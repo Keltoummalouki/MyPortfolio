@@ -2,7 +2,6 @@
 
 import { useEffect , useRef } from "react"
 import gsap from "gsap"
-import ThemeToggle from "./ui/ThemeToggle"
 
 export default function AnimatedTitle() {
     const titleRef = useRef<HTMLHeadingElement>(null)
