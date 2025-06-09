@@ -31,10 +31,10 @@ export default function About() {
         <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300 max-w-2xl">
           Je suis <strong>Keltoum Malouki</strong>, une développeuse full stack passionnée
           par le développement web et mobile. Grâce à ma formation chez YouCode,
-          j'ai acquis des compétences solides en front-end (HTML, CSS, JS, React)
+          j&apos;ai acquis des compétences solides en front-end (HTML, CSS, JS, React)
           et en back-end (PHP, Laravel, MySQL). Je suis motivée, curieuse,
           et toujours à la recherche de nouveaux défis pour améliorer mes compétences
-          techniques et humaines. J'aime concevoir des interfaces modernes, créatives
+          techniques et humaines. J&apos;aime concevoir des interfaces modernes, créatives
           et accessibles à tous.
         </p>
       </div>

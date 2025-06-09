@@ -25,7 +25,6 @@ export default function ContactSection() {
     const contactInfo = contactInfoRef.current
     const form = formRef.current
 
-    // Animation d'entrée avec stagger
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
@@ -74,7 +73,6 @@ export default function ContactSection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Simulation d'envoi
     setIsSubmitted(true)
     setTimeout(() => setIsSubmitted(false), 3000)
   }
@@ -103,7 +101,7 @@ export default function ContactSection() {
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-fuchsia-500 mx-auto mb-6 rounded-full"></div>
           <p className="text-xl text-black dark:text-white max-w-2xl mx-auto leading-relaxed">
-            Vous souhaitez discuter d'un projet ou d'une opportunité ? N'hésitez pas à me contacter via ce formulaire ou
+            Vous souhaitez discuter d&apos;un projet ou d&apos;une opportunité ? N&apos;hésitez pas à me contacter via ce formulaire ou
             directement par mes coordonnées ci-dessous.
           </p>
         </div>
@@ -221,7 +219,6 @@ export default function ContactSection() {
                 />
               </div>
 
-              {/* Bouton d'envoi */}
               <button
                 type="submit"
                 disabled={isSubmitted}
