@@ -45,15 +45,19 @@ export default function GitHubStats() {
         </p>
 
         <div className="flex flex-col items-center gap-8">
-          <Image
+          <img
             src="https://github-readme-stats.vercel.app/api?username=Keltoummalouki&show_icons=true&theme=radical&hide_title=true"
             alt="Statistiques GitHub"
+            width={500}
+            height={200}
             className="w-full max-w-xl rounded-xl shadow-lg bg-white dark:bg-black"
           />
 
-          <Image
+          <img
             src="https://github-readme-streak-stats.herokuapp.com?user=Keltoummalouki&theme=radical"
             alt="GitHub Streak"
+            width={500}
+            height={200}
             className="w-full max-w-xl rounded-xl shadow-lg bg-white dark:bg-black"
           />
         </div>

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Github, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 
-// Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger)
 
 const projects = [
@@ -136,6 +135,8 @@ export default function ProjectsSection() {
                 <Image
                   src={project.image || "/placeholder.svg"}
                   alt={project.title}
+                  width={400}
+                  height={192}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
