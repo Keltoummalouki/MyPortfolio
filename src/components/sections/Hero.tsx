@@ -50,7 +50,7 @@ export default function Hero() {
             <p className="text-2xl md:text-3xl text-black dark:text-white mb-2 font-light">Développeuse Full Stack</p>
 
             <p className="text-lg text-black dark:text-white mb-8 max-w-lg mx-auto lg:mx-0">
-              Passionnée par la création d'expériences web modernes et performantes
+              Passionnée par la création d&apos;expériences web modernes et performantes
             </p>
           </motion.div>
 
