@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import { Github } from "lucide-react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import Image from "next/image"
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
@@ -44,13 +45,13 @@ export default function GitHubStats() {
         </p>
 
         <div className="flex flex-col items-center gap-8">
-          <img
+          <Image
             src="https://github-readme-stats.vercel.app/api?username=Keltoummalouki&show_icons=true&theme=radical&hide_title=true"
             alt="Statistiques GitHub"
             className="w-full max-w-xl rounded-xl shadow-lg bg-white dark:bg-black"
           />
 
-          <img
+          <Image
             src="https://github-readme-streak-stats.herokuapp.com?user=Keltoummalouki&theme=radical"
             alt="GitHub Streak"
             className="w-full max-w-xl rounded-xl shadow-lg bg-white dark:bg-black"
