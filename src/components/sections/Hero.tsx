@@ -92,13 +92,20 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <Button
-              size="lg"
-              className="bg-white dark:bg-black text-black dark:text-white bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <Download size={20} />
-              Télécharger CV
-            </Button>
+          <a
+          href="/cv.pdf"
+          download
+          target="_blank"
+          rel="noopener noreferrer"
+          >
+          <Button
+          size="lg"
+          className="bg-white dark:bg-black text-black dark:text-white bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+          <Download size={20} />
+          Télécharger CV
+          </Button>
+          </a>
           </motion.div>
         </div>
       </div>
