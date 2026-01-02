@@ -1,0 +1,170 @@
+{
+    "nav": {
+        "about": "À propos",
+        "skills": "Compétences",
+        "projects": "Projets",
+        "education": "Formation",
+        "experience": "Expérience",
+        "github": "GitHub",
+        "contact": "Contact"
+    },
+    "hero": {
+        "greeting": "Bonjour, je suis",
+        "name": "Keltoum Malouki",
+        "role": "Développeuse Full Stack",
+        "description": "Passionnée par la création d'expériences web modernes et performantes avec les technologies de pointe",
+        "downloadCV": "Télécharger CV",
+        "contactMe": "Me Contacter",
+        "scrollDown": "Défiler pour explorer",
+        "openToWork": "Disponible"
+    },
+    "about": {
+        "title": "À propos de moi",
+        "subtitle": "Apprenez à me connaître",
+        "description": "Je suis Keltoum Malouki, une développeuse full-stack passionnée originaire de Casablanca, Maroc. Grâce à ma formation chez YouCode (UM6P), j'ai acquis des compétences solides en front-end (React, Next.js, TypeScript) et en back-end (Node.js, Laravel, PHP). Je suis motivée, curieuse, et toujours à la recherche de nouveaux défis pour améliorer mes compétences techniques et humaines. J'aime concevoir des interfaces modernes, créatives et accessibles.",
+        "stats": {
+            "projects": "Projets Réalisés",
+            "experience": "Années d'Apprentissage",
+            "technologies": "Technologies",
+            "commits": "Commits GitHub"
+        },
+        "qualities": {
+            "creative": "Créative",
+            "dedicated": "Dévouée",
+            "teamPlayer": "Esprit d'équipe",
+            "problemSolver": "Résolution de problèmes"
+        }
+    },
+    "skills": {
+        "title": "Mes Compétences",
+        "subtitle": "Voici un aperçu de mes compétences techniques et de mon niveau de maîtrise",
+        "categories": {
+            "languages": "Langages",
+            "frontend": "Frontend",
+            "backend": "Backend",
+            "databases": "Bases de données",
+            "devops": "DevOps & Outils"
+        },
+        "proficiency": {
+            "expert": "Expert",
+            "advanced": "Avancé",
+            "intermediate": "Intermédiaire",
+            "learning": "En apprentissage"
+        }
+    },
+    "projects": {
+        "title": "Mes Projets",
+        "subtitle": "Voici quelques réalisations techniques basées sur mon expérience",
+        "viewCode": "Voir le Code",
+        "liveDemo": "Démo Live",
+        "techStack": "Technologies",
+        "featured": "En vedette",
+        "items": {
+            "truckflow": {
+                "title": "TruckFlow",
+                "description": "Plateforme complète de gestion de flotte et logistique pour les entreprises de transport avec suivi GPS en temps réel, gestion des chauffeurs et rapports automatisés."
+            },
+            "reservezmoi": {
+                "title": "Réservez-Moi",
+                "description": "Plateforme moderne de réservation de rendez-vous avec intégration de calendrier, rappels automatisés et support multi-services pour les entreprises."
+            },
+            "budgetbuddy": {
+                "title": "BudgetBuddy",
+                "description": "Application de gestion des dépenses avec interface responsive, suivi de budget et analyses financières."
+            },
+            "testsplatform": {
+                "title": "Tests Acceptance Platform",
+                "description": "Plateforme pour automatiser l'inscription et la gestion des rôles pour les tests d'acceptance YouCode."
+            },
+            "dentacare": {
+                "title": "DentaCare",
+                "description": "Solution de gestion des rendez-vous pour cabinets dentaires avec planification et dossiers patients."
+            },
+            "youdemy": {
+                "title": "Youdemy",
+                "description": "Plateforme LMS e-learning pour gérer utilisateurs, cours et contenus éducatifs."
+            }
+        }
+    },
+    "experience": {
+        "title": "Expérience Professionnelle & Certifications",
+        "subtitle": "Voici les rôles que j'ai occupés dans le monde professionnel et freelance, ainsi que mes certifications",
+        "items": {
+            "caisseManager": {
+                "title": "Stage Développeuse Front-End",
+                "company": "Caisse Manager — Rabat, Maroc",
+                "date": "Juin - Août 2025",
+                "description": "Stage de 2 mois en développement front-end : création d'interfaces utilisateur modernes avec React, Next.js, Tailwind CSS, GSAP et Framer Motion. Intégration d'API et respect des bonnes pratiques UI/UX."
+            },
+            "freelance": {
+                "title": "Développeuse Full Stack Freelance",
+                "company": "Fiverr (Plateforme en ligne)",
+                "date": "2024",
+                "description": "Création de projets web complets pour des clients internationaux, intégration d'API, développement d'interfaces modernes et optimisation de la performance."
+            },
+            "docker": {
+                "title": "Docker Foundations Professional Certificate",
+                "company": "Docker, Inc. (LinkedIn)",
+                "date": "Mars 2025",
+                "description": "Certification obtenue sur Docker Products et les technologies de conteneurisation."
+            }
+        }
+    },
+    "education": {
+        "title": "Mon Parcours Éducatif",
+        "subtitle": "Découvrez les étapes clés de ma formation académique et technique",
+        "items": {
+            "youcode": {
+                "title": "Développement Full-Stack",
+                "school": "YouCode (UM6P) — Safi, Maroc",
+                "date": "2024 - Présent",
+                "description": "Formation pratique en développement web Frontend & Backend avec gestion de projets en méthodologie agile."
+            },
+            "bac": {
+                "title": "Baccalauréat en Sciences Physiques",
+                "school": "Lycée Okba Ibn Nafii — Casablanca, Maroc",
+                "date": "2024",
+                "description": "Option Française avec des bases solides en mathématiques, physique et informatique."
+            }
+        }
+    },
+    "github": {
+        "title": "Statistiques GitHub",
+        "subtitle": "Un aperçu visuel de mon activité et de mes contributions open-source sur GitHub",
+        "viewProfile": "Voir mon profil GitHub"
+    },
+    "contact": {
+        "title": "Contactez-moi",
+        "subtitle": "Vous souhaitez discuter d'un projet ou d'une opportunité ? N'hésitez pas à me contacter via ce formulaire ou directement par mes coordonnées ci-dessous.",
+        "form": {
+            "name": "Nom complet",
+            "namePlaceholder": "Votre nom complet",
+            "email": "Adresse email",
+            "emailPlaceholder": "votre@email.com",
+            "message": "Message",
+            "messagePlaceholder": "Décrivez votre projet ou votre demande...",
+            "send": "Envoyer le message",
+            "sent": "Message envoyé !"
+        },
+        "info": {
+            "email": "Email",
+            "phone": "Téléphone",
+            "location": "Localisation"
+        }
+    },
+    "footer": {
+        "copyright": "Tous droits réservés",
+        "madeWith": "Fait avec",
+        "and": "et",
+        "languages": {
+            "arabic": "Arabe",
+            "french": "Français",
+            "english": "Anglais"
+        }
+    },
+    "common": {
+        "loading": "Chargement...",
+        "error": "Une erreur s'est produite",
+        "retry": "Réessayer"
+    }
+}

@@ -1,247 +1,353 @@
-"use client"
+'use client'
 
-import type React from "react"
+import type React from 'react'
+import { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useTranslations } from 'next-intl'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Mail, Phone, MapPin, Send, CheckCircle, Loader2, Sparkles, MessageSquare } from 'lucide-react'
 
-import { useEffect, useRef, useState } from "react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react"
-
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
+// Floating label input component
+function FloatingLabelInput({
+  id,
+  type = 'text',
+  label,
+  placeholder,
+  required = false,
+  rows,
+}: {
+  id: string
+  type?: string
+  label: string
+  placeholder: string
+  required?: boolean
+  rows?: number
+}) {
+  const [isFocused, setIsFocused] = useState(false)
+  const [hasValue, setHasValue] = useState(false)
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setHasValue(e.target.value.length > 0)
+  }
+
+  const isFloating = isFocused || hasValue
+
+  const InputComponent = rows ? 'textarea' : 'input'
+
+  return (
+    <div className="relative group">
+      {/* Floating Label */}
+      <motion.label
+        htmlFor={id}
+        className={`absolute left-4 pointer-events-none transition-all duration-300 ${isFloating
+          ? 'text-xs text-[#3B82F6] top-2'
+          : 'text-sm text-muted-foreground top-4'
+          }`}
+        animate={{
+          y: isFloating ? 0 : 0,
+          scale: isFloating ? 0.85 : 1,
+        }}
+      >
+        {label}
+        {required && <span className="text-[#3B82F6] ml-1">*</span>}
+      </motion.label>
+
+      {/* Input/Textarea */}
+      <InputComponent
+        ref={inputRef as any}
+        id={id}
+        name={id}
+        type={type}
+        required={required}
+        rows={rows}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        onChange={handleChange}
+        className={`w-full px-4 ${isFloating ? 'pt-6 pb-3' : 'py-4'} rounded-xl bg-[#111113] border-2 transition-all duration-300 focus:outline-none resize-none ${isFocused
+          ? 'border-[#3B82F6] shadow-lg shadow-[#3B82F6]/10 scale-[1.01]'
+          : 'border-[#27272A] hover:border-[#60A5FA]'
+          }`}
+        placeholder={isFloating ? placeholder : ''}
+      />
+
+      {/* Focus ring effect */}
+      <motion.div
+        className="absolute inset-0 rounded-xl pointer-events-none"
+        animate={{
+          boxShadow: isFocused
+            ? '0 0 0 4px rgba(59, 130, 246, 0.1)'
+            : '0 0 0 0px rgba(59, 130, 246, 0)',
+        }}
+        transition={{ duration: 0.2 }}
+      />
+    </div>
+  )
+}
+
 export default function ContactSection() {
-  const sectionRef = useRef(null)
-  const titleRef = useRef(null)
-  const contactInfoRef = useRef<HTMLDivElement>(null)
-  const formRef = useRef(null)
+  const t = useTranslations('contact')
+  const sectionRef = useRef<HTMLElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [focusedField, setFocusedField] = useState<string | null>(null)
 
   useEffect(() => {
-    const section = sectionRef.current
-    const title = titleRef.current
-    const contactInfo = contactInfoRef.current
-    const form = formRef.current
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 85%",
-        end: "bottom 15%",
-      },
-    })
-
-    tl.fromTo(
-      title,
-      { opacity: 0, y: 50, scale: 0.9 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.7)" },
-    )
-      .fromTo(
-        contactInfo ? Array.from(contactInfo.children) : [],
-        { opacity: 0, y: 30, rotateX: -15 },
-        { opacity: 1, y: 0, rotateX: 0, duration: 0.6, stagger: 0.1, ease: "power2.out" },
-        "-=0.4",
-      )
-      .fromTo(
-        form,
+    const ctx = gsap.context(() => {
+      // Animate contact cards with stagger
+      gsap.fromTo(
+        '.contact-card',
         { opacity: 0, y: 40, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power2.out" },
-        "-=0.3",
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 75%',
+          }
+        }
       )
 
-    // Animation de background flottant
-    gsap.to(".floating-orb", {
-      y: "random(-20, 20)",
-      x: "random(-10, 10)",
-      rotation: "random(-5, 5)",
-      duration: "random(3, 6)",
-      ease: "sine.inOut",
-      repeat: -1,
-      yoyo: true,
-      stagger: {
-        amount: 2,
-        from: "random",
-      },
-    })
+      // Animate form with a slight delay
+      gsap.fromTo(
+        formRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: formRef.current,
+            start: 'top 85%',
+          }
+        }
+      )
+    }, sectionRef)
 
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
-    }
+    return () => ctx.revert()
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
+
+    // Simulate form submission
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    setIsSubmitting(false)
     setIsSubmitted(true)
-    setTimeout(() => setIsSubmitted(false), 3000)
+
+    setTimeout(() => setIsSubmitted(false), 4000)
+
+    if (formRef.current) {
+      formRef.current.reset()
+    }
   }
+
+  const contactInfo = [
+    {
+      icon: Mail,
+      label: t('info.email'),
+      value: 'keltoummalouki@gmail.com',
+      href: 'mailto:keltoummalouki@gmail.com',
+      color: 'from-[#3B82F6] to-[#1E40AF]',
+    },
+    {
+      icon: Phone,
+      label: t('info.phone'),
+      value: '+212 606 232 697',
+      href: 'tel:+212606232697',
+      color: 'from-[#3B82F6] to-[#60A5FA]',
+    },
+    {
+      icon: MapPin,
+      label: t('info.location'),
+      value: 'Casablanca, Morocco',
+      href: null,
+      color: 'from-[#64748B] to-[#94A3B8]',
+    },
+  ]
 
   return (
     <section
       id="contact"
       ref={sectionRef}
-      className="relative py-24 bg-white dark:bg-black text-black dark:text-white"
+      className="relative py-24 overflow-hidden"
     >
-      {/* Orbes flottants décoratifs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="floating-orb absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-xl"></div>
-        <div className="floating-orb absolute top-40 right-20 w-24 h-24 bg-fuchsia-500/10 rounded-full blur-xl"></div>
-        <div className="floating-orb absolute bottom-32 left-1/4 w-40 h-40 bg-blue-500/10 rounded-full blur-xl"></div>
-        <div className="floating-orb absolute bottom-20 right-1/3 w-28 h-28 bg-purple-400/10 rounded-full blur-xl"></div>
-      </div>
+      {/* Background */}
+      <div className="absolute inset-0 opacity-[0.02]" style={{
+        backgroundImage: 'linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)',
+        backgroundSize: '60px 60px'
+      }} />
+      <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-[#3B82F6]/5 rounded-full blur-3xl float" />
+      <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-[#3B82F6]/5 rounded-full blur-3xl float-delayed" />
 
-      {/* Grille de fond subtile */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+      <div className="relative max-w-6xl mx-auto px-6">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <motion.span
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#27272A] text-sm font-medium text-[#3B82F6] mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <MessageSquare size={16} />
+            {t('info.email')}
+          </motion.span>
 
-      <div className="relative max-w-6xl mx-auto px-4">
-        <div ref={titleRef} className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-600 bg-clip-text text-transparent leading-tight">
-            Contactez-moi
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <span className="gradient-text">{t('title')}</span>
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-fuchsia-500 mx-auto mb-6 rounded-full"></div>
-          <p className="text-xl text-black dark:text-white max-w-2xl mx-auto leading-relaxed">
-            Vous souhaitez discuter d&apos;un projet ou d&apos;une opportunité ? N&apos;hésitez pas à me contacter via ce formulaire ou
-            directement par mes coordonnées ci-dessous.
+
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+            {t('subtitle')}
           </p>
+
+          <div className="w-24 h-1 bg-gradient-to-r from-[#3B82F6] to-[#60A5FA] mx-auto rounded-full" />
         </div>
 
-        {/* Informations de contact avec glassmorphism */}
-        <div ref={contactInfoRef} className="mb-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              icon: Mail,
-              text: "keltoummalouki@gmail.com",
-              label: "Email",
-            },
-            {
-              icon: Phone,
-              text: "+212 606 232 697",
-              label: "Téléphone",
-            },
-            {
-              icon: MapPin,
-              text: "Casablanca, Maroc",
-              label: "Localisation",
-            },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="group relative p-6 rounded-2xl bg-white dark:bg-black/80 backdrop-blur-sm border border-white/10 hover:border-purple-400/50 transition-all duration-300 hover:scale-105 hover:bg-white/10 dark:hover:bg-black/90"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative flex flex-col items-center text-center space-y-3">
-                <div className="p-3 rounded-full bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 group-hover:from-purple-500/30 group-hover:to-fuchsia-500/30 transition-all duration-300">
-                  <item.icon
-                    className="text-purple-400 group-hover:text-purple-300 transition-colors duration-300"
-                    size={24}
-                  />
-                </div>
-                <div>
-                  <p className="text-sm text-black dark:text-white mb-1">{item.label}</p>
-                  <p className="text-black dark:text-white font-medium">{item.text}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+        {/* Contact Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          {contactInfo.map((info, index) => {
+            const Icon = info.icon
+            const Component = info.href ? 'a' : 'div'
+
+            return (
+              <motion.div
+                key={info.label}
+                className="contact-card"
+                whileHover={{ y: -8, scale: 1.02 }}
+              >
+                <Component
+                  href={info.href || undefined}
+                  className="block p-6 rounded-2xl glass-card hover-lift group text-center relative overflow-hidden"
+                >
+                  {/* Gradient background on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${info.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+
+                  <motion.div
+                    className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${info.color} mb-4 shadow-lg`}
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    <Icon className="w-6 h-6 text-white" />
+                  </motion.div>
+
+                  <p className="text-sm text-muted-foreground mb-1">{info.label}</p>
+                  <p className="font-medium text-foreground group-hover:text-[#3B82F6] transition-colors">
+                    {info.value}
+                  </p>
+                </Component>
+              </motion.div>
+            )
+          })}
         </div>
 
-        {/* Formulaire amélioré */}
-        <div className="max-w-2xl mx-auto">
+        {/* Contact Form */}
+        <motion.div
+          className="max-w-2xl mx-auto"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className="relative p-8 rounded-3xl bg-white dark:bg-black/80 backdrop-blur-md border border-white/10 shadow-2xl"
+            className="p-8 rounded-3xl glass-card relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-fuchsia-500/5 rounded-3xl"></div>
+            {/* Decorative elements */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#3B82F6]/5 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#3B82F6]/5 rounded-full blur-3xl" />
 
             <div className="relative space-y-6">
-              {/* Champ Nom */}
-              <div className="relative">
-                <label htmlFor="name" className="block text-sm font-medium text-black dark:text-white mb-2">
-                  Nom complet
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  required
-                  onFocus={() => setFocusedField("name")}
-                  onBlur={() => setFocusedField(null)}
-                  className={`w-full px-4 py-4 rounded-xl bg-white dark:bg-black/60 backdrop-blur-sm text-black dark:text-white placeholder-gray-400 border transition-all duration-300 focus:outline-none focus:scale-[1.02] ${
-                    focusedField === "name"
-                      ? "border-purple-400 shadow-lg shadow-purple-500/25 bg-white/10 dark:bg-black/80"
-                      : "border-white/20 hover:border-white/30"
-                  }`}
-                  placeholder="Votre nom complet"
-                />
-              </div>
+              {/* Name Field */}
+              <FloatingLabelInput
+                id="name"
+                label={t('form.name')}
+                placeholder={t('form.namePlaceholder')}
+                required
+              />
 
-              {/* Champ Email */}
-              <div className="relative">
-                <label htmlFor="email" className="block text-sm font-medium text-black dark:text-white mb-2">
-                  Adresse email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  required
-                  onFocus={() => setFocusedField("email")}
-                  onBlur={() => setFocusedField(null)}
-                  className={`w-full px-4 py-4 rounded-xl bg-white dark:bg-black/60 backdrop-blur-sm text-black dark:text-white placeholder-gray-400 border transition-all duration-300 focus:outline-none focus:scale-[1.02] ${
-                    focusedField === "email"
-                      ? "border-purple-400 shadow-lg shadow-purple-500/25 bg-white/10 dark:bg-black/80"
-                      : "border-white/20 hover:border-white/30"
-                  }`}
-                  placeholder="votre@email.com"
-                />
-              </div>
+              {/* Email Field */}
+              <FloatingLabelInput
+                id="email"
+                type="email"
+                label={t('form.email')}
+                placeholder={t('form.emailPlaceholder')}
+                required
+              />
 
-              {/* Champ Message */}
-              <div className="relative">
-                <label htmlFor="message" className="block text-sm font-medium text-black dark:text-white mb-2">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={5}
-                  required
-                  onFocus={() => setFocusedField("message")}
-                  onBlur={() => setFocusedField(null)}
-                  className={`w-full px-4 py-4 rounded-xl bg-white dark:bg-black/60 backdrop-blur-sm text-black dark:text-white placeholder-gray-400 border transition-all duration-300 focus:outline-none focus:scale-[1.02] resize-none ${
-                    focusedField === "message"
-                      ? "border-purple-400 shadow-lg shadow-purple-500/25 bg-white/10 dark:bg-black/80"
-                      : "border-white/20 hover:border-white/30"
-                  }`}
-                  placeholder="Décrivez votre projet ou votre demande..."
-                />
-              </div>
+              {/* Message Field */}
+              <FloatingLabelInput
+                id="message"
+                label={t('form.message')}
+                placeholder={t('form.messagePlaceholder')}
+                required
+                rows={5}
+              />
 
-              <button
+              {/* Submit Button */}
+              <motion.button
                 type="submit"
-                disabled={isSubmitted}
-                className="group relative w-full py-4 px-6 rounded-xl bg-white dark:bg-black text-black dark:text-white font-semibold shadow-lg hover:shadow-xl hover:shadow-purple-500/25 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden transition-all duration-300"
+                disabled={isSubmitting || isSubmitted}
+                className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#3B82F6] to-[#1E40AF] text-white font-semibold shadow-lg hover:shadow-[#3B82F6]/30 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-500 relative overflow-hidden group"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                <div className="relative flex items-center justify-center space-x-2">
-                  {isSubmitted ? (
-                    <>
+                {/* Shimmer Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+                <AnimatePresence mode="wait">
+                  {isSubmitting ? (
+                    <motion.span
+                      key="loading"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="relative flex items-center justify-center gap-2"
+                    >
+                      <Loader2 size={20} className="animate-spin" />
+                      <span>Sending...</span>
+                    </motion.span>
+                  ) : isSubmitted ? (
+                    <motion.span
+                      key="success"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      className="relative flex items-center justify-center gap-2"
+                    >
                       <CheckCircle size={20} />
-                      <span>Message envoyé !</span>
-                    </>
+                      <span>{t('form.sent')}</span>
+                      <Sparkles size={16} className="text-yellow-300" />
+                    </motion.span>
                   ) : (
-                    <>
+                    <motion.span
+                      key="send"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="relative flex items-center justify-center gap-2"
+                    >
                       <Send size={20} />
-                      <span>Envoyer le message</span>
-                    </>
+                      <span>{t('form.send')}</span>
+                    </motion.span>
                   )}
-                </div>
-              </button>
+                </AnimatePresence>
+              </motion.button>
             </div>
           </form>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

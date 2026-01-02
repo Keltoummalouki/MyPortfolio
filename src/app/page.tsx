@@ -4,22 +4,47 @@ import CompetenceSection from "@/components/sections/CompetenceSection"
 import ProjectsSection from "@/components/sections/ProjectsSection"
 import ContactSection from "@/components/sections/ContactSection"
 import Header from "@/components/layouts/Header"
+import Footer from "@/components/layouts/Footer"
 import EducationSection from "@/components/sections/EducationSection"
 import ExperienceSection from "@/components/sections/ExperienceSection"
 import GitHubStats from "@/components/sections/GithubStatsSection"
+import ScrollProgress from "@/components/ui/ScrollProgress"
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative">
+      {/* Scroll Progress Indicator */}
+      <ScrollProgress />
+
+      {/* Navigation */}
       <Header />
+
+      {/* Hero Section with Three.js Background */}
       <Hero />
+
+      {/* About Section with Stats */}
       <AboutSection />
+
+      {/* Skills/Competence Section */}
       <CompetenceSection />
-      <EducationSection/>
-      <ExperienceSection/>
+
+      {/* Education Section */}
+      <EducationSection />
+
+      {/* Experience & Certifications Section */}
+      <ExperienceSection />
+
+      {/* Projects Section with 3D Cards */}
       <ProjectsSection />
-      <GitHubStats/>
+
+      {/* GitHub Statistics */}
+      <GitHubStats />
+
+      {/* Contact Section */}
       <ContactSection />
+
+      {/* Footer */}
+      <Footer />
     </main>
   )
 }

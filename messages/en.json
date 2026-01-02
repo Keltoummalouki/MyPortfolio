@@ -1,0 +1,170 @@
+{
+    "nav": {
+        "about": "About",
+        "skills": "Skills",
+        "projects": "Projects",
+        "education": "Education",
+        "experience": "Experience",
+        "github": "GitHub",
+        "contact": "Contact"
+    },
+    "hero": {
+        "greeting": "Hello, I'm",
+        "name": "Keltoum Malouki",
+        "role": "Full Stack Developer",
+        "description": "Passionate about creating modern, performant web experiences with cutting-edge technologies",
+        "downloadCV": "Download CV",
+        "contactMe": "Contact Me",
+        "scrollDown": "Scroll to explore",
+        "openToWork": "Open to work"
+    },
+    "about": {
+        "title": "About Me",
+        "subtitle": "Get to know me better",
+        "description": "I'm Keltoum Malouki, a passionate full-stack developer from Casablanca, Morocco. Through my training at YouCode (UM6P), I've acquired solid skills in front-end (React, Next.js, TypeScript) and back-end (Node.js, Laravel, PHP) development. I'm motivated, curious, and always looking for new challenges to improve my technical and interpersonal skills. I love designing modern, creative, and accessible interfaces.",
+        "stats": {
+            "projects": "Projects Completed",
+            "experience": "Years Learning",
+            "technologies": "Technologies",
+            "commits": "GitHub Commits"
+        },
+        "qualities": {
+            "creative": "Creative",
+            "dedicated": "Dedicated",
+            "teamPlayer": "Team Player",
+            "problemSolver": "Problem Solver"
+        }
+    },
+    "skills": {
+        "title": "My Skills",
+        "subtitle": "Here's an overview of my technical skills and proficiency levels",
+        "categories": {
+            "languages": "Languages",
+            "frontend": "Frontend",
+            "backend": "Backend",
+            "databases": "Databases",
+            "devops": "DevOps & Tools"
+        },
+        "proficiency": {
+            "expert": "Expert",
+            "advanced": "Advanced",
+            "intermediate": "Intermediate",
+            "learning": "Learning"
+        }
+    },
+    "projects": {
+        "title": "My Projects",
+        "subtitle": "Here are some technical achievements based on my experience",
+        "viewCode": "View Code",
+        "liveDemo": "Live Demo",
+        "techStack": "Tech Stack",
+        "featured": "Featured",
+        "items": {
+            "truckflow": {
+                "title": "TruckFlow",
+                "description": "Complete fleet and logistics management platform for transportation companies with real-time GPS tracking, driver management, and automated reporting."
+            },
+            "reservezmoi": {
+                "title": "Réservez-Moi",
+                "description": "Modern appointment booking platform with calendar integration, automated reminders, and multi-service support for businesses."
+            },
+            "budgetbuddy": {
+                "title": "BudgetBuddy",
+                "description": "Expense management application with responsive interface, budget tracking, and financial analytics."
+            },
+            "testsplatform": {
+                "title": "Tests Acceptance Platform",
+                "description": "Platform to automate registration and role management for YouCode acceptance tests."
+            },
+            "dentacare": {
+                "title": "DentaCare",
+                "description": "Appointment management solution for dental clinics with scheduling and patient records."
+            },
+            "youdemy": {
+                "title": "Youdemy",
+                "description": "E-learning LMS platform for managing users, courses, and educational content."
+            }
+        }
+    },
+    "experience": {
+        "title": "Professional Experience & Certifications",
+        "subtitle": "Here are the roles I've held in the professional and freelance world, along with my certifications",
+        "items": {
+            "caisseManager": {
+                "title": "Front-End Developer Intern",
+                "company": "Caisse Manager — Rabat, Morocco",
+                "date": "June - August 2025",
+                "description": "2-month internship in front-end development: creating modern user interfaces with React, Next.js, Tailwind CSS, GSAP, and Framer Motion. API integration and following UI/UX best practices."
+            },
+            "freelance": {
+                "title": "Full Stack Developer Freelance",
+                "company": "Fiverr (Online Platform)",
+                "date": "2024",
+                "description": "Creating complete web projects for international clients, API integration, developing modern interfaces, and performance optimization."
+            },
+            "docker": {
+                "title": "Docker Foundations Professional Certificate",
+                "company": "Docker, Inc. (LinkedIn)",
+                "date": "March 2025",
+                "description": "Certification obtained on Docker Products and Containerization technologies."
+            }
+        }
+    },
+    "education": {
+        "title": "My Educational Journey",
+        "subtitle": "Discover the key stages of my academic and technical training",
+        "items": {
+            "youcode": {
+                "title": "Full-Stack Development",
+                "school": "YouCode (UM6P) — Safi, Morocco",
+                "date": "2024 - Present",
+                "description": "Hands-on training in Frontend & Backend web development with project management using agile methodology."
+            },
+            "bac": {
+                "title": "Baccalaureate in Physical Sciences",
+                "school": "Okba Ibn Nafii High School — Casablanca, Morocco",
+                "date": "2024",
+                "description": "French option with solid foundations in mathematics, physics, and computer science."
+            }
+        }
+    },
+    "github": {
+        "title": "GitHub Statistics",
+        "subtitle": "A visual overview of my activity and open-source contributions on GitHub",
+        "viewProfile": "View my GitHub profile"
+    },
+    "contact": {
+        "title": "Contact Me",
+        "subtitle": "Want to discuss a project or opportunity? Feel free to contact me via this form or directly through my contact information below.",
+        "form": {
+            "name": "Full Name",
+            "namePlaceholder": "Your full name",
+            "email": "Email Address",
+            "emailPlaceholder": "your@email.com",
+            "message": "Message",
+            "messagePlaceholder": "Describe your project or request...",
+            "send": "Send Message",
+            "sent": "Message Sent!"
+        },
+        "info": {
+            "email": "Email",
+            "phone": "Phone",
+            "location": "Location"
+        }
+    },
+    "footer": {
+        "copyright": "All rights reserved",
+        "madeWith": "Made with",
+        "and": "and",
+        "languages": {
+            "arabic": "Arabic",
+            "french": "French",
+            "english": "English"
+        }
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "retry": "Retry"
+    }
+}
