@@ -10,7 +10,7 @@
 
 A modern, animated portfolio website built with cutting-edge web technologies featuring 3D graphics, smooth animations, and multilingual support.
 
-[Live Demo](https://your-portfolio-url.vercel.app) • [LinkedIn](https://www.linkedin.com/in/keltoum-malouki-79a28029a/) • [GitHub](https://github.com/Keltoummalouki)
+[Live Demo](https://www.keltoummalouki.com/) • [LinkedIn](https://www.linkedin.com/in/keltoum-malouki-79a28029a/) • [GitHub](https://github.com/Keltoummalouki)
 
 </div>
 
