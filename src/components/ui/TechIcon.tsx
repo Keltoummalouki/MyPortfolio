@@ -54,7 +54,6 @@ import {
     SiPostgresql,
     SiMongodb,
     SiDocker,
-    SiGit,
     SiGithub,
     SiGitlab,
 } from 'react-icons/si'

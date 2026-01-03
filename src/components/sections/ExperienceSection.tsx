@@ -5,7 +5,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
-import { Briefcase, Award, Code } from 'lucide-react'
+import { Briefcase, Award } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
