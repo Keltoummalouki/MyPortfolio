@@ -17,12 +17,6 @@ const experienceItems = [
     technologies: ['React', 'Next.js', 'Tailwind CSS', 'GSAP', 'Framer Motion'],
   },
   {
-    id: 'freelance',
-    type: 'work',
-    icon: Code,
-    technologies: ['React', 'Laravel', 'Node.js', 'PostgreSQL'],
-  },
-  {
     id: 'docker',
     type: 'certification',
     icon: Award,
@@ -112,7 +106,7 @@ export default function ExperienceSection() {
 
           {/* Timeline Items */}
           <div className="space-y-12">
-            {experienceItems.map((item, index) => {
+            {experienceItems.map((item) => {
               const Icon = item.icon
 
               return (

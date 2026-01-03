@@ -21,11 +21,13 @@ import {
 
 gsap.registerPlugin(ScrollTrigger)
 
+import type { LucideIcon } from 'lucide-react'
+
 interface StatProps {
   value: number
   label: string
   suffix?: string
-  icon: React.ElementType
+  icon: LucideIcon
 }
 
 function AnimatedStat({ value, label, suffix = '', icon: Icon }: StatProps) {
@@ -315,7 +317,7 @@ export default function AboutSection() {
 
         {/* Qualities */}
         <div className="qualities-container grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {qualities.map((quality, index) => (
+          {qualities.map((quality) => (
             <motion.div
               key={quality.key}
               className="quality-card group relative p-6 rounded-2xl glass-card text-center hover-lift cursor-default"

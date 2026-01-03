@@ -4,7 +4,6 @@ import { useEffect, useRef, Suspense, useState } from 'react'
 import dynamic from 'next/dynamic'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { SplitText } from 'gsap/SplitText'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
@@ -274,6 +273,7 @@ export default function Hero() {
                 src="/images/keltoum.jpg"
                 alt="Keltoum Malouki"
                 fill
+                sizes="(max-width: 768px) 280px, 350px"
                 className="object-cover"
                 priority
               />

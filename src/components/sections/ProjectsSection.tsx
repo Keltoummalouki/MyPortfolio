@@ -16,7 +16,7 @@ const projects = [
   {
     id: 'truckflow',
     title: 'TruckFlow',
-    image: '/images/truckflow.png',
+    image: '/images/truckflow.jpg',
     technologies: ['React', 'Node.js', 'MongoDB', 'Express.js', 'Socket.io'],
     github: 'https://github.com/Keltoummalouki/TruckFlow',
     demo: '',
@@ -27,10 +27,10 @@ const projects = [
     id: 'reservezmoi',
     title: 'Réservez-Moi',
     image: '/images/reservezmoi.png',
-    technologies: ['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL', 'Tailwind CSS'],
+    technologies: ['Laravel', 'Blade', 'PHP', 'MySQL', 'Tailwind CSS'],
     github: 'https://github.com/Keltoummalouki/Reservez-Moi',
     demo: '',
-    featured: true,
+    featured: false,
     category: 'fullstack',
   },
   {
@@ -88,7 +88,6 @@ function ProjectCard({ project, index, t }: ProjectCardProps) {
 
   // Get translated description
   const descriptionKey = `items.${project.id}.description` as const
-  // @ts-expect-error - dynamic key access
   const description = t.has(descriptionKey) ? t(descriptionKey) : project.title
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -159,6 +158,7 @@ function ProjectCard({ project, index, t }: ProjectCardProps) {
           src={project.image || '/images/placeholder.png'}
           alt={project.title}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className={`object-cover transition-all duration-700 ${isHovered ? 'scale-110 blur-sm' : 'scale-100'
             }`}
         />
@@ -420,8 +420,8 @@ export default function ProjectsSection() {
                   key={i}
                   onClick={() => setCurrentPage(i)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${i === currentPage
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 scale-125'
-                      : 'bg-gray-400 hover:bg-purple-400'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 scale-125'
+                    : 'bg-gray-400 hover:bg-purple-400'
                     }`}
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}

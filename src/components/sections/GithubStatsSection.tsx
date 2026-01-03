@@ -6,7 +6,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
 import { Github, ExternalLink } from 'lucide-react'
-import Image from 'next/image'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -86,20 +85,18 @@ export default function GitHubStats() {
 
         {/* Stats Cards */}
         <div className="flex flex-col items-center gap-8 mb-12">
-          {githubStats.map((stat, index) => (
+          {githubStats.map((stat) => (
             <motion.div
               key={stat.title}
               className="github-card w-full max-w-xl"
               whileHover={{ scale: 1.02 }}
             >
               <div className="p-2 rounded-2xl glass-card overflow-hidden">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={stat.src}
                   alt={stat.title}
-                  width={495}
-                  height={195}
                   className="w-full h-auto rounded-xl"
-                  unoptimized // External URL
                 />
               </div>
             </motion.div>

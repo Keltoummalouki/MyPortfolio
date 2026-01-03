@@ -2,7 +2,7 @@
 
 import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Float } from '@react-three/drei'
+import { Float, Line } from '@react-three/drei'
 import * as THREE from 'three'
 
 // Wireframe Icosahedron - the core of the logo
@@ -112,39 +112,31 @@ function ConnectingLines({ mouse }: { mouse: React.MutableRefObject<{ x: number;
 
         linesRef.current.rotation.x = time * 0.1 + mouse.current.y * 0.2
         linesRef.current.rotation.y = time * 0.15 + mouse.current.x * 0.2
-
-        linesRef.current.children.forEach((child, i) => {
-            const line = child as THREE.Line
-            const opacity = 0.2 + Math.sin(time * 2 + i) * 0.1
-                ; (line.material as THREE.LineBasicMaterial).opacity = opacity
-        })
     })
 
-    const lines = useMemo(() => {
+    const lineData = useMemo(() => {
         return Array.from({ length: lineCount }, (_, i) => {
             const angle = (i / lineCount) * Math.PI * 2
             const endX = Math.cos(angle) * 2
             const endZ = Math.sin(angle) * 2
-
-            const points = [
-                new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(endX, 0, endZ)
-            ]
-
-            return new THREE.BufferGeometry().setFromPoints(points)
+            return {
+                points: [[0, 0, 0], [endX, 0, endZ]] as [number, number, number][],
+                color: i % 2 === 0 ? '#3B82F6' : '#60A5FA'
+            }
         })
     }, [])
 
     return (
         <group ref={linesRef}>
-            {lines.map((geometry, i) => (
-                <line key={i} geometry={geometry}>
-                    <lineBasicMaterial
-                        color={i % 2 === 0 ? '#3B82F6' : '#60A5FA'}
-                        transparent
-                        opacity={0.2}
-                    />
-                </line>
+            {lineData.map((data, i) => (
+                <Line
+                    key={i}
+                    points={data.points}
+                    color={data.color}
+                    transparent
+                    opacity={0.2}
+                    lineWidth={1}
+                />
             ))}
         </group>
     )

@@ -1,8 +1,8 @@
 'use client'
 
-import { useRef, useMemo, useEffect, useState } from 'react'
+import { useRef, useMemo, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Points, PointMaterial, Float, Text3D, Center } from '@react-three/drei'
+import { Points, PointMaterial, Float } from '@react-three/drei'
 import * as THREE from 'three'
 
 // Enhanced Particle Field with scroll and mouse reactivity

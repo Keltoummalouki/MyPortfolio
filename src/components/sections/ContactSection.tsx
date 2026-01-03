@@ -6,13 +6,54 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Phone, MapPin, Send, CheckCircle, Loader2, Sparkles, MessageSquare } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, CheckCircle, Loader2, Sparkles, MessageSquare, AlertCircle } from 'lucide-react'
+// EmailJS library for sending emails directly from the frontend (no backend required)
+import emailjs from '@emailjs/browser'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-// Floating label input component
+// =============================================================================
+// EMAILJS CONFIGURATION
+// =============================================================================
+// To set up EmailJS:
+// 1. Create a free account at https://www.emailjs.com/
+// 2. Add an email service (Gmail, Outlook, etc.) in "Email Services"
+// 3. Create an email template in "Email Templates" with these variables:
+//    - {{from_name}} - sender's name
+//    - {{from_email}} - sender's email  
+//    - {{message}} - the message content
+// 4. Get your Public Key from "Account" > "General" > "Public Key"
+// 5. Replace the placeholders below with your actual IDs
+// =============================================================================
+
+const EMAILJS_CONFIG = {
+  // Your EmailJS service ID (found in Email Services section)
+  SERVICE_ID: 'service_6qfjw87',
+  // Your EmailJS template ID (found in Email Templates section)
+  TEMPLATE_ID: 'template_trl9bs6',
+  // Your EmailJS public key (found in Account > General)
+  PUBLIC_KEY: 'PdYxZNmjMU6xRfoxj',
+}
+
+// Form validation types
+interface FormErrors {
+  name?: string
+  email?: string
+  message?: string
+}
+
+interface FormData {
+  name: string
+  email: string
+  message: string
+}
+
+// Email validation regex
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Floating label input component with validation
 function FloatingLabelInput({
   id,
   type = 'text',
@@ -20,6 +61,9 @@ function FloatingLabelInput({
   placeholder,
   required = false,
   rows,
+  value,
+  onChange,
+  error,
 }: {
   id: string
   type?: string
@@ -27,15 +71,14 @@ function FloatingLabelInput({
   placeholder: string
   required?: boolean
   rows?: number
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  error?: string
 }) {
   const [isFocused, setIsFocused] = useState(false)
-  const [hasValue, setHasValue] = useState(false)
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setHasValue(e.target.value.length > 0)
-  }
-
+  const hasValue = value.length > 0
   const isFloating = isFocused || hasValue
 
   const InputComponent = rows ? 'textarea' : 'input'
@@ -46,7 +89,7 @@ function FloatingLabelInput({
       <motion.label
         htmlFor={id}
         className={`absolute left-4 pointer-events-none transition-all duration-300 ${isFloating
-          ? 'text-xs text-[#3B82F6] top-2'
+          ? `text-xs top-2 ${error ? 'text-red-500' : 'text-[#3B82F6]'}`
           : 'text-sm text-muted-foreground top-4'
           }`}
         animate={{
@@ -55,33 +98,57 @@ function FloatingLabelInput({
         }}
       >
         {label}
-        {required && <span className="text-[#3B82F6] ml-1">*</span>}
+        {required && <span className={error ? 'text-red-500 ml-1' : 'text-[#3B82F6] ml-1'}>*</span>}
       </motion.label>
 
       {/* Input/Textarea */}
       <InputComponent
-        ref={inputRef as any}
+        ref={inputRef as React.Ref<HTMLInputElement & HTMLTextAreaElement>}
         id={id}
         name={id}
         type={type}
         required={required}
         rows={rows}
+        value={value}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        onChange={handleChange}
-        className={`w-full px-4 ${isFloating ? 'pt-6 pb-3' : 'py-4'} rounded-xl bg-[#111113] border-2 transition-all duration-300 focus:outline-none resize-none ${isFocused
-          ? 'border-[#3B82F6] shadow-lg shadow-[#3B82F6]/10 scale-[1.01]'
-          : 'border-[#27272A] hover:border-[#60A5FA]'
+        onChange={onChange}
+        className={`w-full px-4 ${isFloating ? 'pt-6 pb-3' : 'py-4'} rounded-xl bg-[#111113] border-2 transition-all duration-300 focus:outline-none resize-none ${error
+          ? 'border-red-500 focus:border-red-500'
+          : isFocused
+            ? 'border-[#3B82F6] shadow-lg shadow-[#3B82F6]/10 scale-[1.01]'
+            : 'border-[#27272A] hover:border-[#60A5FA]'
           }`}
         placeholder={isFloating ? placeholder : ''}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? `${id}-error` : undefined}
       />
+
+      {/* Error Message */}
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            id={`${id}-error`}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="mt-2 text-sm text-red-500 flex items-center gap-1"
+            role="alert"
+          >
+            <AlertCircle size={14} />
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
 
       {/* Focus ring effect */}
       <motion.div
         className="absolute inset-0 rounded-xl pointer-events-none"
         animate={{
           boxShadow: isFocused
-            ? '0 0 0 4px rgba(59, 130, 246, 0.1)'
+            ? error
+              ? '0 0 0 4px rgba(239, 68, 68, 0.1)'
+              : '0 0 0 4px rgba(59, 130, 246, 0.1)'
             : '0 0 0 0px rgba(59, 130, 246, 0)',
         }}
         transition={{ duration: 0.2 }}
@@ -94,8 +161,17 @@ export default function ContactSection() {
   const t = useTranslations('contact')
   const sectionRef = useRef<HTMLElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
+
+  // Form state
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    message: '',
+  })
+  const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -137,20 +213,108 @@ export default function ContactSection() {
     return () => ctx.revert()
   }, [])
 
+  // Handle input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }))
+    }
+  }
+
+  // Client-side validation
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {}
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required'
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters'
+    }
+
+    // Email validation
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!EMAIL_REGEX.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address'
+    }
+
+    // Message validation
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required'
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  // Handle form submission with EmailJS
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return
+    }
+
     setIsSubmitting(true)
+    setSubmitStatus('idle')
+    setErrorMessage('')
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    try {
+      // =============================================================================
+      // EMAILJS SEND EMAIL
+      // =============================================================================
+      // The send() method takes:
+      // - serviceId: Your email service ID
+      // - templateId: Your email template ID
+      // - templateParams: Object with variables matching your template
+      // - publicKey: Your EmailJS public key
+      // =============================================================================
+      await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          // You can add more template variables here if needed
+          to_name: 'Keltoum', // Your name (recipient)
+        },
+        EMAILJS_CONFIG.PUBLIC_KEY
+      )
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+      // Success! Clear form and show success message
+      setSubmitStatus('success')
+      setFormData({ name: '', email: '', message: '' })
 
-    setTimeout(() => setIsSubmitted(false), 4000)
+      // Reset success message after 5 seconds
+      setTimeout(() => setSubmitStatus('idle'), 5000)
 
-    if (formRef.current) {
-      formRef.current.reset()
+    } catch (error) {
+      // Handle error
+      console.error('EmailJS Error:', error)
+      setSubmitStatus('error')
+
+      // Set user-friendly error message
+      if (error instanceof Error) {
+        setErrorMessage(error.message || 'Failed to send message. Please try again.')
+      } else {
+        setErrorMessage('Failed to send message. Please try again.')
+      }
+
+      // Reset error state after 5 seconds
+      setTimeout(() => {
+        setSubmitStatus('idle')
+        setErrorMessage('')
+      }, 5000)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -218,7 +382,7 @@ export default function ContactSection() {
 
         {/* Contact Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {contactInfo.map((info, index) => {
+          {contactInfo.map((info) => {
             const Icon = info.icon
             const Component = info.href ? 'a' : 'div'
 
@@ -264,6 +428,7 @@ export default function ContactSection() {
             ref={formRef}
             onSubmit={handleSubmit}
             className="p-8 rounded-3xl glass-card relative overflow-hidden"
+            noValidate // Disable browser validation, we handle it ourselves
           >
             {/* Decorative elements */}
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#3B82F6]/5 rounded-full blur-3xl" />
@@ -276,6 +441,9 @@ export default function ContactSection() {
                 label={t('form.name')}
                 placeholder={t('form.namePlaceholder')}
                 required
+                value={formData.name}
+                onChange={handleChange}
+                error={errors.name}
               />
 
               {/* Email Field */}
@@ -285,6 +453,9 @@ export default function ContactSection() {
                 label={t('form.email')}
                 placeholder={t('form.emailPlaceholder')}
                 required
+                value={formData.email}
+                onChange={handleChange}
+                error={errors.email}
               />
 
               {/* Message Field */}
@@ -294,15 +465,34 @@ export default function ContactSection() {
                 placeholder={t('form.messagePlaceholder')}
                 required
                 rows={5}
+                value={formData.message}
+                onChange={handleChange}
+                error={errors.message}
               />
+
+              {/* Error Message Banner */}
+              <AnimatePresence>
+                {submitStatus === 'error' && errorMessage && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-3"
+                    role="alert"
+                  >
+                    <AlertCircle size={20} />
+                    <span>{errorMessage}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Submit Button */}
               <motion.button
                 type="submit"
-                disabled={isSubmitting || isSubmitted}
+                disabled={isSubmitting || submitStatus === 'success'}
                 className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#3B82F6] to-[#1E40AF] text-white font-semibold shadow-lg hover:shadow-[#3B82F6]/30 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-500 relative overflow-hidden group"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
               >
                 {/* Shimmer Effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
@@ -319,7 +509,7 @@ export default function ContactSection() {
                       <Loader2 size={20} className="animate-spin" />
                       <span>Sending...</span>
                     </motion.span>
-                  ) : isSubmitted ? (
+                  ) : submitStatus === 'success' ? (
                     <motion.span
                       key="success"
                       initial={{ opacity: 0, scale: 0.5 }}
@@ -330,6 +520,17 @@ export default function ContactSection() {
                       <CheckCircle size={20} />
                       <span>{t('form.sent')}</span>
                       <Sparkles size={16} className="text-yellow-300" />
+                    </motion.span>
+                  ) : submitStatus === 'error' ? (
+                    <motion.span
+                      key="error"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      className="relative flex items-center justify-center gap-2"
+                    >
+                      <AlertCircle size={20} />
+                      <span>Try Again</span>
                     </motion.span>
                   ) : (
                     <motion.span

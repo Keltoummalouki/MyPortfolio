@@ -5,61 +5,63 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
+import { TechIcon, type TechName, getTechColor } from '@/components/ui/TechIcon'
+import { Code2, Palette, Server, Database, Rocket } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// Updated skills data from CV with icons
+// Updated skills data with TechName types for icon lookup
 const skillsData = {
   languages: [
-    { name: 'JavaScript', level: 95, icon: '🟨' },
-    { name: 'TypeScript', level: 85, icon: '🔷' },
-    { name: 'PHP', level: 90, icon: '🐘' },
-    { name: 'C', level: 75, icon: '⚙️' },
-    { name: 'HTML5', level: 100, icon: '🌐' },
-    { name: 'CSS3', level: 95, icon: '🎨' },
-    { name: 'SQL', level: 85, icon: '📊' },
+    { name: 'JavaScript' as TechName, level: 95 },
+    { name: 'TypeScript' as TechName, level: 85 },
+    { name: 'PHP' as TechName, level: 90 },
+    { name: 'C' as TechName, level: 75 },
+    { name: 'HTML5' as TechName, level: 100 },
+    { name: 'CSS3' as TechName, level: 95 },
+    { name: 'SQL' as TechName, level: 85 },
   ],
   frontend: [
-    { name: 'React', level: 90, icon: '⚛️' },
-    { name: 'Next.js', level: 85, icon: '▲' },
-    { name: 'Tailwind CSS', level: 95, icon: '🌊' },
-    { name: 'GSAP', level: 80, icon: '✨' },
-    { name: 'Framer Motion', level: 85, icon: '🎬' },
-    { name: 'GraphQL', level: 70, icon: '◆' },
+    { name: 'React' as TechName, level: 90 },
+    { name: 'Next.js' as TechName, level: 85 },
+    { name: 'Tailwind CSS' as TechName, level: 95 },
+    { name: 'GSAP' as TechName, level: 80 },
+    { name: 'Framer Motion' as TechName, level: 85 },
+    { name: 'GraphQL' as TechName, level: 70 },
   ],
   backend: [
-    { name: 'Node.js', level: 80, icon: '💚' },
-    { name: 'Express.js', level: 80, icon: '🚂' },
-    { name: 'NestJS', level: 70, icon: '🐱' },
-    { name: 'Laravel', level: 90, icon: '🔴' },
+    { name: 'Node.js' as TechName, level: 80 },
+    { name: 'Express.js' as TechName, level: 80 },
+    { name: 'NestJS' as TechName, level: 70 },
+    { name: 'Laravel' as TechName, level: 90 },
   ],
   databases: [
-    { name: 'MySQL', level: 90, icon: '🐬' },
-    { name: 'PostgreSQL', level: 85, icon: '🐘' },
-    { name: 'MongoDB', level: 75, icon: '🍃' },
+    { name: 'MySQL' as TechName, level: 90 },
+    { name: 'PostgreSQL' as TechName, level: 85 },
+    { name: 'MongoDB' as TechName, level: 75 },
   ],
   devops: [
-    { name: 'Docker', level: 75, icon: '🐳' },
-    { name: 'Git/GitHub', level: 95, icon: '🐙' },
-    { name: 'CI/CD', level: 70, icon: '🔄' },
-    { name: 'GitLab', level: 70, icon: '🦊' },
+    { name: 'Docker' as TechName, level: 75 },
+    { name: 'Git/GitHub' as TechName, level: 95 },
+    { name: 'CI/CD' as TechName, level: 70 },
+    { name: 'GitLab' as TechName, level: 70 },
   ],
 }
 
 type Category = keyof typeof skillsData
 
 interface SkillCardProps {
-  name: string
+  name: TechName
   level: number
-  icon: string
   index: number
   isActive: boolean
 }
 
-function SkillCard({ name, level, icon, index, isActive }: SkillCardProps) {
+function SkillCard({ name, level, index, isActive }: SkillCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef<SVGCircleElement>(null)
   const [count, setCount] = useState(0)
+  const iconColor = getTechColor(name)
 
   useEffect(() => {
     if (!isActive) return
@@ -103,13 +105,6 @@ function SkillCard({ name, level, icon, index, isActive }: SkillCardProps) {
     )
   }, [isActive, level, index])
 
-  const getColorClass = (level: number) => {
-    if (level >= 90) return 'stroke-[#3B82F6]'
-    if (level >= 75) return 'stroke-[#3B82F6]'
-    if (level >= 60) return 'stroke-[#60A5FA]'
-    return 'stroke-[#94A3B8]'
-  }
-
   const getGradientId = (level: number) => {
     if (level >= 90) return 'gradient-expert'
     if (level >= 75) return 'gradient-advanced'
@@ -126,8 +121,13 @@ function SkillCard({ name, level, icon, index, isActive }: SkillCardProps) {
       transition={{ duration: 0.5, delay: index * 0.08 }}
       whileHover={{ scale: 1.03 }}
     >
-      {/* Hover glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#3B82F6]/5 to-[#60A5FA]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Hover glow effect with dynamic color */}
+      <div
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background: `linear-gradient(135deg, ${iconColor}10, ${iconColor}05)`
+        }}
+      />
 
       <div className="relative flex items-center gap-4">
         {/* Circular Progress */}
@@ -178,16 +178,16 @@ function SkillCard({ name, level, icon, index, isActive }: SkillCardProps) {
             />
           </svg>
 
-          {/* Center content */}
+          {/* Center content - Official Tech Icon */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-lg">{icon}</span>
-            <span className="text-xs font-bold text-foreground">{count}%</span>
+            <TechIcon name={name} size={22} />
+            <span className="text-xs font-bold text-foreground mt-0.5">{count}%</span>
           </div>
         </div>
 
         {/* Skill info */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-foreground group-hover:text-[#3B82F6] transition-colors truncate">
+          <h3 className="font-semibold text-foreground group-hover:text-[#3B82F6] transition-colors truncate flex items-center gap-2">
             {name}
           </h3>
           <div className="mt-2 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -214,12 +214,13 @@ export default function CompetenceSection() {
   const [activeCategory, setActiveCategory] = useState<Category>('frontend')
   const [isVisible, setIsVisible] = useState(false)
 
-  const categories: { key: Category; icon: string; gradient: string }[] = [
-    { key: 'languages', icon: '💻', gradient: 'from-[#3B82F6] to-[#1E40AF]' },
-    { key: 'frontend', icon: '🎨', gradient: 'from-[#60A5FA] to-[#3B82F6]' },
-    { key: 'backend', icon: '⚙️', gradient: 'from-[#3B82F6] to-[#60A5FA]' },
-    { key: 'databases', icon: '🗄️', gradient: 'from-[#3B82F6] to-[#93C5FD]' },
-    { key: 'devops', icon: '🚀', gradient: 'from-[#64748B] to-[#94A3B8]' },
+  // Category configuration with Lucide icons and gradients
+  const categories: { key: Category; icon: React.ReactNode; gradient: string }[] = [
+    { key: 'languages', icon: <Code2 size={16} />, gradient: 'from-[#3B82F6] to-[#1E40AF]' },
+    { key: 'frontend', icon: <Palette size={16} />, gradient: 'from-[#60A5FA] to-[#3B82F6]' },
+    { key: 'backend', icon: <Server size={16} />, gradient: 'from-[#3B82F6] to-[#60A5FA]' },
+    { key: 'databases', icon: <Database size={16} />, gradient: 'from-[#3B82F6] to-[#93C5FD]' },
+    { key: 'devops', icon: <Rocket size={16} />, gradient: 'from-[#64748B] to-[#94A3B8]' },
   ]
 
   useEffect(() => {
@@ -311,7 +312,7 @@ export default function CompetenceSection() {
           </div>
         </div>
 
-        {/* Category Tabs */}
+        {/* Category Tabs with Lucide Icons */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map((category, index) => (
             <motion.button
@@ -337,7 +338,7 @@ export default function CompetenceSection() {
               )}
 
               <span className="relative flex items-center gap-2">
-                <span>{category.icon}</span>
+                {category.icon}
                 {t(`categories.${category.key}`)}
               </span>
             </motion.button>
@@ -360,7 +361,6 @@ export default function CompetenceSection() {
                   key={skill.name}
                   name={skill.name}
                   level={skill.level}
-                  icon={skill.icon}
                   index={index}
                   isActive={isVisible}
                 />
