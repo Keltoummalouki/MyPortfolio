@@ -7,7 +7,7 @@ import * as THREE from 'three'
 
 // Enhanced Particle Field with scroll and mouse reactivity
 function ParticleField({
-    count = 4000,
+    count = 2000,
     mouse,
     scrollProgress
 }: {
@@ -241,65 +241,6 @@ function GlowingOrb({ scrollProgress }: { scrollProgress: React.MutableRefObject
     )
 }
 
-// Floating code symbols
-function FloatingSymbols({
-    mouse,
-    scrollProgress
-}: {
-    mouse: React.MutableRefObject<{ x: number; y: number }>
-    scrollProgress: React.MutableRefObject<number>
-}) {
-    const groupRef = useRef<THREE.Group>(null)
-
-    const symbols = useMemo(() => [
-        { text: '</>', position: [-10, 6, -20] as [number, number, number] },
-        { text: '{ }', position: [9, 4, -18] as [number, number, number] },
-        { text: '=>', position: [-8, -4, -16] as [number, number, number] },
-        { text: '( )', position: [7, -5, -22] as [number, number, number] },
-        { text: '[]', position: [0, 7, -24] as [number, number, number] },
-    ], [])
-
-    useFrame((state) => {
-        if (!groupRef.current) return
-        const time = state.clock.getElapsedTime()
-        const scroll = scrollProgress.current
-
-        groupRef.current.children.forEach((child, i) => {
-            child.position.y = symbols[i].position[1] + Math.sin(time + i * 0.5) * 0.5
-            child.rotation.y = time * 0.2
-
-            // Fade out on scroll
-            if (child instanceof THREE.Mesh) {
-                const material = child.material as THREE.MeshBasicMaterial
-                if (material.opacity !== undefined) {
-                    material.opacity = 0.3 * (1 - scroll * 1.5)
-                }
-            }
-        })
-
-        // Mouse influence
-        groupRef.current.rotation.x = mouse.current.y * 0.1
-        groupRef.current.rotation.y = mouse.current.x * 0.1
-    })
-
-    return (
-        <group ref={groupRef}>
-            {symbols.map((symbol, i) => (
-                <Float key={i} speed={2} floatIntensity={1} rotationIntensity={0.3}>
-                    <mesh position={symbol.position}>
-                        <planeGeometry args={[2, 1]} />
-                        <meshBasicMaterial
-                            color="#a855f7"
-                            transparent
-                            opacity={0.3}
-                            side={THREE.DoubleSide}
-                        />
-                    </mesh>
-                </Float>
-            ))}
-        </group>
-    )
-}
 
 // Main scene component
 function Scene({
@@ -328,7 +269,6 @@ function Scene({
             <ParticleField mouse={mouse} scrollProgress={scrollProgress} />
             <GeometricShapes mouse={mouse} scrollProgress={scrollProgress} />
             <GlowingOrb scrollProgress={scrollProgress} />
-            <FloatingSymbols mouse={mouse} scrollProgress={scrollProgress} />
         </>
     )
 }
@@ -378,7 +318,7 @@ export default function ThreeBackground() {
         >
             <Canvas
                 camera={{ position: [0, 0, 5], fov: 75 }}
-                dpr={[1, 2]}
+                dpr={[1, 1.5]}
                 gl={{
                     antialias: true,
                     alpha: true,

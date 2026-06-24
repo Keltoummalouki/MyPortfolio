@@ -1,21 +1,32 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Github, ExternalLink } from 'lucide-react'
+import SectionHeader from '@/components/ui/SectionHeader'
+import GlassCard from '@/components/ui/GlassCard'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-export default function GitHubStats() {
+export default function GithubStatsSection() {
   const t = useTranslations('github')
   const sectionRef = useRef<HTMLElement>(null)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReducedMotion(mediaQuery.matches)
+  }, [])
+
+  useEffect(() => {
+    if (prefersReducedMotion || !sectionRef.current) return
+
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.github-card',
@@ -36,16 +47,23 @@ export default function GitHubStats() {
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [prefersReducedMotion])
+
+  const username = 'keltoummalouki'
+  const themeParams = 'theme=dark&hide_border=true&bg_color=0B0F19&title_color=3B82F6&icon_color=8B5CF6&text_color=F8FAFC'
 
   const githubStats = [
     {
       title: 'GitHub Stats',
-      src: 'https://github-readme-stats.vercel.app/api?username=Keltoummalouki&show_icons=true&theme=radical&hide_border=true&bg_color=0d1117&title_color=a855f7&icon_color=ec4899&text_color=ffffff',
+      src: `https://github-readme-stats.vercel.app/api?username=${username}&${themeParams}&show_icons=true`,
+      width: 520,
+      height: 200,
     },
     {
       title: 'GitHub Streak',
-      src: 'https://github-readme-streak-stats.herokuapp.com?user=Keltoummalouki&theme=radical&hide_border=true&background=0d1117&ring=a855f7&fire=ec4899&currStreakLabel=ffffff',
+      src: `https://github-readme-streak-stats.herokuapp.com?user=${username}&${themeParams}&ring=3B82F6&fire=8B5CF6&currStreakLabel=F8FAFC`,
+      width: 520,
+      height: 200,
     },
   ]
 
@@ -53,75 +71,56 @@ export default function GitHubStats() {
     <section
       id="github"
       ref={sectionRef}
-      className="relative py-24 overflow-hidden"
+      className="relative section-padding overflow-hidden bg-background"
+      aria-labelledby="github-title"
     >
-      {/* Background */}
-      <div className="absolute inset-0 grid-pattern opacity-30" />
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+      <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-4xl mx-auto px-6">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <motion.span
-            className="inline-block px-4 py-2 rounded-full glass text-sm font-medium text-purple-500 mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Github className="inline-block w-4 h-4 mr-2" />
-            Open Source
-          </motion.span>
+      <div className="relative container-main">
+        <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            <span className="gradient-text">{t('title')}</span>
-          </h2>
-
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-            {t('subtitle')}
-          </p>
-
-          <div className="w-24 h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 mx-auto rounded-full" />
-        </div>
-
-        {/* Stats Cards */}
         <div className="flex flex-col items-center gap-8 mb-12">
-          {githubStats.map((stat) => (
+          {githubStats.map((stat, index) => (
             <motion.div
               key={stat.title}
               className="github-card w-full max-w-xl"
-              whileHover={{ scale: 1.02 }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 * index }}
+              whileHover={{ scale: 1.01 }}
             >
-              <div className="p-2 rounded-2xl glass-card overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <GlassCard className="p-3 overflow-hidden">
+                <Image
                   src={stat.src}
                   alt={stat.title}
+                  width={stat.width}
+                  height={stat.height}
                   className="w-full h-auto rounded-xl"
+                  unoptimized
                 />
-              </div>
+              </GlassCard>
             </motion.div>
           ))}
         </div>
 
-        {/* CTA Button */}
         <motion.div
           className="text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <motion.a
-            href="https://github.com/Keltoummalouki"
+          <a
+            href={`https://github.com/${username}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass hover:bg-purple-500/20 transition-all duration-300 group"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-card border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
           >
-            <Github className="w-5 h-5 text-purple-500" />
-            <span className="font-medium">{t('viewProfile')}</span>
-            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-purple-500 transition-colors" />
-          </motion.a>
+            <Github className="w-5 h-5 text-primary" />
+            <span className="font-medium text-foreground">{t('viewProfile')}</span>
+            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+          </a>
         </motion.div>
       </div>
     </section>

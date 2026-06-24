@@ -1,170 +1,201 @@
 {
-    "nav": {
-        "about": "À propos",
-        "skills": "Compétences",
-        "projects": "Projets",
-        "education": "Formation",
-        "experience": "Expérience",
-        "github": "GitHub",
-        "contact": "Contact"
+  "nav": {
+    "about": "À propos",
+    "skills": "Compétences",
+    "experience": "Expérience",
+    "education": "Formation",
+    "projects": "Projets",
+    "certifications": "Certifications",
+    "github": "GitHub",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Bonjour, je suis",
+    "name": "Keltoum Malouki",
+    "role": "Développeuse Web Full Stack",
+    "description": "Je conçois des expériences web modernes, performantes et accessibles. Basée à Casablanca, mobile et ouverte aux nouvelles opportunités.",
+    "downloadCV": "Télécharger CV",
+    "contactMe": "Me Contacter",
+    "scrollDown": "Défiler pour explorer",
+    "openToWork": "Disponible",
+    "location": "Casablanca (mobilité / relocation)"
+  },
+  "about": {
+    "title": "À propos de moi",
+    "subtitle": "Apprenez à me connaître",
+    "description": "Je suis Keltoum Malouki, développeuse web full stack basée à Casablanca, Maroc. Formée chez YouCode (UM6P), je livre des solutions web complètes, de l'interface utilisateur à l'architecture back-end. Je privilégie le code propre, l'expérience utilisateur et l'apprentissage continu.",
+    "stats": {
+      "projects": "Projets Réalisés",
+      "experience": "Années d'Expérience",
+      "technologies": "Technologies",
+      "commits": "Commits GitHub"
     },
-    "hero": {
-        "greeting": "Bonjour, je suis",
-        "name": "Keltoum Malouki",
-        "role": "Développeuse Full Stack",
-        "description": "Passionnée par la création d'expériences web modernes et performantes avec les technologies de pointe",
-        "downloadCV": "Télécharger CV",
-        "contactMe": "Me Contacter",
-        "scrollDown": "Défiler pour explorer",
-        "openToWork": "Disponible"
-    },
-    "about": {
-        "title": "À propos de moi",
-        "subtitle": "Apprenez à me connaître",
-        "description": "Je suis Keltoum Malouki, une développeuse full-stack passionnée originaire de Casablanca, Maroc. Grâce à ma formation chez YouCode (UM6P), j'ai acquis des compétences solides en front-end (React, Next.js, TypeScript) et en back-end (Node.js, Laravel, PHP). Je suis motivée, curieuse, et toujours à la recherche de nouveaux défis pour améliorer mes compétences techniques et humaines. J'aime concevoir des interfaces modernes, créatives et accessibles.",
-        "stats": {
-            "projects": "Projets Réalisés",
-            "experience": "Années d'Apprentissage",
-            "technologies": "Technologies",
-            "commits": "Commits GitHub"
-        },
-        "qualities": {
-            "creative": "Créative",
-            "dedicated": "Dévouée",
-            "teamPlayer": "Esprit d'équipe",
-            "problemSolver": "Résolution de problèmes"
-        }
-    },
-    "skills": {
-        "title": "Mes Compétences",
-        "subtitle": "Voici un aperçu de mes compétences techniques et de mon niveau de maîtrise",
-        "categories": {
-            "languages": "Langages",
-            "frontend": "Frontend",
-            "backend": "Backend",
-            "databases": "Bases de données",
-            "devops": "DevOps & Outils"
-        },
-        "proficiency": {
-            "expert": "Expert",
-            "advanced": "Avancé",
-            "intermediate": "Intermédiaire",
-            "learning": "En apprentissage"
-        }
-    },
-    "projects": {
-        "title": "Mes Projets",
-        "subtitle": "Voici quelques réalisations techniques basées sur mon expérience",
-        "viewCode": "Voir le Code",
-        "liveDemo": "Démo Live",
-        "techStack": "Technologies",
-        "featured": "En vedette",
-        "items": {
-            "truckflow": {
-                "title": "TruckFlow",
-                "description": "Plateforme complète de gestion de flotte et logistique pour les entreprises de transport avec suivi GPS en temps réel, gestion des chauffeurs et rapports automatisés."
-            },
-            "reservezmoi": {
-                "title": "Réservez-Moi",
-                "description": "Plateforme moderne de réservation de rendez-vous avec intégration de calendrier, rappels automatisés et support multi-services pour les entreprises."
-            },
-            "budgetbuddy": {
-                "title": "BudgetBuddy",
-                "description": "Application de gestion des dépenses avec interface responsive, suivi de budget et analyses financières."
-            },
-            "testsplatform": {
-                "title": "Tests Acceptance Platform",
-                "description": "Plateforme pour automatiser l'inscription et la gestion des rôles pour les tests d'acceptance YouCode."
-            },
-            "dentacare": {
-                "title": "DentaCare",
-                "description": "Solution de gestion des rendez-vous pour cabinets dentaires avec planification et dossiers patients."
-            },
-            "youdemy": {
-                "title": "Youdemy",
-                "description": "Plateforme LMS e-learning pour gérer utilisateurs, cours et contenus éducatifs."
-            }
-        }
-    },
-    "experience": {
-        "title": "Expérience Professionnelle & Certifications",
-        "subtitle": "Voici les rôles que j'ai occupés dans le monde professionnel et freelance, ainsi que mes certifications",
-        "items": {
-            "caisseManager": {
-                "title": "Stage Développeuse Front-End",
-                "company": "Caisse Manager — Rabat, Maroc",
-                "date": "Juin - Août 2025",
-                "description": "Stage de 2 mois en développement front-end : création d'interfaces utilisateur modernes avec React, Next.js, Tailwind CSS, GSAP et Framer Motion. Intégration d'API et respect des bonnes pratiques UI/UX."
-            },
-            "freelance": {
-                "title": "Développeuse Full Stack Freelance",
-                "company": "Fiverr (Plateforme en ligne)",
-                "date": "2024",
-                "description": "Création de projets web complets pour des clients internationaux, intégration d'API, développement d'interfaces modernes et optimisation de la performance."
-            },
-            "docker": {
-                "title": "Docker Foundations Professional Certificate",
-                "company": "Docker, Inc. (LinkedIn)",
-                "date": "Mars 2025",
-                "description": "Certification obtenue sur Docker Products et les technologies de conteneurisation."
-            }
-        }
-    },
-    "education": {
-        "title": "Mon Parcours Éducatif",
-        "subtitle": "Découvrez les étapes clés de ma formation académique et technique",
-        "items": {
-            "youcode": {
-                "title": "Développement Full-Stack",
-                "school": "YouCode (UM6P) — Safi, Maroc",
-                "date": "2024 - Présent",
-                "description": "Formation pratique en développement web Frontend & Backend avec gestion de projets en méthodologie agile."
-            },
-            "bac": {
-                "title": "Baccalauréat en Sciences Physiques",
-                "school": "Lycée Okba Ibn Nafii — Casablanca, Maroc",
-                "date": "2024",
-                "description": "Option Française avec des bases solides en mathématiques, physique et informatique."
-            }
-        }
-    },
-    "github": {
-        "title": "Statistiques GitHub",
-        "subtitle": "Un aperçu visuel de mon activité et de mes contributions open-source sur GitHub",
-        "viewProfile": "Voir mon profil GitHub"
-    },
-    "contact": {
-        "title": "Contactez-moi",
-        "subtitle": "Vous souhaitez discuter d'un projet ou d'une opportunité ? N'hésitez pas à me contacter via ce formulaire ou directement par mes coordonnées ci-dessous.",
-        "form": {
-            "name": "Nom complet",
-            "namePlaceholder": "Votre nom complet",
-            "email": "Adresse email",
-            "emailPlaceholder": "votre@email.com",
-            "message": "Message",
-            "messagePlaceholder": "Décrivez votre projet ou votre demande...",
-            "send": "Envoyer le message",
-            "sent": "Message envoyé !"
-        },
-        "info": {
-            "email": "Email",
-            "phone": "Téléphone",
-            "location": "Localisation"
-        }
-    },
-    "footer": {
-        "copyright": "Tous droits réservés",
-        "madeWith": "Fait avec",
-        "and": "et",
-        "languages": {
-            "arabic": "Arabe",
-            "french": "Français",
-            "english": "Anglais"
-        }
-    },
-    "common": {
-        "loading": "Chargement...",
-        "error": "Une erreur s'est produite",
-        "retry": "Réessayer"
+    "qualities": {
+      "creative": "Créative",
+      "dedicated": "Dévouée",
+      "teamPlayer": "Esprit d'équipe",
+      "problemSolver": "Résolution de problèmes"
     }
+  },
+  "skills": {
+    "title": "Compétences Techniques",
+    "subtitle": "Technologies et outils que j'utilise",
+    "categories": {
+      "languages": "Langages",
+      "frameworks": "Frameworks & APIs",
+      "devops": "DevOps",
+      "databases": "Bases de données",
+      "management": "Gestion de projets",
+      "modeling": "Conception & Modélisation",
+      "versioning": "Contrôle de version",
+      "design": "UX/UI Design"
+    }
+  },
+  "experience": {
+    "title": "Expérience",
+    "subtitle": "Mon parcours professionnel",
+    "items": {
+      "dabadoc": {
+        "title": "Développeuse Full Stack",
+        "company": "DabaDoc — Casablanca, Maroc",
+        "date": "Fév 2026 – Présent",
+        "description": "Développement et maintenance de fonctionnalités pour une plateforme de prise de rendez-vous médicaux. Amélioration de l'interface et de l'expérience utilisateur.",
+        "stack": "Ruby on Rails, Angular, CoffeeScript, MongoDB, Docker, Git/GitHub"
+      },
+      "caisseManager": {
+        "title": "Stagiaire Développeuse Web",
+        "company": "Caisse Manager — Rabat, Maroc",
+        "date": "Juin – Août 2025",
+        "description": "Création d'un site vitrine et intégration des interfaces front-end pour des outils de gestion financière.",
+        "stack": "Next.js, React.js, TailwindCSS, GSAP, Framer Motion, Shadcn UI, Git/GitHub"
+      }
+    }
+  },
+  "education": {
+    "title": "Formation",
+    "subtitle": "Mon parcours académique",
+    "items": {
+      "youcode": {
+        "title": "Formation Développement Full Stack",
+        "school": "YouCode / UM6P — Campus Youssoufia, Maroc",
+        "date": "2024 – 2026",
+        "description": "Formation pratique en développement web front-end et back-end, gestion de projet agile et bonnes pratiques du génie logiciel moderne."
+      },
+      "bac": {
+        "title": "Baccalauréat Sciences Physiques & Chimie",
+        "school": "Lycée Okba Bnou Nafiaa — Casablanca, Maroc",
+        "date": "2023 – 2024",
+        "description": "Baccalauréat scientifique avec des bases solides en mathématiques, physique et chimie."
+      }
+    }
+  },
+  "projects": {
+    "title": "Projets",
+    "subtitle": "Projets sélectionnés parmi plus de 40 réalisations",
+    "viewCode": "Voir le Code",
+    "liveDemo": "Démo Live",
+    "techStack": "Stack Technique",
+    "featured": "En vedette",
+    "moreProjects": "40+ projets réalisés",
+    "items": {
+      "eventBooking": {
+        "title": "Event Booking App",
+        "date": "Déc 2025",
+        "description": "Application de gestion d'événements avec système de réservation et gestion des rôles utilisateurs.",
+        "stack": "NestJS, Next.js, TypeScript, PostgreSQL, Docker, GitHub Actions, Jira"
+      },
+      "reservezmoi": {
+        "title": "Réservez-Moi",
+        "date": "Avr 2025",
+        "description": "Plateforme de réservation de services avec gestion des disponibilités et des réservations.",
+        "stack": "Laravel, MySQL, HTML, Tailwind CSS, JavaScript, UML, Jira, Git/GitHub"
+      }
+    }
+  },
+  "certifications": {
+    "title": "Certifications",
+    "subtitle": "Diplômes et réussites",
+    "viewCredential": "Voir sur LinkedIn",
+    "items": {
+      "docker": {
+        "title": "Docker Foundations Professional Certificate",
+        "issuer": "LinkedIn / Docker, Inc.",
+        "date": "2025",
+        "description": "Certification professionnelle validant les fondamentaux de Docker et de la conteneurisation."
+      }
+    }
+  },
+  "softSkills": {
+    "title": "Compétences Transversales",
+    "subtitle": "Ma façon de travailler",
+    "items": {
+      "timeManagement": "Gestion du temps",
+      "adaptability": "Adaptabilité / Flexibilité",
+      "teamwork": "Travail en équipe"
+    }
+  },
+  "languages": {
+    "title": "Langues",
+    "subtitle": "Communication",
+    "arabic": "Arabe (Maternelle)",
+    "french": "Français (B1)",
+    "english": "Anglais (A2)"
+  },
+  "github": {
+    "title": "Statistiques GitHub",
+    "subtitle": "Un aperçu visuel de mon activité et de mes contributions open-source sur GitHub.",
+    "viewProfile": "Voir mon profil GitHub"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Me Contacter",
+    "subtitle": "Vous avez un projet ou une opportunité en tête ? N'hésitez pas à me contacter via le formulaire ou directement.",
+    "form": {
+      "name": "Nom complet",
+      "namePlaceholder": "Votre nom complet",
+      "email": "Adresse email",
+      "emailPlaceholder": "votre@email.com",
+      "message": "Message",
+      "messagePlaceholder": "Parlez-moi de votre projet ou opportunité...",
+      "send": "Envoyer le message",
+      "sending": "Envoi en cours...",
+      "sent": "Message envoyé avec succès !",
+      "errors": {
+        "nameRequired": "Le nom est requis",
+        "nameMin": "Le nom doit contenir au moins 2 caractères",
+        "emailRequired": "L'email est requis",
+        "emailInvalid": "Veuillez entrer une adresse email valide",
+        "messageRequired": "Le message est requis",
+        "messageMin": "Le message doit contenir au moins 10 caractères",
+        "messageMax": "Le message doit contenir moins de 2000 caractères"
+      }
+    },
+    "info": {
+      "email": "Email",
+      "phone": "Téléphone",
+      "location": "Localisation"
+    }
+  },
+  "footer": {
+    "copyright": "Tous droits réservés",
+    "madeWith": "Fait avec",
+    "and": "et",
+    "links": {
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "email": "Email"
+    },
+    "languages": {
+      "arabic": "Arabe",
+      "french": "Français",
+      "english": "Anglais"
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "menu": "Menu"
+  }
 }

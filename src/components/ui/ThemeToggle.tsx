@@ -19,40 +19,22 @@ export default function ThemeToggle() {
   const isDark = theme === "dark"
 
   return (
-    <motion.div
-      initial={{ rotate: 0 }}
-      animate={{ rotate: isDark ? 180 : 0 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative rounded-full hover:bg-secondary transition-colors duration-200"
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setTheme(isDark ? "light" : "dark")}
-        className="relative overflow-hidden rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
+      <motion.div
+        initial={false}
+        animate={{ rotate: isDark ? 180 : 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="relative flex items-center justify-center"
       >
-        <motion.div
-          initial={false}
-          animate={{
-            scale: isDark ? 0 : 1,
-            rotate: isDark ? 90 : 0,
-          }}
-          transition={{ duration: 0.3 }}
-          className="absolute"
-        >
-          <Sun className="h-5 w-5" />
-        </motion.div>
-        <motion.div
-          initial={false}
-          animate={{
-            scale: isDark ? 1 : 0,
-            rotate: isDark ? 0 : -90,
-          }}
-          transition={{ duration: 0.3 }}
-          className="absolute"
-        >
-          <Moon className="h-5 w-5" />
-        </motion.div>
-      </Button>
-    </motion.div>
+        <Sun className="h-[1.15rem] w-[1.15rem] transition-all dark:-rotate-90 dark:opacity-0" />
+        <Moon className="absolute h-[1.15rem] w-[1.15rem] rotate-90 opacity-0 transition-all dark:rotate-0 dark:opacity-100" />
+      </motion.div>
+    </Button>
   )
 }

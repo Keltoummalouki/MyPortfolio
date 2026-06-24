@@ -3,6 +3,19 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
+const cspHeader = `
+  default-src 'self';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline';
+  font-src 'self';
+  img-src 'self' data: https://github-readme-stats.vercel.app https://github-readme-streak-stats.herokuapp.com;
+  connect-src 'self' https://api.emailjs.com;
+  frame-ancestors 'none';
+  base-uri 'self';
+  form-action 'self';
+  upgrade-insecure-requests;
+`.replace(/\s{2,}/g, ' ').trim();
+
 const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
@@ -16,8 +29,44 @@ const nextConfig: NextConfig = {
             },
         ],
     },
-    // Optimize for Three.js
     transpilePackages: ['three'],
+    // Pin the workspace root so Turbopack doesn't infer it from a stray parent lockfile.
+    turbopack: {
+        root: __dirname,
+    },
+    // The layout is dynamic (cookie-based locale), so Next streams metadata into <body>
+    // for non-bot UAs. Disable streaming metadata so <title>/<meta description>/OG always
+    // render in <head> — required for Lighthouse SEO and non-JS social scrapers.
+    htmlLimitedBots: /.*/,
+    async headers() {
+        return [
+            {
+                source: '/:path*',
+                headers: [
+                    {
+                        key: 'Content-Security-Policy',
+                        value: cspHeader,
+                    },
+                    {
+                        key: 'X-Frame-Options',
+                        value: 'DENY',
+                    },
+                    {
+                        key: 'X-Content-Type-Options',
+                        value: 'nosniff',
+                    },
+                    {
+                        key: 'Referrer-Policy',
+                        value: 'strict-origin-when-cross-origin',
+                    },
+                    {
+                        key: 'Permissions-Policy',
+                        value: 'camera=(), microphone=(), geolocation=()',
+                    },
+                ],
+            },
+        ];
+    },
 };
 
 export default withNextIntl(nextConfig);

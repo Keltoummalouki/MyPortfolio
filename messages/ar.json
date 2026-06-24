@@ -1,170 +1,201 @@
 {
-    "nav": {
-        "about": "نبذة عني",
-        "skills": "المهارات",
-        "projects": "المشاريع",
-        "education": "التعليم",
-        "experience": "الخبرة",
-        "github": "جيت هب",
-        "contact": "تواصل"
+  "nav": {
+    "about": "نبذة عني",
+    "skills": "المهارات",
+    "experience": "الخبرة",
+    "education": "التعليم",
+    "projects": "المشاريع",
+    "certifications": "الشهادات",
+    "github": "جيت هب",
+    "contact": "تواصل"
+  },
+  "hero": {
+    "greeting": "مرحباً، أنا",
+    "name": "كلثوم ملوكي",
+    "role": "مطورة ويب متكاملة",
+    "description": "أبني تجارب ويب حديثة وعالية الأداء وسهلة الوصول. مقيمة في الدار البيضاء، متنقلة ومفتوحة على الفرص الجديدة.",
+    "downloadCV": "تحميل السيرة الذاتية",
+    "contactMe": "تواصل معي",
+    "scrollDown": "مرر للاستكشاف",
+    "openToWork": "متاحة للعمل",
+    "location": "الدار البيضاء (تنقل / انتقال)"
+  },
+  "about": {
+    "title": "نبذة عني",
+    "subtitle": "تعرف علي أكثر",
+    "description": "أنا كلثوم ملوكي، مطورة ويب متكاملة من الدار البيضاء، المغرب. تلقيت تدريباً عملياً في YouCode (UM6P)، وأقدم حلولاً ويب متكاملة من واجهات المستخدم إلى البنية التحتية الخلفية. أهتم بالبرمجية النظيفة وتجربة المستخدم والتعلم المستمر.",
+    "stats": {
+      "projects": "مشاريع منجزة",
+      "experience": "سنوات الخبرة",
+      "technologies": "تقنيات",
+      "commits": "مساهمات جيت هب"
     },
-    "hero": {
-        "greeting": "مرحباً، أنا",
-        "name": "كلثوم ملوكي",
-        "role": "مطورة ويب متكاملة",
-        "description": "شغوفة بإنشاء تجارب ويب حديثة وعالية الأداء باستخدام أحدث التقنيات",
-        "downloadCV": "تحميل السيرة الذاتية",
-        "contactMe": "تواصل معي",
-        "scrollDown": "مرر للاستكشاف",
-        "openToWork": "متاحة للعمل"
-    },
-    "about": {
-        "title": "نبذة عني",
-        "subtitle": "تعرف علي أكثر",
-        "description": "أنا كلثوم ملوكي، مطورة ويب متكاملة شغوفة من الدار البيضاء، المغرب. من خلال تدريبي في YouCode (UM6P)، اكتسبت مهارات قوية في تطوير الواجهة الأمامية (React, Next.js, TypeScript) والواجهة الخلفية (Node.js, Laravel, PHP). أنا متحمسة وفضولية، وأبحث دائماً عن تحديات جديدة لتحسين مهاراتي التقنية والشخصية. أحب تصميم واجهات حديثة ومبتكرة وسهلة الوصول.",
-        "stats": {
-            "projects": "مشاريع منجزة",
-            "experience": "سنوات التعلم",
-            "technologies": "تقنيات",
-            "commits": "مساهمات جيت هب"
-        },
-        "qualities": {
-            "creative": "مبدعة",
-            "dedicated": "ملتزمة",
-            "teamPlayer": "روح الفريق",
-            "problemSolver": "حل المشكلات"
-        }
-    },
-    "skills": {
-        "title": "مهاراتي",
-        "subtitle": "إليك نظرة عامة على مهاراتي التقنية ومستوى إتقاني",
-        "categories": {
-            "languages": "لغات البرمجة",
-            "frontend": "الواجهة الأمامية",
-            "backend": "الواجهة الخلفية",
-            "databases": "قواعد البيانات",
-            "devops": "DevOps والأدوات"
-        },
-        "proficiency": {
-            "expert": "خبير",
-            "advanced": "متقدم",
-            "intermediate": "متوسط",
-            "learning": "قيد التعلم"
-        }
-    },
-    "projects": {
-        "title": "مشاريعي",
-        "subtitle": "إليك بعض الإنجازات التقنية بناءً على خبرتي",
-        "viewCode": "عرض الكود",
-        "liveDemo": "عرض مباشر",
-        "techStack": "التقنيات",
-        "featured": "مميز",
-        "items": {
-            "truckflow": {
-                "title": "TruckFlow",
-                "description": "منصة شاملة لإدارة الأسطول واللوجستيات لشركات النقل مع تتبع GPS في الوقت الفعلي وإدارة السائقين والتقارير الآلية."
-            },
-            "reservezmoi": {
-                "title": "Réservez-Moi",
-                "description": "منصة حديثة لحجز المواعيد مع تكامل التقويم والتذكيرات الآلية ودعم الخدمات المتعددة للشركات."
-            },
-            "budgetbuddy": {
-                "title": "BudgetBuddy",
-                "description": "تطبيق لإدارة المصروفات مع واجهة متجاوبة وتتبع الميزانية والتحليلات المالية."
-            },
-            "testsplatform": {
-                "title": "منصة اختبارات القبول",
-                "description": "منصة لأتمتة التسجيل وإدارة الأدوار لاختبارات قبول YouCode."
-            },
-            "dentacare": {
-                "title": "DentaCare",
-                "description": "حل لإدارة المواعيد لعيادات الأسنان مع الجدولة وسجلات المرضى."
-            },
-            "youdemy": {
-                "title": "Youdemy",
-                "description": "منصة تعليم إلكتروني LMS لإدارة المستخدمين والدورات والمحتوى التعليمي."
-            }
-        }
-    },
-    "experience": {
-        "title": "الخبرة المهنية والشهادات",
-        "subtitle": "إليك الأدوار التي شغلتها في عالم العمل والعمل الحر، بالإضافة إلى شهاداتي",
-        "items": {
-            "caisseManager": {
-                "title": "متدربة مطورة واجهة أمامية",
-                "company": "Caisse Manager — الرباط، المغرب",
-                "date": "يونيو - أغسطس 2025",
-                "description": "تدريب لمدة شهرين في تطوير الواجهة الأمامية: إنشاء واجهات مستخدم حديثة باستخدام React وNext.js وTailwind CSS وGSAP وFramer Motion. تكامل API واتباع أفضل ممارسات UI/UX."
-            },
-            "freelance": {
-                "title": "مطورة ويب متكاملة مستقلة",
-                "company": "Fiverr (منصة إلكترونية)",
-                "date": "2024",
-                "description": "إنشاء مشاريع ويب كاملة للعملاء الدوليين، تكامل API، تطوير واجهات حديثة وتحسين الأداء."
-            },
-            "docker": {
-                "title": "شهادة Docker Foundations المهنية",
-                "company": "Docker, Inc. (LinkedIn)",
-                "date": "مارس 2025",
-                "description": "شهادة حصلت عليها في منتجات Docker وتقنيات الحاويات."
-            }
-        }
-    },
-    "education": {
-        "title": "مساري التعليمي",
-        "subtitle": "اكتشف المراحل الرئيسية في تدريبي الأكاديمي والتقني",
-        "items": {
-            "youcode": {
-                "title": "تطوير الويب المتكامل",
-                "school": "YouCode (UM6P) — آسفي، المغرب",
-                "date": "2024 - الحالي",
-                "description": "تدريب عملي في تطوير الويب للواجهة الأمامية والخلفية مع إدارة المشاريع باستخدام منهجية أجايل."
-            },
-            "bac": {
-                "title": "بكالوريا في العلوم الفيزيائية",
-                "school": "ثانوية عقبة بن نافع — الدار البيضاء، المغرب",
-                "date": "2024",
-                "description": "خيار فرنسي مع أسس قوية في الرياضيات والفيزياء وعلوم الحاسوب."
-            }
-        }
-    },
-    "github": {
-        "title": "إحصائيات جيت هب",
-        "subtitle": "نظرة بصرية على نشاطي ومساهماتي في المصادر المفتوحة على جيت هب",
-        "viewProfile": "عرض ملفي على جيت هب"
-    },
-    "contact": {
-        "title": "تواصل معي",
-        "subtitle": "هل تريد مناقشة مشروع أو فرصة؟ لا تتردد في التواصل معي عبر هذا النموذج أو مباشرة من خلال معلومات الاتصال أدناه.",
-        "form": {
-            "name": "الاسم الكامل",
-            "namePlaceholder": "اسمك الكامل",
-            "email": "البريد الإلكتروني",
-            "emailPlaceholder": "بريدك@email.com",
-            "message": "الرسالة",
-            "messagePlaceholder": "صف مشروعك أو طلبك...",
-            "send": "إرسال الرسالة",
-            "sent": "تم إرسال الرسالة!"
-        },
-        "info": {
-            "email": "البريد الإلكتروني",
-            "phone": "الهاتف",
-            "location": "الموقع"
-        }
-    },
-    "footer": {
-        "copyright": "جميع الحقوق محفوظة",
-        "madeWith": "صنع بـ",
-        "and": "و",
-        "languages": {
-            "arabic": "العربية",
-            "french": "الفرنسية",
-            "english": "الإنجليزية"
-        }
-    },
-    "common": {
-        "loading": "جاري التحميل...",
-        "error": "حدث خطأ",
-        "retry": "إعادة المحاولة"
+    "qualities": {
+      "creative": "مبدعة",
+      "dedicated": "ملتزمة",
+      "teamPlayer": "روح الفريق",
+      "problemSolver": "حل المشكلات"
     }
+  },
+  "skills": {
+    "title": "المهارات التقنية",
+    "subtitle": "التقنيات والأدوات التي أعمل بها",
+    "categories": {
+      "languages": "لغات البرمجة",
+      "frameworks": "الأطر وواجهات البرمجة",
+      "devops": "DevOps",
+      "databases": "قواعد البيانات",
+      "management": "إدارة المشاريع",
+      "modeling": "التصميم والنمذجة",
+      "versioning": "التحكم بالإصدارات",
+      "design": "تصميم UX/UI"
+    }
+  },
+  "experience": {
+    "title": "الخبرة",
+    "subtitle": "مساري المهني",
+    "items": {
+      "dabadoc": {
+        "title": "مطورة متكاملة",
+        "company": "DabaDoc — الدار البيضاء، المغرب",
+        "date": "فبراير 2026 – الحالي",
+        "description": "تطوير وصيانة ميزات لمنصة حجز المواعيد الطبية. تحسين الواجهة وتجربة المستخدم عبر المنتج.",
+        "stack": "Ruby on Rails، Angular، CoffeeScript، MongoDB، Docker، Git/GitHub"
+      },
+      "caisseManager": {
+        "title": "متدربة تطوير ويب",
+        "company": "Caisse Manager — الرباط، المغرب",
+        "date": "يونيو – أغسطس 2025",
+        "description": "إنشاء موقع تعريفي وتكامل واجهات الواجهة الأمامية لأدوات إدارة مالية.",
+        "stack": "Next.js، React.js، TailwindCSS، GSAP، Framer Motion، Shadcn UI، Git/GitHub"
+      }
+    }
+  },
+  "education": {
+    "title": "التعليم",
+    "subtitle": "خلفيتي الأكاديمية",
+    "items": {
+      "youcode": {
+        "title": "برنامج تطوير الويب المتكامل",
+        "school": "YouCode / UM6P — يوسفية، المغرب",
+        "date": "2024 – 2026",
+        "description": "تدريب عملي في تطوير الويب الأمامي والخلفي، وإدارة المشاريع بالمنهجية الرشيقة، وممارسات هندسة البرمجيات الحديثة."
+      },
+      "bac": {
+        "title": "بكالوريا العلوم الفيزيائية والكيميائية",
+        "school": "ثانوية عقبة بن نافع — الدار البيضاء، المغرب",
+        "date": "2023 – 2024",
+        "description": "بكالوريا علمية بأسس قوية في الرياضيات والفيزياء والكيمياء."
+      }
+    }
+  },
+  "projects": {
+    "title": "المشاريع",
+    "subtitle": "مشاريع مختارة من بين أكثر من 40 مشروعاً منجزاً",
+    "viewCode": "عرض الكود",
+    "liveDemo": "عرض مباشر",
+    "techStack": "التقنيات",
+    "featured": "مميز",
+    "moreProjects": "40+ مشروعاً منجزاً",
+    "items": {
+      "eventBooking": {
+        "title": "Event Booking App",
+        "date": "ديسمبر 2025",
+        "description": "تطبيق لإدارة الفعاليات مع نظام حجز وإدارة أدوار المستخدمين.",
+        "stack": "NestJS، Next.js، TypeScript، PostgreSQL، Docker، GitHub Actions، Jira"
+      },
+      "reservezmoi": {
+        "title": "Réservez-Moi",
+        "date": "أبريل 2025",
+        "description": "منصة لحجز الخدمات مع إدارة التوفر والحجوزات.",
+        "stack": "Laravel، MySQL، HTML، Tailwind CSS، JavaScript، UML، Jira، Git/GitHub"
+      }
+    }
+  },
+  "certifications": {
+    "title": "الشهادات",
+    "subtitle": "الاعتمادات والإنجازات",
+    "viewCredential": "عرض على لينكدإن",
+    "items": {
+      "docker": {
+        "title": "Docker Foundations Professional Certificate",
+        "issuer": "LinkedIn / Docker, Inc.",
+        "date": "2025",
+        "description": "شهادة مهنية تثبت أساسيات Docker والحاويات."
+      }
+    }
+  },
+  "softSkills": {
+    "title": "المهارات الشخصية",
+    "subtitle": "كيف أعمل",
+    "items": {
+      "timeManagement": "إدارة الوقت",
+      "adaptability": "القدرة على التكيف / المرونة",
+      "teamwork": "العمل الجماعي"
+    }
+  },
+  "languages": {
+    "title": "اللغات",
+    "subtitle": "التواصل",
+    "arabic": "العربية (اللغة الأم)",
+    "french": "الفرنسية (B1)",
+    "english": "الإنجليزية (A2)"
+  },
+  "github": {
+    "title": "إحصائيات جيت هب",
+    "subtitle": "نظرة بصرية على نشاطي ومساهماتي في المصادر المفتوحة على جيت هب.",
+    "viewProfile": "عرض ملفي على جيت هب"
+  },
+  "contact": {
+    "eyebrow": "تواصل",
+    "title": "تواصل معي",
+    "subtitle": "هل لديك مشروع أو فرصة في بالك؟ سأكون سعيدة بسماعك. املأ النموذج أو تواصل مباشرة.",
+    "form": {
+      "name": "الاسم الكامل",
+      "namePlaceholder": "اسمك الكامل",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "بريدك@email.com",
+      "message": "الرسالة",
+      "messagePlaceholder": "أخبرني عن مشروعك أو الفرصة...",
+      "send": "إرسال الرسالة",
+      "sending": "جاري الإرسال...",
+      "sent": "تم إرسال الرسالة بنجاح!",
+      "errors": {
+        "nameRequired": "الاسم مطلوب",
+        "nameMin": "يجب أن يحتوي الاسم على حرفين على الأقل",
+        "emailRequired": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صالح",
+        "messageRequired": "الرسالة مطلوبة",
+        "messageMin": "يجب أن تحتوي الرسالة على 10 أحرف على الأقل",
+        "messageMax": "يجب أن تحتوي الرسالة على أقل من 2000 حرف"
+      }
+    },
+    "info": {
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "location": "الموقع"
+    }
+  },
+  "footer": {
+    "copyright": "جميع الحقوق محفوظة",
+    "madeWith": "صنع بـ",
+    "and": "و",
+    "links": {
+      "github": "جيت هب",
+      "linkedin": "لينكدإن",
+      "email": "البريد"
+    },
+    "languages": {
+      "arabic": "العربية",
+      "french": "الفرنسية",
+      "english": "الإنجليزية"
+    }
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "retry": "إعادة المحاولة",
+    "close": "إغلاق",
+    "menu": "القائمة"
+  }
 }

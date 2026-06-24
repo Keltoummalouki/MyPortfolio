@@ -3,12 +3,12 @@
 import { useState, useTransition } from 'react'
 import { useLocale } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Globe, ChevronDown } from 'lucide-react'
+import { Globe, ChevronDown, Check } from 'lucide-react'
 
 const languages = [
-    { code: 'en', name: 'English', flag: '🇬🇧', dir: 'ltr' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷', dir: 'ltr' },
-    { code: 'ar', name: 'العربية', flag: '🇲🇦', dir: 'rtl' },
+    { code: 'en', name: 'English', dir: 'ltr' },
+    { code: 'fr', name: 'Français', dir: 'ltr' },
+    { code: 'ar', name: 'العربية', dir: 'rtl' },
 ] as const
 
 export default function LanguageSwitcher() {
@@ -20,17 +20,14 @@ export default function LanguageSwitcher() {
 
     const handleLanguageChange = (langCode: string) => {
         startTransition(() => {
-            // Set cookie for locale
             document.cookie = `locale=${langCode};path=/;max-age=31536000`
 
-            // Set document direction
             const lang = languages.find(l => l.code === langCode)
             if (lang) {
                 document.documentElement.dir = lang.dir
                 document.documentElement.lang = langCode
             }
 
-            // Reload to apply changes
             window.location.reload()
         })
         setIsOpen(false)
@@ -40,18 +37,18 @@ export default function LanguageSwitcher() {
         <div className="relative">
             <motion.button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-full glass hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Change language"
+                className="flex items-center gap-2 px-3 py-2 rounded-full border border-border bg-card hover:bg-secondary transition-colors duration-200 min-h-[44px]"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                aria-expanded={isOpen}
                 disabled={isPending}
             >
-                <Globe size={18} className="text-purple-500" />
+                <Globe size={16} className="text-primary" />
                 <span className="text-sm font-medium hidden sm:inline">
-                    {currentLang.flag} {currentLang.code.toUpperCase()}
+                    {currentLang.name}
                 </span>
                 <span className="text-sm font-medium sm:hidden">
-                    {currentLang.flag}
+                    {currentLang.code.toUpperCase()}
                 </span>
                 <ChevronDown
                     size={14}
@@ -62,7 +59,6 @@ export default function LanguageSwitcher() {
             <AnimatePresence>
                 {isOpen && (
                     <>
-                        {/* Backdrop */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -71,32 +67,27 @@ export default function LanguageSwitcher() {
                             onClick={() => setIsOpen(false)}
                         />
 
-                        {/* Dropdown */}
                         <motion.div
-                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                            initial={{ opacity: 0, y: -8, scale: 0.97 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute right-0 top-full mt-2 z-50 min-w-[160px] glass-card rounded-xl overflow-hidden shadow-xl"
+                            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute right-0 top-full mt-2 z-50 min-w-[160px] bg-card border border-border rounded-xl overflow-hidden shadow-lg"
                         >
                             {languages.map((lang) => (
                                 <motion.button
                                     key={lang.code}
                                     onClick={() => handleLanguageChange(lang.code)}
                                     className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-200 ${locale === lang.code
-                                            ? 'bg-purple-500/20 text-purple-600 dark:text-purple-400'
-                                            : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                                            ? 'bg-primary/10 text-primary'
+                                            : 'hover:bg-secondary'
                                         }`}
-                                    whileHover={{ x: 4 }}
+                                    whileHover={{ x: 2 }}
                                     disabled={isPending}
                                 >
-                                    <span className="text-xl">{lang.flag}</span>
                                     <span className="font-medium">{lang.name}</span>
                                     {locale === lang.code && (
-                                        <motion.div
-                                            layoutId="activeLanguage"
-                                            className="ml-auto w-2 h-2 rounded-full bg-purple-500"
-                                        />
+                                        <Check size={14} className="ml-auto text-primary" />
                                     )}
                                 </motion.button>
                             ))}

@@ -1,170 +1,201 @@
 {
-    "nav": {
-        "about": "About",
-        "skills": "Skills",
-        "projects": "Projects",
-        "education": "Education",
-        "experience": "Experience",
-        "github": "GitHub",
-        "contact": "Contact"
+  "nav": {
+    "about": "About",
+    "skills": "Skills",
+    "experience": "Experience",
+    "education": "Education",
+    "projects": "Projects",
+    "certifications": "Certifications",
+    "github": "GitHub",
+    "contact": "Contact"
+  },
+  "hero": {
+    "greeting": "Hello, I'm",
+    "name": "Keltoum Malouki",
+    "role": "Full Stack Web Developer",
+    "description": "I build modern, performant, and accessible web experiences. Based in Casablanca, open to mobility and new opportunities.",
+    "downloadCV": "Download CV",
+    "contactMe": "Contact Me",
+    "scrollDown": "Scroll to explore",
+    "openToWork": "Open to work",
+    "location": "Casablanca (mobile / relocation)"
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "Get to know me",
+    "description": "I'm Keltoum Malouki, a Full Stack Web Developer from Casablanca, Morocco. With hands-on training at YouCode (UM6P), I deliver complete web solutions from front-end interfaces to back-end architecture. I care about clean code, user experience, and continuous learning.",
+    "stats": {
+      "projects": "Projects Completed",
+      "experience": "Years Experience",
+      "technologies": "Technologies",
+      "commits": "GitHub Commits"
     },
-    "hero": {
-        "greeting": "Hello, I'm",
-        "name": "Keltoum Malouki",
-        "role": "Full Stack Developer",
-        "description": "Passionate about creating modern, performant web experiences with cutting-edge technologies",
-        "downloadCV": "Download CV",
-        "contactMe": "Contact Me",
-        "scrollDown": "Scroll to explore",
-        "openToWork": "Open to work"
-    },
-    "about": {
-        "title": "About Me",
-        "subtitle": "Get to know me better",
-        "description": "I'm Keltoum Malouki, a passionate full-stack developer from Casablanca, Morocco. Through my training at YouCode (UM6P), I've acquired solid skills in front-end (React, Next.js, TypeScript) and back-end (Node.js, Laravel, PHP) development. I'm motivated, curious, and always looking for new challenges to improve my technical and interpersonal skills. I love designing modern, creative, and accessible interfaces.",
-        "stats": {
-            "projects": "Projects Completed",
-            "experience": "Years Learning",
-            "technologies": "Technologies",
-            "commits": "GitHub Commits"
-        },
-        "qualities": {
-            "creative": "Creative",
-            "dedicated": "Dedicated",
-            "teamPlayer": "Team Player",
-            "problemSolver": "Problem Solver"
-        }
-    },
-    "skills": {
-        "title": "My Skills",
-        "subtitle": "Here's an overview of my technical skills and proficiency levels",
-        "categories": {
-            "languages": "Languages",
-            "frontend": "Frontend",
-            "backend": "Backend",
-            "databases": "Databases",
-            "devops": "DevOps & Tools"
-        },
-        "proficiency": {
-            "expert": "Expert",
-            "advanced": "Advanced",
-            "intermediate": "Intermediate",
-            "learning": "Learning"
-        }
-    },
-    "projects": {
-        "title": "My Projects",
-        "subtitle": "Here are some technical achievements based on my experience",
-        "viewCode": "View Code",
-        "liveDemo": "Live Demo",
-        "techStack": "Tech Stack",
-        "featured": "Featured",
-        "items": {
-            "truckflow": {
-                "title": "TruckFlow",
-                "description": "Complete fleet and logistics management platform for transportation companies with real-time GPS tracking, driver management, and automated reporting."
-            },
-            "reservezmoi": {
-                "title": "Réservez-Moi",
-                "description": "Modern appointment booking platform with calendar integration, automated reminders, and multi-service support for businesses."
-            },
-            "budgetbuddy": {
-                "title": "BudgetBuddy",
-                "description": "Expense management application with responsive interface, budget tracking, and financial analytics."
-            },
-            "testsplatform": {
-                "title": "Tests Acceptance Platform",
-                "description": "Platform to automate registration and role management for YouCode acceptance tests."
-            },
-            "dentacare": {
-                "title": "DentaCare",
-                "description": "Appointment management solution for dental clinics with scheduling and patient records."
-            },
-            "youdemy": {
-                "title": "Youdemy",
-                "description": "E-learning LMS platform for managing users, courses, and educational content."
-            }
-        }
-    },
-    "experience": {
-        "title": "Professional Experience & Certifications",
-        "subtitle": "Here are the roles I've held in the professional and freelance world, along with my certifications",
-        "items": {
-            "caisseManager": {
-                "title": "Front-End Developer Intern",
-                "company": "Caisse Manager — Rabat, Morocco",
-                "date": "June - August 2025",
-                "description": "2-month internship in front-end development: creating modern user interfaces with React, Next.js, Tailwind CSS, GSAP, and Framer Motion. API integration and following UI/UX best practices."
-            },
-            "freelance": {
-                "title": "Full Stack Developer Freelance",
-                "company": "Fiverr (Online Platform)",
-                "date": "2024",
-                "description": "Creating complete web projects for international clients, API integration, developing modern interfaces, and performance optimization."
-            },
-            "docker": {
-                "title": "Docker Foundations Professional Certificate",
-                "company": "Docker, Inc. (LinkedIn)",
-                "date": "March 2025",
-                "description": "Certification obtained on Docker Products and Containerization technologies."
-            }
-        }
-    },
-    "education": {
-        "title": "My Educational Journey",
-        "subtitle": "Discover the key stages of my academic and technical training",
-        "items": {
-            "youcode": {
-                "title": "Full-Stack Development",
-                "school": "YouCode (UM6P) — Safi, Morocco",
-                "date": "2024 - Present",
-                "description": "Hands-on training in Frontend & Backend web development with project management using agile methodology."
-            },
-            "bac": {
-                "title": "Baccalaureate in Physical Sciences",
-                "school": "Okba Ibn Nafii High School — Casablanca, Morocco",
-                "date": "2024",
-                "description": "French option with solid foundations in mathematics, physics, and computer science."
-            }
-        }
-    },
-    "github": {
-        "title": "GitHub Statistics",
-        "subtitle": "A visual overview of my activity and open-source contributions on GitHub",
-        "viewProfile": "View my GitHub profile"
-    },
-    "contact": {
-        "title": "Contact Me",
-        "subtitle": "Want to discuss a project or opportunity? Feel free to contact me via this form or directly through my contact information below.",
-        "form": {
-            "name": "Full Name",
-            "namePlaceholder": "Your full name",
-            "email": "Email Address",
-            "emailPlaceholder": "your@email.com",
-            "message": "Message",
-            "messagePlaceholder": "Describe your project or request...",
-            "send": "Send Message",
-            "sent": "Message Sent!"
-        },
-        "info": {
-            "email": "Email",
-            "phone": "Phone",
-            "location": "Location"
-        }
-    },
-    "footer": {
-        "copyright": "All rights reserved",
-        "madeWith": "Made with",
-        "and": "and",
-        "languages": {
-            "arabic": "Arabic",
-            "french": "French",
-            "english": "English"
-        }
-    },
-    "common": {
-        "loading": "Loading...",
-        "error": "An error occurred",
-        "retry": "Retry"
+    "qualities": {
+      "creative": "Creative",
+      "dedicated": "Dedicated",
+      "teamPlayer": "Team Player",
+      "problemSolver": "Problem Solver"
     }
+  },
+  "skills": {
+    "title": "Technical Skills",
+    "subtitle": "Technologies and tools I work with",
+    "categories": {
+      "languages": "Languages",
+      "frameworks": "Frameworks & APIs",
+      "devops": "DevOps",
+      "databases": "Databases",
+      "management": "Project Management",
+      "modeling": "Design & Modeling",
+      "versioning": "Version Control",
+      "design": "UX/UI Design"
+    }
+  },
+  "experience": {
+    "title": "Experience",
+    "subtitle": "My professional journey",
+    "items": {
+      "dabadoc": {
+        "title": "Full Stack Developer",
+        "company": "DabaDoc — Casablanca, Morocco",
+        "date": "Feb 2026 – Present",
+        "description": "Develop and maintain features for a medical appointment-booking platform. Improve UI and user experience across the product.",
+        "stack": "Ruby on Rails, Angular, CoffeeScript, MongoDB, Docker, Git/GitHub"
+      },
+      "caisseManager": {
+        "title": "Web Developer Intern",
+        "company": "Caisse Manager — Rabat, Morocco",
+        "date": "Jun – Aug 2025",
+        "description": "Built a showcase site and integrated front-end interfaces for financial management tools.",
+        "stack": "Next.js, React.js, TailwindCSS, GSAP, Framer Motion, Shadcn UI, Git/GitHub"
+      }
+    }
+  },
+  "education": {
+    "title": "Education",
+    "subtitle": "My academic background",
+    "items": {
+      "youcode": {
+        "title": "Full Stack Development Program",
+        "school": "YouCode / UM6P — Youssoufia Campus, Morocco",
+        "date": "2024 – 2026",
+        "description": "Hands-on training in front-end and back-end web development, agile project management, and modern software engineering practices."
+      },
+      "bac": {
+        "title": "Baccalauréat in Physical Sciences & Chemistry",
+        "school": "Lycée Okba Bnou Nafiaa — Casablanca, Morocco",
+        "date": "2023 – 2024",
+        "description": "Scientific baccalauréat with a strong foundation in mathematics, physics, and chemistry."
+      }
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Featured work from 40+ completed projects",
+    "viewCode": "View Code",
+    "liveDemo": "Live Demo",
+    "techStack": "Tech Stack",
+    "featured": "Featured",
+    "moreProjects": "40+ projects realized",
+    "items": {
+      "eventBooking": {
+        "title": "Event Booking App",
+        "date": "Dec 2025",
+        "description": "Event management application with booking system and user-role management.",
+        "stack": "NestJS, Next.js, TypeScript, PostgreSQL, Docker, GitHub Actions, Jira"
+      },
+      "reservezmoi": {
+        "title": "Réservez-Moi",
+        "date": "Apr 2025",
+        "description": "Service-booking platform with availability and reservation management.",
+        "stack": "Laravel, MySQL, HTML, Tailwind CSS, JavaScript, UML, Jira, Git/GitHub"
+      }
+    }
+  },
+  "certifications": {
+    "title": "Certifications",
+    "subtitle": "Credentials and achievements",
+    "viewCredential": "View on LinkedIn",
+    "items": {
+      "docker": {
+        "title": "Docker Foundations Professional Certificate",
+        "issuer": "LinkedIn / Docker, Inc.",
+        "date": "2025",
+        "description": "Professional certification validating Docker and containerization fundamentals."
+      }
+    }
+  },
+  "softSkills": {
+    "title": "Soft Skills",
+    "subtitle": "How I work",
+    "items": {
+      "timeManagement": "Time Management",
+      "adaptability": "Adaptability / Flexibility",
+      "teamwork": "Teamwork"
+    }
+  },
+  "languages": {
+    "title": "Languages",
+    "subtitle": "Communication",
+    "arabic": "Arabic (Native)",
+    "french": "French (B1)",
+    "english": "English (A2)"
+  },
+  "github": {
+    "title": "GitHub Stats",
+    "subtitle": "A visual overview of my open-source activity and contributions on GitHub.",
+    "viewProfile": "View my GitHub profile"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Get In Touch",
+    "subtitle": "Have a project or opportunity in mind? I'd love to hear from you. Fill out the form or reach out directly.",
+    "form": {
+      "name": "Full Name",
+      "namePlaceholder": "Your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "message": "Message",
+      "messagePlaceholder": "Tell me about your project or opportunity...",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "sent": "Message sent successfully!",
+      "errors": {
+        "nameRequired": "Name is required",
+        "nameMin": "Name must be at least 2 characters",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "messageRequired": "Message is required",
+        "messageMin": "Message must be at least 10 characters",
+        "messageMax": "Message must be less than 2000 characters"
+      }
+    },
+    "info": {
+      "email": "Email",
+      "phone": "Phone",
+      "location": "Location"
+    }
+  },
+  "footer": {
+    "copyright": "All rights reserved",
+    "madeWith": "Made with",
+    "and": "and",
+    "links": {
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "email": "Email"
+    },
+    "languages": {
+      "arabic": "Arabic",
+      "french": "French",
+      "english": "English"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "close": "Close",
+    "menu": "Menu"
+  }
 }
