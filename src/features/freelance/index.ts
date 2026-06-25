@@ -1,4 +1,6 @@
-// Freelance feature (services + lead pipeline: inquiries, notes, statuses).
-// Public API surface — UI imports typed functions from here, never raw Supabase
-// queries. Implemented in M9.
-export {}
+// Freelance feature (lead pipeline: inquiries, statuses). Public API surface.
+//
+// Only the client-safe schema is re-exported here. Server-only data access
+// (`queries`) and Server Actions (`actions`) are imported directly from their
+// modules by server/client code.
+export * from './schema'

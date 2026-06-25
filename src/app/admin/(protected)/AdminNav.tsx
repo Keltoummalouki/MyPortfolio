@@ -11,8 +11,8 @@ const items = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, ready: true },
   { href: '/admin/projects', label: 'Projects', icon: FolderKanban, ready: true },
   { href: '/admin/inbox', label: 'Inbox', icon: Inbox, ready: true },
-  { href: '/admin/blog', label: 'Blog', icon: FileText, ready: false },
-  { href: '/admin/leads', label: 'Leads', icon: Briefcase, ready: false },
+  { href: '/admin/blog', label: 'Blog', icon: FileText, ready: true },
+  { href: '/admin/leads', label: 'Leads', icon: Briefcase, ready: true },
 ] as const
 
 const base =
