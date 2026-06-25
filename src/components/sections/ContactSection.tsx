@@ -35,7 +35,9 @@ interface FormData {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function sanitizeInput(input: string): string {
-  return input.trim().replace(/[<>]/g, '')
+  // Do not trim while the user is typing: trimming on every change removes
+  // trailing spaces immediately, which makes the message textarea feel broken.
+  return input.replace(/[<>]/g, '')
 }
 
 function FloatingLabelInput({
@@ -199,24 +201,27 @@ export default function ContactSection() {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
+    const name = formData.name.trim()
+    const email = formData.email.trim()
+    const message = formData.message.trim()
 
-    if (!formData.name.trim()) {
+    if (!name) {
       newErrors.name = t('form.errors.nameRequired')
-    } else if (formData.name.trim().length < 2) {
+    } else if (name.length < 2) {
       newErrors.name = t('form.errors.nameMin')
     }
 
-    if (!formData.email.trim()) {
+    if (!email) {
       newErrors.email = t('form.errors.emailRequired')
-    } else if (!EMAIL_REGEX.test(formData.email)) {
+    } else if (!EMAIL_REGEX.test(email)) {
       newErrors.email = t('form.errors.emailInvalid')
     }
 
-    if (!formData.message.trim()) {
+    if (!message) {
       newErrors.message = t('form.errors.messageRequired')
-    } else if (formData.message.trim().length < 10) {
+    } else if (message.length < 10) {
       newErrors.message = t('form.errors.messageMin')
-    } else if (formData.message.trim().length > MAX_MESSAGE_LENGTH) {
+    } else if (message.length > MAX_MESSAGE_LENGTH) {
       newErrors.message = t('form.errors.messageMax')
     }
 
