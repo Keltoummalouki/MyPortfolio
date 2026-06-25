@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils'
 // placeholders to convey the dashboard structure; they are built in M5–M9.
 const items = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, ready: true },
-  { href: '/admin/projects', label: 'Projects', icon: FolderKanban, ready: false },
-  { href: '/admin/inbox', label: 'Inbox', icon: Inbox, ready: false },
+  { href: '/admin/projects', label: 'Projects', icon: FolderKanban, ready: true },
+  { href: '/admin/inbox', label: 'Inbox', icon: Inbox, ready: true },
   { href: '/admin/blog', label: 'Blog', icon: FileText, ready: false },
   { href: '/admin/leads', label: 'Leads', icon: Briefcase, ready: false },
 ] as const

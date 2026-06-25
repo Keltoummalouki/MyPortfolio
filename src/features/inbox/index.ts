@@ -1,4 +1,6 @@
-// Inbox feature (contact messages: statuses, notes). Public API surface — UI
-// imports typed functions from here, never raw Supabase queries.
-// Implemented in M7.
-export {}
+// Inbox feature (contact messages: statuses). Public API surface.
+//
+// Only the client-safe schema is re-exported here. Server-only data access
+// (`queries`), Server Actions (`actions`), and the Turnstile verifier
+// (`turnstile`) are imported directly from their modules by server/client code.
+export * from './schema'

@@ -7,18 +7,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, Phone, MapPin, Send, CheckCircle, Loader2, AlertCircle } from 'lucide-react'
-import emailjs from '@emailjs/browser'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
+import TurnstileWidget from '@/components/ui/TurnstileWidget'
+import { submitContactMessage } from '@/features/inbox/actions'
 import { cn } from '@/lib/utils'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_6qfjw87'
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_trl9bs6'
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'PdYxZNmjMU6xRfoxj'
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 const MAX_MESSAGE_LENGTH = 2000
 
 interface FormErrors {
@@ -142,6 +141,7 @@ export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -231,30 +231,37 @@ export default function ContactSection() {
       return
     }
 
+    // If Turnstile is configured, require a token before submitting.
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      setSubmitStatus('error')
+      setErrorMessage(tCommon('error'))
+      return
+    }
+
     setIsSubmitting(true)
     setSubmitStatus('idle')
     setErrorMessage('')
 
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          message: formData.message,
-          to_name: 'Keltoum',
-        },
-        EMAILJS_PUBLIC_KEY
-      )
+      const result = await submitContactMessage({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        turnstileToken,
+      })
+
+      if (!result.ok) {
+        throw new Error(result.error ?? 'server')
+      }
 
       setSubmitStatus('success')
       setFormData({ name: '', email: '', message: '' })
+      setTurnstileToken(null)
 
       setTimeout(() => setSubmitStatus('idle'), 5000)
     } catch {
       setSubmitStatus('error')
-      // Show a generic, localized message — never surface raw provider errors to users.
+      // Show a generic, localized message — never surface raw server errors to users.
       setErrorMessage(tCommon('error'))
 
       setTimeout(() => {
@@ -381,6 +388,8 @@ export default function ContactSection() {
                 error={errors.message}
                 maxLength={MAX_MESSAGE_LENGTH}
               />
+
+              <TurnstileWidget onToken={setTurnstileToken} />
 
               <AnimatePresence>
                 {submitStatus === 'error' && errorMessage && (

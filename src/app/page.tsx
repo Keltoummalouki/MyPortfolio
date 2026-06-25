@@ -1,3 +1,4 @@
+import { getLocale } from "next-intl/server"
 import HeroSection from "@/components/sections/HeroSection"
 import AboutSection from "@/components/sections/AboutSection"
 import SkillsSection from "@/components/sections/SkillsSection"
@@ -10,8 +11,14 @@ import ContactSection from "@/components/sections/ContactSection"
 import Header from "@/components/layouts/Header"
 import Footer from "@/components/layouts/Footer"
 import ScrollProgress from "@/components/ui/ScrollProgress"
+import { getPublishedProjects } from "@/features/content/projects.queries"
+import { toProjectCard } from "@/features/content/projects.map"
+import type { Locale } from "@/lib/validation/locale"
 
-export default function Home() {
+export default async function Home() {
+  const locale = (await getLocale()) as Locale
+  const projects = (await getPublishedProjects()).map((p) => toProjectCard(p, locale))
+
   return (
     <div className="min-h-screen relative">
       <ScrollProgress />
@@ -23,7 +30,7 @@ export default function Home() {
         <SkillsSection />
         <ExperienceSection />
         <EducationSection />
-        <ProjectsSection />
+        <ProjectsSection projects={projects} />
         <CertificationsSection />
         <GithubStatsSection />
         <ContactSection />
