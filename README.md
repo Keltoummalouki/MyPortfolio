@@ -114,13 +114,13 @@ public/
    npm install
    ```
 
-3. **Set up environment variables** (optional, for contact form)
+3. **Set up environment variables**
    ```bash
-   # Create .env.local file
-   NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_service_id
-   NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_template_id
-   NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=your_public_key
+   cp .env.example .env.local   # then fill in real values
    ```
+   [`.env.example`](.env.example) is the source of truth for every variable and documents which are **public** (`NEXT_PUBLIC_*`, embedded in the browser bundle) versus **server-only secrets** (never prefixed `NEXT_PUBLIC_`, never imported into a Client Component — e.g. `SUPABASE_SERVICE_ROLE_KEY`, `TURNSTILE_SECRET_KEY`). `.env.local` is gitignored.
+
+   > The contact form currently also reads `NEXT_PUBLIC_EMAILJS_*` (service / template / public key) until the Supabase-backed inbox replaces it.
 
 4. **Run the development server**
    ```bash
@@ -142,6 +142,11 @@ public/
 | `npm run build` | Build for production |
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint |
+| `npm test` | Run unit tests once (Vitest) |
+| `npm run test:watch` | Run unit tests in watch mode |
+| `npm run test:coverage` | Run unit tests with a coverage report |
+
+> **Testing scope.** `npm test` covers pure logic only (validation schemas, content mapping) and needs **no Supabase project or credentials**. Supabase **RLS integration tests require the local Supabase stack** (`supabase start`) and are introduced in M2 — they are not part of `npm test`.
 
 ---
 

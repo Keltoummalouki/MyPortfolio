@@ -91,12 +91,12 @@
   },
   "projects": {
     "title": "Projects",
-    "subtitle": "Featured work from 40+ completed projects",
+    "subtitle": "Featured work from 50+ completed projects",
     "viewCode": "View Code",
     "liveDemo": "Live Demo",
     "techStack": "Tech Stack",
     "featured": "Featured",
-    "moreProjects": "40+ projects realized",
+    "moreProjects": "50+ projects realized",
     "items": {
       "eventBooking": {
         "title": "Event Booking App",

@@ -170,7 +170,7 @@ export default function ProjectsSection() {
             <div className="p-4 rounded-2xl bg-secondary text-primary mb-5">
               <Code2 size={32} />
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-2">40+</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-2">50+</h3>
             <p className="text-muted-foreground mb-6">{t('moreProjects')}</p>
             <a
               href="https://github.com/keltoummalouki"
