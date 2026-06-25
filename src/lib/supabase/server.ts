@@ -1,12 +1,34 @@
 import 'server-only'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+import type { Database } from './database.types'
+import { getSupabaseAnonKey, getSupabaseUrl } from './env'
 
-// Cookie-aware Supabase server client (per-request auth).
-// Implemented in M3-T1 (Create Supabase client utilities).
+// Cookie-aware Supabase server client (per-request auth). Uses the public anon
+// key + the request's auth cookies, so every query runs under the signed-in
+// user's RLS context. Use from Server Components, Server Actions, and Route
+// Handlers.
 //
-// Boundary: the `server-only` import makes importing this module from a Client
-// Component a build error. Use it from Server Components, Server Actions, and
-// Route Handlers.
+// `server-only` makes importing this from a Client Component a build error.
+export async function createServerSupabaseClient() {
+  const cookieStore = await cookies()
 
-export function createServerSupabaseClient(): never {
-  throw new Error('Supabase server client not implemented yet (see M3-T1).')
+  return createServerClient<Database>(getSupabaseUrl(), getSupabaseAnonKey(), {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
+      setAll(cookiesToSet) {
+        try {
+          for (const { name, value, options } of cookiesToSet) {
+            cookieStore.set(name, value, options)
+          }
+        } catch {
+          // `setAll` was called from a Server Component, where mutating cookies
+          // is not allowed. Safe to ignore: the middleware refreshes the session
+          // and writes refreshed cookies on every /admin request.
+        }
+      },
+    },
+  })
 }

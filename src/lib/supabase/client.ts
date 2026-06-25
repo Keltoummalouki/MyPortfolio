@@ -1,10 +1,12 @@
-// Browser Supabase client (public anon key only).
-// Implemented in M3-T1 (Create Supabase client utilities).
-//
-// Boundary: safe to import from Client Components. It must use ONLY
-// NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY — never a
-// service-role key.
+import { createBrowserClient } from '@supabase/ssr'
+import type { Database } from './database.types'
+import { getSupabaseAnonKey, getSupabaseUrl } from './env'
 
-export function createBrowserSupabaseClient(): never {
-  throw new Error('Supabase browser client not implemented yet (see M3-T1).')
+// Browser Supabase client (public anon key only). Safe to import from Client
+// Components. Row Level Security — not this key — is the authorization boundary.
+//
+// Auth is driven server-side (Server Actions + cookie-aware server client +
+// middleware refresh), so this client is for future client-side reads/realtime.
+export function createBrowserSupabaseClient() {
+  return createBrowserClient<Database>(getSupabaseUrl(), getSupabaseAnonKey())
 }

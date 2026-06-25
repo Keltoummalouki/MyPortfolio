@@ -1,11 +1,26 @@
 import 'server-only'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
+import { getSupabaseUrl } from './env'
 
 // Privileged Supabase client using SUPABASE_SERVICE_ROLE_KEY. BYPASSES RLS.
-// Implemented in M3-T1 and used only where strictly necessary.
 //
 // Boundary: the `server-only` import guarantees this can never be bundled into
-// client code. The service-role key must never reach the browser.
+// client code, and the service-role key is read here and nowhere else. Use only
+// where strictly necessary (e.g. server-side writes that must skip RLS); prefer
+// the cookie-aware server client for anything that should run as the user.
+export function createAdminSupabaseClient() {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!serviceRoleKey) {
+    throw new Error(
+      'Missing environment variable: SUPABASE_SERVICE_ROLE_KEY. Set it in .env.local (server-only).',
+    )
+  }
 
-export function createAdminSupabaseClient(): never {
-  throw new Error('Supabase admin (service-role) client not implemented yet (see M3-T1).')
+  return createClient<Database>(getSupabaseUrl(), serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
 }

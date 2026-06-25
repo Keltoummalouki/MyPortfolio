@@ -8,8 +8,8 @@ const cspHeader = `
   script-src 'self' 'unsafe-eval' 'unsafe-inline';
   style-src 'self' 'unsafe-inline';
   font-src 'self';
-  img-src 'self' data: https://github-readme-stats.vercel.app https://github-readme-streak-stats.herokuapp.com;
-  connect-src 'self' https://api.emailjs.com;
+  img-src 'self' data: https://github-readme-stats.vercel.app https://github-readme-streak-stats.herokuapp.com https://*.supabase.co;
+  connect-src 'self' https://api.emailjs.com https://*.supabase.co wss://*.supabase.co;
   frame-ancestors 'none';
   base-uri 'self';
   form-action 'self';
