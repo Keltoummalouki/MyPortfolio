@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState, Suspense } from 'react'
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import { Mail, Github, Linkedin, Download, ChevronDown, ArrowRight, MapPin } from 'lucide-react'
+import { ArrowRight, ChevronDown, Download, Mail, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import SocialIcon from '@/components/ui/SocialIcon'
+import type { PublicAbout, PublicSocialLink } from '@/features/cms/queries'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -16,10 +17,24 @@ if (typeof window !== 'undefined') {
 
 const ThreeBackground = dynamic(
   () => import('@/components/three/ThreeBackground'),
-  { ssr: false }
+  { ssr: false },
 )
 
-export default function HeroSection() {
+function availabilityLabel(t: ReturnType<typeof useTranslations>, status: string | undefined) {
+  if (status === 'limited' || status === 'unavailable') {
+    return t(`availability.${status}`)
+  }
+  if (status === 'available') return t('availability.available')
+  return t('openToWork')
+}
+
+export default function HeroSection({
+  about,
+  socialLinks = [],
+}: {
+  about?: PublicAbout
+  socialLinks?: PublicSocialLink[]
+}) {
   const t = useTranslations('hero')
   const sectionRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -60,44 +75,44 @@ export default function HeroSection() {
       tl.fromTo(
         '.hero-greeting',
         { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.6 }
-      )
-      .fromTo(
-        '.hero-title',
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 0.8 },
-        0.2
-      )
-      .fromTo(
-        '.hero-role',
-        { opacity: 0, y: 24 },
         { opacity: 1, y: 0, duration: 0.6 },
-        0.4
       )
-      .fromTo(
-        '.hero-desc',
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.6 },
-        0.5
-      )
-      .fromTo(
-        '.hero-meta',
-        { opacity: 0, y: 16 },
-        { opacity: 1, y: 0, duration: 0.5 },
-        0.6
-      )
-      .fromTo(
-        '.hero-ctas',
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.6 },
-        0.7
-      )
-      .fromTo(
-        imageRef.current,
-        { opacity: 0, scale: 0.9, x: 40 },
-        { opacity: 1, scale: 1, x: 0, duration: 0.9 },
-        0.4
-      )
+        .fromTo(
+          '.hero-title',
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.8 },
+          0.2,
+        )
+        .fromTo(
+          '.hero-role',
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.6 },
+          0.4,
+        )
+        .fromTo(
+          '.hero-desc',
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.6 },
+          0.5,
+        )
+        .fromTo(
+          '.hero-meta',
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.5 },
+          0.6,
+        )
+        .fromTo(
+          '.hero-ctas',
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.6 },
+          0.7,
+        )
+        .fromTo(
+          imageRef.current,
+          { opacity: 0, scale: 0.9, x: 40 },
+          { opacity: 1, scale: 1, x: 0, duration: 0.9 },
+          0.4,
+        )
 
       gsap.to(imageRef.current, {
         y: 40,
@@ -107,7 +122,7 @@ export default function HeroSection() {
           start: 'top top',
           end: 'bottom top',
           scrub: true,
-        }
+        },
       })
 
       gsap.to(contentRef.current, {
@@ -119,18 +134,31 @@ export default function HeroSection() {
           start: '20% top',
           end: '60% top',
           scrub: true,
-        }
+        },
       })
     }, sectionRef)
 
     return () => ctx.revert()
   }, [prefersReducedMotion])
 
-  const socialLinks = [
-    { name: 'Email', href: 'mailto:keltoummalouki@gmail.com', icon: Mail },
-    { name: 'GitHub', href: 'https://github.com/keltoummalouki', icon: Github },
-    { name: 'LinkedIn', href: 'https://www.linkedin.com/in/keltoummalouki', icon: Linkedin },
-  ]
+  const displayName = about?.fullName || t('name')
+  const role = about?.headline || t('role')
+  const description = about?.bio || t('description')
+  const location = about?.location || t('location')
+  const cvUrl = about?.cvUrl || '/cv.pdf'
+  const avatarUrl = about?.avatarUrl || '/images/keltoum.png'
+  const socialItems = socialLinks.length
+    ? socialLinks.slice(0, 3).map((link) => ({
+        name: link.label || link.platform,
+        href: link.url,
+        platform: link.platform,
+        icon: link.icon,
+      }))
+    : [
+        { name: 'Email', href: 'mailto:keltoummalouki@gmail.com', platform: 'email', icon: 'email' },
+        { name: 'GitHub', href: 'https://github.com/keltoummalouki', platform: 'github', icon: 'github' },
+        { name: 'LinkedIn', href: 'https://www.linkedin.com/in/keltoummalouki', platform: 'linkedin', icon: 'linkedin' },
+      ]
 
   return (
     <section
@@ -155,28 +183,28 @@ export default function HeroSection() {
           </p>
 
           <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl font-bold mb-5 leading-[1.05] tracking-tight text-foreground">
-            {t('name')}
+            {displayName}
           </h1>
 
           <p className="hero-role text-xl md:text-2xl lg:text-3xl font-medium text-gradient mb-6">
-            {t('role')}
+            {role}
           </p>
 
           <p className="hero-desc text-base md:text-lg text-muted-foreground mb-6 max-w-lg leading-relaxed text-pretty">
-            {t('description')}
+            {description}
           </p>
 
           <div className="hero-meta flex flex-wrap items-center gap-3 mb-8">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-sm text-muted-foreground">
               <MapPin size={14} className="text-primary" />
-              {t('location')}
+              {location}
             </span>
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-sm text-muted-foreground">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
               </span>
-              {t('openToWork')}
+              {availabilityLabel(t, about?.availabilityStatus)}
             </span>
           </div>
 
@@ -186,7 +214,7 @@ export default function HeroSection() {
               size="lg"
               className="group bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-5 rounded-xl transition-all duration-200"
             >
-              <a href="/cv.pdf" download target="_blank" rel="noopener noreferrer">
+              <a href={cvUrl} download target="_blank" rel="noopener noreferrer">
                 <Download size={18} className="mr-2" />
                 {t('downloadCV')}
                 <ArrowRight size={16} className="ml-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
@@ -204,12 +232,12 @@ export default function HeroSection() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            {socialLinks.map((link, index) => (
+            {socialItems.map((link, index) => (
               <motion.a
-                key={link.name}
+                key={`${link.name}-${link.href}`}
                 href={link.href}
-                target={link.name !== 'Email' ? '_blank' : undefined}
-                rel={link.name !== 'Email' ? 'noopener noreferrer' : undefined}
+                target={link.href.startsWith('mailto:') || link.href.startsWith('tel:') ? undefined : '_blank'}
+                rel={link.href.startsWith('mailto:') || link.href.startsWith('tel:') ? undefined : 'noopener noreferrer'}
                 className="group flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card text-muted-foreground hover:border-primary hover:text-primary transition-all duration-200 min-h-[44px]"
                 initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: isLoaded ? 1 : 0, x: isLoaded ? 0 : -16 }}
@@ -217,7 +245,11 @@ export default function HeroSection() {
                 whileHover={{ y: -2 }}
                 aria-label={link.name}
               >
-                <link.icon size={16} aria-hidden="true" />
+                {link.platform === 'email' ? (
+                  <Mail size={16} aria-hidden="true" />
+                ) : (
+                  <SocialIcon platform={link.platform} icon={link.icon} className="size-4" />
+                )}
                 <span className="hidden sm:inline text-sm font-medium">{link.name}</span>
               </motion.a>
             ))}
@@ -235,13 +267,11 @@ export default function HeroSection() {
 
           <div className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px]">
             <div className="w-full h-full rounded-full overflow-hidden border-2 border-border relative z-10 bg-card">
-              <Image
-                src="/images/keltoum.png"
-                alt="Keltoum Malouki, Full Stack Web Developer"
-                fill
-                sizes="(max-width: 768px) 260px, 320px"
-                className="object-cover"
-                priority
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={avatarUrl}
+                alt={displayName}
+                className="h-full w-full object-cover"
               />
             </div>
           </div>

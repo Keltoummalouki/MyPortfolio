@@ -1,15 +1,16 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const withNextIntl = createNextIntlPlugin('./i18n.ts');
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com;
   style-src 'self' 'unsafe-inline';
   font-src 'self';
-  img-src 'self' data: https://github-readme-stats.vercel.app https://github-readme-streak-stats.herokuapp.com;
-  connect-src 'self' https://api.emailjs.com;
+  img-src 'self' data: https://github-readme-stats.vercel.app https://github-readme-streak-stats.herokuapp.com https://*.supabase.co;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com;
+  frame-src https://challenges.cloudflare.com;
   frame-ancestors 'none';
   base-uri 'self';
   form-action 'self';
@@ -26,6 +27,11 @@ const nextConfig: NextConfig = {
             {
                 protocol: 'https',
                 hostname: 'github-readme-streak-stats.herokuapp.com',
+            },
+            {
+                // Supabase Storage public objects (e.g. project cover images).
+                protocol: 'https',
+                hostname: '*.supabase.co',
             },
         ],
     },

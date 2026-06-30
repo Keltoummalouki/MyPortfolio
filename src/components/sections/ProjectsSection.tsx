@@ -9,12 +9,16 @@ import { Github, ExternalLink, Star, Folder, Code2, ArrowUpRight } from 'lucide-
 import { Button } from '@/components/ui/button'
 import SectionHeader from '@/components/ui/SectionHeader'
 import BentoCard from '@/components/ui/BentoCard'
+import SkillIcon from '@/components/ui/SkillIcon'
+import type { ProjectCardData } from '@/features/content/projects.map'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-const projects = [
+// Static fallback, used when the database has no published projects or is
+// unreachable. Preserves the original portfolio content and its translations.
+const FALLBACK_PROJECTS = [
   {
     id: 'eventBooking',
     image: '/images/event-booking-app.png',
@@ -29,9 +33,9 @@ const projects = [
     demo: '',
     featured: true,
   },
-]
+] as const
 
-export default function ProjectsSection() {
+export default function ProjectsSection({ projects }: { projects?: ProjectCardData[] }) {
   const t = useTranslations('projects')
   const sectionRef = useRef<HTMLElement>(null)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
@@ -64,6 +68,29 @@ export default function ProjectsSection() {
     return () => ctx.revert()
   }, [prefersReducedMotion])
 
+  // Prefer database-managed projects; otherwise fall back to static content.
+  const items: ProjectCardData[] =
+    projects && projects.length > 0
+      ? projects
+      : FALLBACK_PROJECTS.map((p) => {
+          const stack = t(`items.${p.id}.stack`)
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+          return {
+            id: p.id,
+            title: t(`items.${p.id}.title`),
+            description: t(`items.${p.id}.description`),
+            image: p.image,
+            github: p.github || null,
+            demo: p.demo || null,
+            featured: p.featured,
+            stack,
+            stackItems: stack.map((name) => ({ name, icon: null, imageUrl: null })),
+            dateLabel: t(`items.${p.id}.date`),
+          }
+        })
+
   return (
     <section
       id="projects"
@@ -79,7 +106,7 @@ export default function ProjectsSection() {
         <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
 
         <div className="projects-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {projects.map((project, index) => (
+          {items.map((project, index) => (
             <BentoCard
               key={project.id}
               className="lg:col-span-2 group"
@@ -87,13 +114,19 @@ export default function ProjectsSection() {
             >
               <div className="grid md:grid-cols-2 h-full">
                 <div className="relative h-56 md:h-full overflow-hidden">
-                  <Image
-                    src={project.image}
-                    alt={t(`items.${project.id}.title`)}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 66vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  {project.image ? (
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 66vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-violet-500/10 text-primary">
+                      <Folder size={40} />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/90 hidden md:block" />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent md:hidden" />
 
@@ -108,9 +141,11 @@ export default function ProjectsSection() {
                 <div className="p-6 md:p-8 flex flex-col justify-center">
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div>
-                      <p className="text-sm text-primary font-medium mb-1">{t(`items.${project.id}.date`)}</p>
+                      {project.dateLabel && (
+                        <p className="text-sm text-primary font-medium mb-1">{project.dateLabel}</p>
+                      )}
                       <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-200">
-                        {t(`items.${project.id}.title`)}
+                        {project.title}
                       </h3>
                     </div>
                     <div className="p-2 rounded-lg bg-secondary text-primary">
@@ -118,17 +153,20 @@ export default function ProjectsSection() {
                     </div>
                   </div>
 
-                  <p className="text-muted-foreground mb-5 leading-relaxed">
-                    {t(`items.${project.id}.description`)}
-                  </p>
+                  {project.description && (
+                    <p className="text-muted-foreground mb-5 leading-relaxed">
+                      {project.description}
+                    </p>
+                  )}
 
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {t(`items.${project.id}.stack`).split(',').slice(0, 6).map((tech) => (
+                    {project.stackItems.slice(0, 6).map((tech) => (
                       <span
-                        key={tech.trim()}
-                        className="px-2.5 py-1 text-xs font-medium rounded-full bg-secondary text-muted-foreground border border-border"
+                        key={tech.name}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-secondary text-muted-foreground border border-border"
                       >
-                        {tech.trim()}
+                        <SkillIcon name={tech.name} icon={tech.icon} imageUrl={tech.imageUrl} className="text-primary" size={13} />
+                        {tech.name}
                       </span>
                     ))}
                   </div>
@@ -170,7 +208,7 @@ export default function ProjectsSection() {
             <div className="p-4 rounded-2xl bg-secondary text-primary mb-5">
               <Code2 size={32} />
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-2">40+</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-2">50+</h3>
             <p className="text-muted-foreground mb-6">{t('moreProjects')}</p>
             <a
               href="https://github.com/keltoummalouki"

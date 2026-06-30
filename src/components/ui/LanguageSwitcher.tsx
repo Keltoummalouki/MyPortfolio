@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from 'react'
 import { useLocale } from 'next-intl'
+import { usePathname, useRouter } from '@/i18n/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Globe, ChevronDown, Check } from 'lucide-react'
+import { Globe, Check } from 'lucide-react'
 
 const languages = [
     { code: 'en', name: 'English', dir: 'ltr' },
@@ -13,22 +14,19 @@ const languages = [
 
 export default function LanguageSwitcher() {
     const locale = useLocale()
+    const router = useRouter()
+    const pathname = usePathname()
     const [isOpen, setIsOpen] = useState(false)
     const [isPending, startTransition] = useTransition()
 
     const currentLang = languages.find(l => l.code === locale) || languages[1]
 
     const handleLanguageChange = (langCode: string) => {
+        // Navigate to the same page under the new locale prefix. next-intl also
+        // updates the `locale` preference cookie. The server re-renders with the
+        // correct `lang`/`dir`.
         startTransition(() => {
-            document.cookie = `locale=${langCode};path=/;max-age=31536000`
-
-            const lang = languages.find(l => l.code === langCode)
-            if (lang) {
-                document.documentElement.dir = lang.dir
-                document.documentElement.lang = langCode
-            }
-
-            window.location.reload()
+            router.replace(pathname, { locale: langCode })
         })
         setIsOpen(false)
     }
@@ -37,23 +35,18 @@ export default function LanguageSwitcher() {
         <div className="relative">
             <motion.button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-full border border-border bg-card hover:bg-secondary transition-colors duration-200 min-h-[44px]"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card hover:bg-secondary transition-colors duration-200"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
                 aria-expanded={isOpen}
+                aria-label={`${currentLang.name} — change language`}
+                title={currentLang.name}
                 disabled={isPending}
             >
-                <Globe size={16} className="text-primary" />
-                <span className="text-sm font-medium hidden sm:inline">
-                    {currentLang.name}
+                <Globe size={18} className="text-primary" />
+                <span className="absolute -bottom-0.5 -right-0.5 rounded-full bg-background px-1 text-[9px] font-bold uppercase leading-tight text-muted-foreground ring-1 ring-border">
+                    {currentLang.code}
                 </span>
-                <span className="text-sm font-medium sm:hidden">
-                    {currentLang.code.toUpperCase()}
-                </span>
-                <ChevronDown
-                    size={14}
-                    className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-                />
             </motion.button>
 
             <AnimatePresence>

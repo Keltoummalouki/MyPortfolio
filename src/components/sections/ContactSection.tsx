@@ -7,18 +7,19 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, Phone, MapPin, Send, CheckCircle, Loader2, AlertCircle } from 'lucide-react'
-import emailjs from '@emailjs/browser'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
+import TurnstileWidget from '@/components/ui/TurnstileWidget'
+import SocialIcon from '@/components/ui/SocialIcon'
+import { submitContactMessage } from '@/features/inbox/actions'
 import { cn } from '@/lib/utils'
+import type { PublicSocialLink } from '@/features/cms/queries'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_6qfjw87'
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_trl9bs6'
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'PdYxZNmjMU6xRfoxj'
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 const MAX_MESSAGE_LENGTH = 2000
 
 interface FormErrors {
@@ -36,7 +37,9 @@ interface FormData {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function sanitizeInput(input: string): string {
-  return input.trim().replace(/[<>]/g, '')
+  // Do not trim while the user is typing: trimming on every change removes
+  // trailing spaces immediately, which makes the message textarea feel broken.
+  return input.replace(/[<>]/g, '')
 }
 
 function FloatingLabelInput({
@@ -126,7 +129,7 @@ function FloatingLabelInput({
   )
 }
 
-export default function ContactSection() {
+export default function ContactSection({ socialLinks = [] }: { socialLinks?: PublicSocialLink[] }) {
   const t = useTranslations('contact')
   const tCommon = useTranslations('common')
   const sectionRef = useRef<HTMLElement>(null)
@@ -142,6 +145,7 @@ export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -199,24 +203,27 @@ export default function ContactSection() {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
+    const name = formData.name.trim()
+    const email = formData.email.trim()
+    const message = formData.message.trim()
 
-    if (!formData.name.trim()) {
+    if (!name) {
       newErrors.name = t('form.errors.nameRequired')
-    } else if (formData.name.trim().length < 2) {
+    } else if (name.length < 2) {
       newErrors.name = t('form.errors.nameMin')
     }
 
-    if (!formData.email.trim()) {
+    if (!email) {
       newErrors.email = t('form.errors.emailRequired')
-    } else if (!EMAIL_REGEX.test(formData.email)) {
+    } else if (!EMAIL_REGEX.test(email)) {
       newErrors.email = t('form.errors.emailInvalid')
     }
 
-    if (!formData.message.trim()) {
+    if (!message) {
       newErrors.message = t('form.errors.messageRequired')
-    } else if (formData.message.trim().length < 10) {
+    } else if (message.length < 10) {
       newErrors.message = t('form.errors.messageMin')
-    } else if (formData.message.trim().length > MAX_MESSAGE_LENGTH) {
+    } else if (message.length > MAX_MESSAGE_LENGTH) {
       newErrors.message = t('form.errors.messageMax')
     }
 
@@ -231,30 +238,37 @@ export default function ContactSection() {
       return
     }
 
+    // If Turnstile is configured, require a token before submitting.
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      setSubmitStatus('error')
+      setErrorMessage(tCommon('error'))
+      return
+    }
+
     setIsSubmitting(true)
     setSubmitStatus('idle')
     setErrorMessage('')
 
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          message: formData.message,
-          to_name: 'Keltoum',
-        },
-        EMAILJS_PUBLIC_KEY
-      )
+      const result = await submitContactMessage({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+        turnstileToken,
+      })
+
+      if (!result.ok) {
+        throw new Error(result.error ?? 'server')
+      }
 
       setSubmitStatus('success')
       setFormData({ name: '', email: '', message: '' })
+      setTurnstileToken(null)
 
       setTimeout(() => setSubmitStatus('idle'), 5000)
     } catch {
       setSubmitStatus('error')
-      // Show a generic, localized message — never surface raw provider errors to users.
+      // Show a generic, localized message — never surface raw server errors to users.
       setErrorMessage(tCommon('error'))
 
       setTimeout(() => {
@@ -299,7 +313,11 @@ export default function ContactSection() {
       <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative container-main">
-        <SectionHeader eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+        <SectionHeader
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          subtitle={t('subtitle')}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {contactInfo.map((info) => {
@@ -332,6 +350,24 @@ export default function ContactSection() {
             )
           })}
         </div>
+
+        {socialLinks.length > 0 && (
+          <div className="mb-12 flex flex-wrap justify-center gap-3">
+            {socialLinks.map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target={link.url.startsWith('mailto:') || link.url.startsWith('tel:') ? undefined : '_blank'}
+                rel={link.url.startsWith('mailto:') || link.url.startsWith('tel:') ? undefined : 'noopener noreferrer'}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+                aria-label={link.label || link.platform}
+              >
+                <SocialIcon platform={link.platform} icon={link.icon} className="size-4" />
+                {link.label || link.platform}
+              </a>
+            ))}
+          </div>
+        )}
 
         <motion.div
           className="max-w-2xl mx-auto"
@@ -381,6 +417,8 @@ export default function ContactSection() {
                 error={errors.message}
                 maxLength={MAX_MESSAGE_LENGTH}
               />
+
+              <TurnstileWidget onToken={setTurnstileToken} />
 
               <AnimatePresence>
                 {submitStatus === 'error' && errorMessage && (

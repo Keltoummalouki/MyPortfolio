@@ -1,17 +1,28 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
-import { motion } from 'framer-motion'
-import { Sparkles, Users, Lightbulb, Target, Code, Calendar, Layers, GitCommit, Clock, RotateCcw, Handshake, Globe, type LucideIcon } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
+import {
+  Calendar,
+  Code,
+  Compass,
+  GitCommit,
+  Globe,
+  Handshake,
+  Layers,
+  Lightbulb,
+  Sparkles,
+  Target,
+  Users,
+  type LucideIcon,
+} from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger)
-}
+import SkillIcon from '@/components/ui/SkillIcon'
+import type { PublicAbout, PublicSkill } from '@/features/cms/queries'
+import type { PublicLanguage } from '@/features/cms/languages'
+import { statValue } from '@/features/stats/portfolio'
 
 interface StatProps {
   value: number
@@ -53,7 +64,7 @@ function AnimatedStat({ value, label, suffix = '', icon: Icon }: StatProps) {
           observer.disconnect()
         }
       },
-      { threshold: 0.4 }
+      { threshold: 0.4 },
     )
 
     if (ref.current) {
@@ -64,66 +75,112 @@ function AnimatedStat({ value, label, suffix = '', icon: Icon }: StatProps) {
   }, [value])
 
   return (
-    <div ref={ref} className="group relative p-5 md:p-6 rounded-2xl bg-card border border-border hover:border-primary/30 transition-colors duration-300">
-      <div className="flex flex-col items-center text-center gap-3">
-        <div className="p-3 rounded-xl bg-secondary text-primary">
-          <Icon className="w-5 h-5 md:w-6 md:h-6" />
-        </div>
-        <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-          {count}{suffix}
-        </div>
-        <div className="text-sm text-muted-foreground font-medium">{label}</div>
+    <div
+      ref={ref}
+      className="group/stat flex flex-col items-center gap-2.5 rounded-xl p-4 text-center transition-colors duration-300 hover:bg-secondary/60"
+    >
+      <div className="p-2.5 rounded-xl bg-secondary text-primary transition-colors duration-300 group-hover/stat:bg-primary group-hover/stat:text-primary-foreground">
+        <Icon className="w-5 h-5" />
+      </div>
+      <div className="text-3xl md:text-4xl font-bold text-foreground tracking-tight tabular-nums">
+        {count}
+        {suffix}
+      </div>
+      <div className="text-xs md:text-sm text-muted-foreground font-medium leading-tight">{label}</div>
+    </div>
+  )
+}
+
+function Trait({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2 rounded-xl bg-secondary/40 p-4 text-center transition-colors duration-300 hover:bg-secondary/70">
+      <div className="p-2 rounded-lg bg-card text-primary">
+        <Icon className="w-4 h-4" />
+      </div>
+      <span className="text-sm font-semibold text-foreground leading-tight">{label}</span>
+    </div>
+  )
+}
+
+const CEFR_LEVELS: { match: string[]; pct: number }[] = [
+  { match: ['native', 'natif', 'maternelle', 'الأم', 'c2'], pct: 100 },
+  { match: ['c1'], pct: 88 },
+  { match: ['b2'], pct: 74 },
+  { match: ['b1'], pct: 58 },
+  { match: ['a2'], pct: 40 },
+  { match: ['a1'], pct: 24 },
+]
+
+function levelToPercent(raw: string): number {
+  const value = raw.toLowerCase()
+  for (const level of CEFR_LEVELS) {
+    if (level.match.some((token) => value.includes(token))) return level.pct
+  }
+  return 62
+}
+
+function LanguageBar({
+  name,
+  levelText,
+  percent,
+  index,
+  reduce,
+}: {
+  name: string
+  levelText: string
+  percent: number
+  index: number
+  reduce: boolean
+}) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-foreground font-medium">{name}</span>
+        {levelText && <span className="text-sm text-muted-foreground">{levelText}</span>}
+      </div>
+      <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+        <motion.div
+          className="h-full rounded-full bg-gradient-to-r from-primary to-violet-500 origin-left"
+          style={{ width: `${percent}%` }}
+          initial={reduce ? false : { scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.9, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+        />
       </div>
     </div>
   )
 }
 
-function QualityCard({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
-  return (
-    <GlassCard className="p-5 md:p-6 text-center">
-      <div className="inline-flex p-3 rounded-xl bg-secondary text-primary mb-4">
-        <Icon className="w-5 h-5 md:w-6 md:h-6" />
-      </div>
-      <h3 className="font-semibold text-foreground">{label}</h3>
-    </GlassCard>
-  )
-}
+const reveal = (reduce: boolean, delay: number) => ({
+  initial: reduce ? false : { opacity: 0, y: 28 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-60px' },
+  transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] as const },
+})
 
-export default function AboutSection() {
+export default function AboutSection({
+  about,
+  softSkills: cmsSoftSkills,
+  languages: cmsLanguages,
+}: {
+  about?: PublicAbout
+  softSkills?: PublicSkill[]
+  languages?: PublicLanguage[]
+}) {
   const t = useTranslations('about')
+  const tHero = useTranslations('hero')
   const tSoftSkills = useTranslations('softSkills')
   const tLanguages = useTranslations('languages')
-  const sectionRef = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion() ?? false
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mediaQuery.matches || !sectionRef.current) return
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.about-bio',
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          }
-        }
-      )
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
+  const role = about?.headline || tHero('role')
 
   const stats = [
-    { value: 40, label: t('stats.projects'), suffix: '+', icon: Code },
-    { value: 1, label: t('stats.experience'), suffix: '+', icon: Calendar },
-    { value: 20, label: t('stats.technologies'), suffix: '+', icon: Layers },
-    { value: 500, label: t('stats.commits'), suffix: '+', icon: GitCommit },
+    { value: statValue('projects'), label: t('stats.projects'), suffix: '+', icon: Code },
+    { value: statValue('experience'), label: t('stats.experience'), suffix: '+', icon: Calendar },
+    { value: statValue('technologies'), label: t('stats.technologies'), suffix: '+', icon: Layers },
+    { value: statValue('commits'), label: t('stats.commits'), suffix: '+', icon: GitCommit },
   ]
 
   const qualities = [
@@ -133,18 +190,46 @@ export default function AboutSection() {
     { key: 'problemSolver', icon: Lightbulb },
   ]
 
-  const softSkills = [
-    { key: 'timeManagement', icon: Clock },
-    { key: 'adaptability', icon: RotateCcw },
-    { key: 'teamwork', icon: Handshake },
-  ]
+  const softSkills = cmsSoftSkills?.length
+    ? cmsSoftSkills.map((skill) => ({
+        key: skill.id,
+        label: skill.name,
+        icon: skill.icon,
+        imageUrl: skill.imageUrl,
+      }))
+    : [
+        { key: 'timeManagement', label: tSoftSkills('items.timeManagement'), icon: 'time', imageUrl: '' },
+        { key: 'adaptability', label: tSoftSkills('items.adaptability'), icon: 'adaptability', imageUrl: '' },
+        { key: 'teamwork', label: tSoftSkills('items.teamwork'), icon: 'teamwork', imageUrl: '' },
+      ]
+
+  const languages = (
+    cmsLanguages?.length
+      ? cmsLanguages
+      : (['arabic', 'french', 'english'] as const).map((lang) => ({
+          id: lang,
+          name: tLanguages(lang),
+          level: '',
+          icon: '',
+        }))
+  ).map((language) => {
+    const rawLevel = language.level?.trim() || ''
+    const parenthetical = language.name.match(/[([（]([^)\]）]+)[)\]）]/)?.[1] ?? ''
+    const levelText = rawLevel || parenthetical
+    const displayName = language.name.replace(/\s*[([（][^)\]）]*[)\]）]\s*$/, '').trim()
+    return {
+      id: language.id,
+      name: displayName || language.name,
+      levelText,
+      percent: levelToPercent(rawLevel || language.name),
+    }
+  })
 
   return (
     <section
       id="about"
-      ref={sectionRef}
       className="relative section-padding overflow-hidden bg-background"
-      aria-labelledby="about-title"
+      aria-label={t('title')}
     >
       <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl float pointer-events-none" />
@@ -153,81 +238,84 @@ export default function AboutSection() {
       <div className="relative container-main">
         <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
 
-        <div className="about-bio grid lg:grid-cols-2 gap-8 lg:gap-12 items-start mb-16 md:mb-20">
-          <GlassCard className="p-6 md:p-8 h-full">
-            <div className="inline-flex p-3 rounded-xl bg-secondary text-primary mb-5">
-              <Target className="w-6 h-6" />
-            </div>
-            <p className="text-lg md:text-xl text-foreground leading-relaxed text-pretty">
-              {t('description')}
-            </p>
-          </GlassCard>
-
-          <div className="grid grid-cols-2 gap-4">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.08 * index }}
-              >
-                <AnimatedStat {...stat} />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16 md:mb-20">
-          {qualities.map((quality, index) => (
-            <motion.div
-              key={quality.key}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.08 * index }}
-            >
-              <QualityCard icon={quality.icon} label={t(`qualities.${quality.key}`)} />
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <GlassCard className="p-6 md:p-8">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="p-3 rounded-xl bg-secondary text-primary">
-                <Handshake className="w-6 h-6" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6">
+          {/* Identity */}
+          <motion.div className="lg:col-span-5" {...reveal(reduce, 0)}>
+            <GlassCard className="h-full p-6 md:p-8 flex flex-col justify-center">
+              <div className="inline-flex w-fit p-3 rounded-xl bg-secondary text-primary mb-6">
+                <Compass className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">{tSoftSkills('title')}</h3>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {softSkills.map((skill) => (
-                <span
-                  key={skill.key}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary text-foreground text-sm"
-                >
-                  <skill.icon size={16} className="text-primary" />
-                  {tSoftSkills(`items.${skill.key}`)}
-                </span>
-              ))}
-            </div>
-          </GlassCard>
+              <h3 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">{role}</h3>
+              <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed text-pretty max-w-[44ch]">
+                {t('lead')}
+              </p>
+            </GlassCard>
+          </motion.div>
 
-          <GlassCard className="p-6 md:p-8">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="p-3 rounded-xl bg-secondary text-primary">
-                <Globe className="w-6 h-6" />
+          {/* Stats */}
+          <motion.div className="lg:col-span-7" {...reveal(reduce, 0.08)}>
+            <GlassCard className="h-full p-4 md:p-6 flex items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3 w-full">
+                {stats.map((stat) => (
+                  <AnimatedStat key={stat.label} {...stat} />
+                ))}
               </div>
-              <h3 className="text-xl font-bold text-foreground">{tLanguages('title')}</h3>
-            </div>
-            <div className="space-y-3">
-              {(['arabic', 'french', 'english'] as const).map((lang) => (
-                <div key={lang} className="flex items-center justify-between">
-                  <span className="text-foreground">{tLanguages(lang)}</span>
+            </GlassCard>
+          </motion.div>
+
+          {/* How I work — qualities + soft skills merged */}
+          <motion.div className="lg:col-span-7" {...reveal(reduce, 0.16)}>
+            <GlassCard className="h-full p-6 md:p-8 flex flex-col">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 rounded-xl bg-secondary text-primary">
+                  <Handshake className="w-6 h-6" />
                 </div>
-              ))}
-            </div>
-          </GlassCard>
+                <h3 className="text-xl font-bold text-foreground">{tSoftSkills('subtitle')}</h3>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {qualities.map((quality) => (
+                  <Trait key={quality.key} icon={quality.icon} label={t(`qualities.${quality.key}`)} />
+                ))}
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-border flex flex-wrap gap-2.5">
+                {softSkills.map((skill) => (
+                  <span
+                    key={skill.key}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary/70 border border-border text-foreground text-sm"
+                  >
+                    <SkillIcon name={skill.label} icon={skill.icon} imageUrl={skill.imageUrl} className="text-primary" size={16} />
+                    {skill.label}
+                  </span>
+                ))}
+              </div>
+            </GlassCard>
+          </motion.div>
+
+          {/* Languages */}
+          <motion.div className="lg:col-span-5" {...reveal(reduce, 0.24)}>
+            <GlassCard className="h-full p-6 md:p-8 flex flex-col">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 rounded-xl bg-secondary text-primary">
+                  <Globe className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">{tLanguages('title')}</h3>
+              </div>
+              <div className="flex flex-col justify-center gap-5 flex-1">
+                {languages.map((language, index) => (
+                  <LanguageBar
+                    key={language.id}
+                    name={language.name}
+                    levelText={language.levelText}
+                    percent={language.percent}
+                    index={index}
+                    reduce={reduce}
+                  />
+                ))}
+              </div>
+            </GlassCard>
+          </motion.div>
         </div>
       </div>
     </section>

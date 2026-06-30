@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
-import { Code2, Layers, Server, Database, FolderKanban, PenTool, GitBranch, Palette, CheckCircle2, type LucideIcon } from 'lucide-react'
+import { Code2, Layers, Server, Database, FolderKanban, PenTool, GitBranch, Palette, type LucideIcon } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import BentoCard from '@/components/ui/BentoCard'
-import { TechIcon, hasTechIcon } from '@/components/ui/TechIcon'
-import type { TechName } from '@/components/ui/TechIcon'
+import SkillIcon from '@/components/ui/SkillIcon'
+import type { PublicSkillCategory } from '@/features/cms/queries'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -16,23 +16,31 @@ if (typeof window !== 'undefined') {
 
 interface SkillCategory {
   key: string
+  title?: string
   icon: LucideIcon
-  technologies: string[]
+  technologies: SkillItem[]
 }
 
-function SkillChip({ name }: { name: string }) {
-  const isIconTech = hasTechIcon(name)
+interface SkillItem {
+  name: string
+  icon?: string
+  imageUrl?: string
+}
 
+function SkillChip({ skill }: { skill: SkillItem }) {
   return (
     <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/80 border border-border text-sm text-foreground hover:border-primary/30 hover:bg-secondary transition-colors duration-200">
-      {isIconTech && <TechIcon name={name as TechName} size={16} showColor />}
-      {!isIconTech && <CheckCircle2 size={14} className="text-primary" />}
-      {name}
+      <SkillIcon name={skill.name} icon={skill.icon} imageUrl={skill.imageUrl} className="text-primary" size={16} />
+      {skill.name}
     </span>
   )
 }
 
-export default function SkillsSection() {
+export default function SkillsSection({
+  categories: cmsCategories,
+}: {
+  categories?: PublicSkillCategory[]
+}) {
   const t = useTranslations('skills')
   const sectionRef = useRef<HTMLElement>(null)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
@@ -65,48 +73,60 @@ export default function SkillsSection() {
     return () => ctx.revert()
   }, [prefersReducedMotion])
 
-  const categories: SkillCategory[] = [
+  const fallbackIconMap = [Code2, Layers, Server, Database, FolderKanban, PenTool, GitBranch, Palette]
+  const baseCategories: SkillCategory[] = cmsCategories?.length
+    ? cmsCategories.map((category, index) => ({
+        key: category.id,
+        title: category.name,
+        icon: fallbackIconMap[index % fallbackIconMap.length],
+        technologies: category.skills.map((skill) => ({
+          name: skill.name,
+          icon: skill.icon,
+          imageUrl: skill.imageUrl,
+        })),
+      }))
+    : [
     {
       key: 'languages',
       icon: Code2,
-      technologies: ['C', 'HTML5', 'CSS3', 'SQL', 'NoSQL', 'JavaScript', 'TypeScript', 'PHP'],
+      technologies: ['C', 'HTML5', 'CSS3', 'SQL', 'NoSQL', 'JavaScript', 'TypeScript', 'PHP'].map((name) => ({ name })),
     },
     {
       key: 'frameworks',
       icon: Layers,
-      technologies: ['Laravel', 'Node.js', 'React', 'Next.js', 'Express.js', 'NestJS', 'Ruby on Rails', 'Angular', 'Tailwind CSS', 'GraphQL'],
+      technologies: ['Laravel', 'Node.js', 'React', 'Next.js', 'Express.js', 'NestJS', 'Ruby on Rails', 'Angular', 'Tailwind CSS', 'GraphQL'].map((name) => ({ name })),
     },
     {
       key: 'devops',
       icon: Server,
-      technologies: ['Docker', 'CI/CD', 'GitLab'],
+      technologies: ['Docker', 'CI/CD', 'GitLab'].map((name) => ({ name })),
     },
     {
       key: 'databases',
       icon: Database,
-      technologies: ['MySQL', 'PostgreSQL', 'MongoDB'],
+      technologies: ['MySQL', 'PostgreSQL', 'MongoDB'].map((name) => ({ name })),
     },
     {
       key: 'management',
       icon: FolderKanban,
-      technologies: ['Agile', 'Jira'],
+      technologies: ['Agile', 'Jira'].map((name) => ({ name })),
     },
     {
       key: 'modeling',
       icon: PenTool,
-      technologies: ['Merise', 'UML'],
+      technologies: ['Merise', 'UML'].map((name) => ({ name })),
     },
     {
       key: 'versioning',
       icon: GitBranch,
-      technologies: ['Git', 'GitHub', 'GitLab'],
+      technologies: ['Git', 'GitHub', 'GitLab'].map((name) => ({ name })),
     },
     {
       key: 'design',
       icon: Palette,
-      technologies: ['Figma', 'Canva', 'Adobe XD'],
+      technologies: ['Figma', 'Canva', 'Adobe XD'].map((name) => ({ name })),
     },
-  ]
+      ]
 
   return (
     <section
@@ -120,10 +140,13 @@ export default function SkillsSection() {
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative container-main">
-        <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
+        <SectionHeader
+          eyebrow={t('subtitle')}
+          title={t('title')}
+        />
 
         <div className="skills-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
-          {categories.map((category, index) => {
+          {baseCategories.map((category, index) => {
             const Icon = category.icon
             return (
               <BentoCard
@@ -135,12 +158,12 @@ export default function SkillsSection() {
                   <div className="p-2.5 rounded-xl bg-secondary text-primary">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground">{t(`categories.${category.key}`)}</h3>
+                  <h3 className="text-lg font-bold text-foreground">{category.title ?? t(`categories.${category.key}`)}</h3>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
                   {category.technologies.map((tech) => (
-                    <SkillChip key={tech} name={tech} />
+                    <SkillChip key={`${tech.name}-${tech.imageUrl ?? tech.icon ?? ''}`} skill={tech} />
                   ))}
                 </div>
               </BentoCard>

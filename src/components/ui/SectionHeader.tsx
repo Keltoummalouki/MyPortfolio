@@ -15,6 +15,7 @@ export default function SectionHeader({ eyebrow, title, subtitle, centered = tru
   return (
     <div className={cn(centered && 'text-center', 'mb-14 md:mb-20', className)}>
       <motion.span
+        data-section-eyebrow
         className="inline-block px-4 py-1.5 rounded-full bg-secondary border border-border text-sm font-medium text-primary mb-4"
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}

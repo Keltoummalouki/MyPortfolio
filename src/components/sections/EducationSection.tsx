@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { GraduationCap, BookOpen } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
+import type { PublicEducation } from '@/features/cms/queries'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -24,7 +25,7 @@ const educationItems = [
   },
 ]
 
-export default function EducationSection() {
+export default function EducationSection({ items: cmsItems }: { items?: PublicEducation[] }) {
   const t = useTranslations('education')
   const sectionRef = useRef<HTMLElement>(null)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
@@ -58,6 +59,25 @@ export default function EducationSection() {
     return () => ctx.revert()
   }, [prefersReducedMotion])
 
+  const items = cmsItems?.length
+    ? cmsItems.map((item, index) => ({
+        id: item.id,
+        icon: index % 2 === 0 ? GraduationCap : BookOpen,
+        title: item.degree,
+        school: item.institution,
+        date: item.date,
+        description: item.description || item.field,
+        imageUrl: item.imageUrl,
+      }))
+    : educationItems.map((item) => ({
+        ...item,
+        title: t(`items.${item.id}.title`),
+        school: t(`items.${item.id}.school`),
+        date: t(`items.${item.id}.date`),
+        description: t(`items.${item.id}.description`),
+        imageUrl: '',
+      }))
+
   return (
     <section
       id="education"
@@ -72,7 +92,7 @@ export default function EducationSection() {
         <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {educationItems.map((item, index) => {
+          {items.map((item, index) => {
             const Icon = item.icon
 
             return (
@@ -85,24 +105,29 @@ export default function EducationSection() {
                 transition={{ delay: 0.1 * index }}
               >
                 <GlassCard className="p-6 md:p-8 h-full">
-                  <div className="inline-flex p-3 rounded-xl bg-secondary text-primary mb-5">
-                    <Icon className="w-6 h-6 md:w-7 md:h-7" />
-                  </div>
+                  {item.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.imageUrl} alt="" className="mb-5 size-14 rounded-xl border border-border object-cover" />
+                  ) : (
+                    <div className="inline-flex p-3 rounded-xl bg-secondary text-primary mb-5">
+                      <Icon className="w-6 h-6 md:w-7 md:h-7" />
+                    </div>
+                  )}
 
                   <h3 className="text-xl md:text-2xl font-bold mb-2 text-foreground tracking-tight">
-                    {t(`items.${item.id}.title`)}
+                    {item.title}
                   </h3>
 
                   <p className="text-sm text-primary font-medium mb-1">
-                    {t(`items.${item.id}.school`)}
+                    {item.school}
                   </p>
 
                   <p className="text-sm text-muted-foreground mb-4">
-                    {t(`items.${item.id}.date`)}
+                    {item.date}
                   </p>
 
                   <p className="text-muted-foreground leading-relaxed">
-                    {t(`items.${item.id}.description`)}
+                    {item.description}
                   </p>
                 </GlassCard>
               </motion.div>

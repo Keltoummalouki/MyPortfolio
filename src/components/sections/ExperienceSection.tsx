@@ -7,6 +7,8 @@ import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
 import { Briefcase } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
+import SkillIcon from '@/components/ui/SkillIcon'
+import type { PublicExperience } from '@/features/cms/queries'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -25,7 +27,7 @@ const experienceItems = [
   },
 ]
 
-export default function ExperienceSection() {
+export default function ExperienceSection({ items: cmsItems }: { items?: PublicExperience[] }) {
   const t = useTranslations('experience')
   const sectionRef = useRef<HTMLElement>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
@@ -74,6 +76,26 @@ export default function ExperienceSection() {
     return () => ctx.revert()
   }, [prefersReducedMotion])
 
+  const items = cmsItems?.length
+    ? cmsItems.map((item) => ({
+        id: item.id,
+        icon: Briefcase,
+        title: item.role,
+        date: item.date,
+        company: item.company,
+        description: item.description,
+        imageUrl: item.imageUrl,
+        technologies: item.technologies,
+      }))
+    : experienceItems.map((item) => ({
+        ...item,
+        title: t(`items.${item.id}.title`),
+        date: t(`items.${item.id}.date`),
+        company: t(`items.${item.id}.company`),
+        description: t(`items.${item.id}.description`),
+        imageUrl: '',
+      }))
+
   return (
     <section
       id="experience"
@@ -91,7 +113,7 @@ export default function ExperienceSection() {
           <div className="timeline-line absolute left-4 md:left-8 top-0 bottom-0 w-0.5 bg-border origin-top" />
 
           <div className="space-y-10 md:space-y-12">
-            {experienceItems.map((item) => {
+            {items.map((item) => {
               const Icon = item.icon
 
               return (
@@ -108,36 +130,37 @@ export default function ExperienceSection() {
                   <div className="group p-5 md:p-6 rounded-2xl bg-card border border-border hover:border-primary/30 transition-colors duration-300">
                     <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
                       <h3 className="text-lg md:text-xl font-bold text-foreground tracking-tight">
-                        {t(`items.${item.id}.title`)}
+                        {item.title}
                       </h3>
                       <span className="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                        {t(`items.${item.id}.date`)}
+                        {item.date}
                       </span>
                     </div>
 
                     <p className="text-sm text-primary font-medium mb-3">
-                      {t(`items.${item.id}.company`)}
+                      {item.imageUrl && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.imageUrl} alt="" className="mr-2 inline-block size-8 rounded-lg border border-border object-cover align-middle" />
+                      )}
+                      {item.company}
                     </p>
 
                     <p className="text-muted-foreground mb-4 leading-relaxed">
-                      {t(`items.${item.id}.description`)}
+                      {item.description}
                     </p>
 
                     <div className="flex flex-wrap gap-2">
                       {item.technologies.map((tech) => (
                         <span
                           key={tech}
-                          className="px-2.5 py-1 text-xs rounded-full bg-secondary text-muted-foreground"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full bg-secondary text-muted-foreground"
                         >
+                          <SkillIcon name={tech} icon={tech} className="text-primary" size={13} />
                           {tech}
                         </span>
                       ))}
                     </div>
 
-                    <p className="mt-4 text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground">Stack: </span>
-                      {t(`items.${item.id}.stack`)}
-                    </p>
                   </div>
                 </motion.div>
               )

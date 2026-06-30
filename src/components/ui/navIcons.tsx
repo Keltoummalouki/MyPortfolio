@@ -1,0 +1,34 @@
+import {
+  Award,
+  BookOpen,
+  BriefcaseBusiness,
+  FolderKanban,
+  Github,
+  GraduationCap,
+  Home,
+  LogIn,
+  Mail,
+  Settings,
+  Sparkles,
+  User,
+  Wrench,
+  type LucideIcon,
+} from 'lucide-react'
+import type { NavItemKey } from '@/features/cms/design-options'
+
+export const NAV_ICONS: Record<NavItemKey, LucideIcon> = {
+  home: Home,
+  about: User,
+  skills: Wrench,
+  experience: BriefcaseBusiness,
+  education: GraduationCap,
+  projects: FolderKanban,
+  certifications: Award,
+  github: Github,
+  blog: BookOpen,
+  freelance: Sparkles,
+  contact: Mail,
+  login: LogIn,
+  profile: User,
+  admin: Settings,
+}

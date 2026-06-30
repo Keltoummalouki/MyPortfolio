@@ -1,0 +1,50 @@
+import { getLocale } from 'next-intl/server'
+import Header from '@/components/layouts/Header'
+import Footer from '@/components/layouts/Footer'
+import AboutSection from '@/components/sections/AboutSection'
+import CertificationsSection from '@/components/sections/CertificationsSection'
+import ContactSection from '@/components/sections/ContactSection'
+import EducationSection from '@/components/sections/EducationSection'
+import ExperienceSection from '@/components/sections/ExperienceSection'
+import GithubStatsSection from '@/components/sections/GithubStatsSection'
+import HeroSection from '@/components/sections/HeroSection'
+import ProjectsSection from '@/components/sections/ProjectsSection'
+import SkillsSection from '@/components/sections/SkillsSection'
+import ScrollProgress from '@/components/ui/ScrollProgress'
+import { getPublishedCmsContent } from '@/features/cms/queries'
+import { getPublishedProjects } from '@/features/content/projects.queries'
+import { toProjectCard } from '@/features/content/projects.map'
+import type { Locale } from '@/lib/validation/locale'
+
+// Render per request so the public portfolio reflects CMS changes immediately.
+export const dynamic = 'force-dynamic'
+
+export default async function HomePage() {
+  const locale = (await getLocale()) as Locale
+  const [cms, projectRows] = await Promise.all([
+    getPublishedCmsContent(locale),
+    getPublishedProjects(),
+  ])
+  const projects = projectRows.map((project) => toProjectCard(project, locale))
+
+  return (
+    <div className="min-h-screen relative">
+      <ScrollProgress />
+      <Header brandName={cms.about?.fullName} design={cms.design} />
+
+      <main id="main-content">
+        <HeroSection about={cms.about} socialLinks={cms.socialLinks} />
+        <AboutSection about={cms.about} softSkills={cms.softSkills} languages={cms.languages} />
+        <SkillsSection categories={cms.skillCategories} />
+        <ExperienceSection items={cms.experiences} />
+        <EducationSection items={cms.education} />
+        <ProjectsSection projects={projects} />
+        <CertificationsSection items={cms.certifications} />
+        <GithubStatsSection />
+        <ContactSection socialLinks={cms.socialLinks} />
+      </main>
+
+      <Footer links={cms.socialLinks} />
+    </div>
+  )
+}

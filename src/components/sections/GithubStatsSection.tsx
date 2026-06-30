@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
-import { Github, ExternalLink } from 'lucide-react'
+import { ExternalLink, Github } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
 
@@ -41,8 +41,8 @@ export default function GithubStatsSection() {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top 80%',
-          }
-        }
+          },
+        },
       )
     }, sectionRef)
 
