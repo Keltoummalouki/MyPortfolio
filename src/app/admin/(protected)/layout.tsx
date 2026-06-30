@@ -2,9 +2,10 @@ import { redirect } from 'next/navigation'
 import { LogOut } from 'lucide-react'
 import { getAdminSession } from '@/features/auth/session'
 import { signOutAction } from '@/features/auth/actions'
+import { getStatusCounts } from '@/features/inbox/queries'
+import { getLeadStatusCounts } from '@/features/freelance/queries'
 import { Button } from '@/components/ui/button'
-import ThemeToggle from '@/components/ui/ThemeToggle'
-import AdminNav from './AdminNav'
+import AdminShell from './AdminShell'
 
 // Protected dashboard shell. The server-side guard here (plus RLS in the
 // database) is the security boundary; middleware only keeps tokens fresh.
@@ -39,28 +40,19 @@ export default async function ProtectedAdminLayout({
     )
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="flex h-14 items-center justify-between border-b border-border px-4">
-        <span className="font-bold text-foreground">Portfolio CMS</span>
-        <div className="flex items-center gap-2">
-          <span className="hidden text-sm text-muted-foreground sm:inline">{user.email}</span>
-          <ThemeToggle />
-          <form action={signOutAction}>
-            <Button type="submit" variant="outline" size="sm">
-              <LogOut size={16} />
-              <span className="hidden sm:inline">Sign out</span>
-            </Button>
-          </form>
-        </div>
-      </header>
+  // Real "new" counts for the nav badges (admin RLS context). Resolved here so
+  // every admin page keeps a consistent, up-to-date sidebar.
+  const [messageCounts, leadCounts] = await Promise.all([
+    getStatusCounts(),
+    getLeadStatusCounts(),
+  ])
 
-      <div className="lg:grid lg:grid-cols-[220px_1fr]">
-        <aside className="border-b border-border p-3 lg:min-h-[calc(100vh-3.5rem)] lg:border-b-0 lg:border-r">
-          <AdminNav />
-        </aside>
-        <main className="p-4 sm:p-6">{children}</main>
-      </div>
-    </div>
+  return (
+    <AdminShell
+      email={user.email ?? 'Admin'}
+      counts={{ newMessages: messageCounts.new, newLeads: leadCounts.new }}
+    >
+      {children}
+    </AdminShell>
   )
 }

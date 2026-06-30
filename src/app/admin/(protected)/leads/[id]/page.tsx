@@ -10,6 +10,7 @@ import {
   PROJECT_TYPE_LABELS,
   TIMELINE_LABELS,
 } from '@/features/freelance/schema'
+import { AdminSelectField } from '@/components/admin/AdminFormControls'
 import { Button } from '@/components/ui/button'
 
 function formatDateTime(value: string): string {
@@ -98,19 +99,14 @@ export default async function LeadDetailPage({
 
         <form action={updateLeadStatusAction} className="flex items-end gap-2">
           <input type="hidden" name="id" value={lead.id} />
-          <div className="space-y-1.5">
-            <label htmlFor="status" className="text-sm font-medium text-foreground">Status</label>
-            <select
-              id="status"
-              name="status"
-              defaultValue={lead.status}
-              className="rounded-md border border-border bg-background px-3 py-2 text-sm capitalize text-foreground shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-            >
-              {LEAD_STATUSES.map((s) => (
-                <option key={s} value={s} className="capitalize">{s}</option>
-              ))}
-            </select>
-          </div>
+          <AdminSelectField
+            id="status"
+            label="Status"
+            name="status"
+            options={LEAD_STATUSES.map((s) => ({ value: s, label: s.charAt(0).toUpperCase() + s.slice(1) }))}
+            defaultValue={lead.status}
+            className="w-44"
+          />
           <Button type="submit" variant="outline">Update</Button>
         </form>
       </div>

@@ -55,6 +55,33 @@ export async function getPublishedArticleBySlug(slug: string): Promise<Published
   }
 }
 
+/**
+ * Per-locale slugs for a published article identified by one of its slugs.
+ * Used to build `hreflang` alternates on the article detail page.
+ */
+export async function getArticleLocaleSlugs(slug: string): Promise<Record<string, string>> {
+  try {
+    const supabase = await createServerSupabaseClient()
+    const { data: match } = await supabase
+      .from('article_translations')
+      .select('article_id, articles!inner(status)')
+      .eq('slug', slug)
+      .eq('articles.status', 'published')
+      .maybeSingle()
+    if (!match) return {}
+
+    const { data: siblings } = await supabase
+      .from('article_translations')
+      .select('locale, slug')
+      .eq('article_id', match.article_id)
+
+    return Object.fromEntries((siblings ?? []).map((s) => [s.locale, s.slug]))
+  } catch (err) {
+    console.error('getArticleLocaleSlugs failed:', err)
+    return {}
+  }
+}
+
 /** Admin list: every article (RLS restricts this to administrators). */
 export async function listAdminArticles(): Promise<AdminArticle[]> {
   const supabase = await createServerSupabaseClient()

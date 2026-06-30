@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/admin/ui'
 import { listAdminProjects } from '@/features/content/projects.queries'
 import ProjectsTable, { type ProjectRowVM } from './ProjectsTable'
 
@@ -26,17 +28,18 @@ export default async function AdminProjectsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Projects</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage your portfolio projects and their translations.
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/admin/projects/new">New project</Link>
-        </Button>
-      </div>
+      <PageHeader
+        title="Projects"
+        description="Manage your portfolio projects and their translations."
+        action={
+          <Button asChild>
+            <Link href="/admin/projects/new">
+              <Plus size={16} />
+              New project
+            </Link>
+          </Button>
+        }
+      />
 
       <ProjectsTable projects={rows} />
     </div>

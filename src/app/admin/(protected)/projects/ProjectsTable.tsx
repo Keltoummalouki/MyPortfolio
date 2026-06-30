@@ -2,8 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Star } from 'lucide-react'
+import { FolderKanban, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { EmptyState, StatusBadge, table } from '@/components/admin/ui'
 import { cn } from '@/lib/utils'
 import { deleteProjectAction } from '@/features/content/projects.actions'
 import {
@@ -22,12 +30,6 @@ export interface ProjectRowVM {
   sortOrder: number
   techCount: number
   locales: Record<ProjectLocale, boolean>
-}
-
-const statusStyles: Record<ProjectStatus, string> = {
-  draft: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  published: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  archived: 'bg-muted text-muted-foreground',
 }
 
 const control =
@@ -56,69 +58,70 @@ export default function ProjectsTable({ projects }: { projects: ProjectRowVM[] }
           aria-label="Search projects"
           className={cn(control, 'sm:max-w-xs sm:flex-1')}
         />
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as ProjectStatus | 'all')}
-          aria-label="Filter by status"
-          className={control}
-        >
-          <option value="all">All statuses</option>
-          {PROJECT_STATUSES.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+        <Select value={status} onValueChange={(next) => setStatus(next as ProjectStatus | 'all')}>
+          <SelectTrigger aria-label="Filter by status" className="w-full sm:w-44">
+            <SelectValue placeholder="All statuses" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            {PROJECT_STATUSES.map((s) => (
+              <SelectItem key={s} value={s}>{s}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          {projects.length === 0 ? (
-            <>
-              No projects yet.{' '}
-              <Link href="/admin/projects/new" className="text-primary hover:underline">
-                Create your first project
-              </Link>
-              .
-            </>
-          ) : (
-            'No projects match your filters.'
-          )}
-        </div>
+        <EmptyState
+          icon={FolderKanban}
+          title={projects.length === 0 ? 'No projects yet' : 'No matching projects'}
+          description={
+            projects.length === 0
+              ? 'Create your first portfolio project to get started.'
+              : 'No projects match your search and filters.'
+          }
+          action={
+            projects.length === 0 ? (
+              <Button asChild size="sm">
+                <Link href="/admin/projects/new">New project</Link>
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+        <div className={table.shell}>
+          <table className={table.table}>
+            <thead className={table.thead}>
               <tr>
-                <th className="px-4 py-3 font-medium">Project</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Featured</th>
-                <th className="px-4 py-3 font-medium">Order</th>
-                <th className="px-4 py-3 font-medium">Locales</th>
-                <th className="px-4 py-3 text-right font-medium">Actions</th>
+                <th className={table.th}>Project</th>
+                <th className={table.th}>Status</th>
+                <th className={table.th}>Featured</th>
+                <th className={table.th}>Order</th>
+                <th className={table.th}>Locales</th>
+                <th className={cn(table.th, 'text-right')}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className={table.tbody}>
               {filtered.map((p) => (
-                <tr key={p.id} className="hover:bg-muted/30">
-                  <td className="px-4 py-3">
+                <tr key={p.id} className={table.tr}>
+                  <td className={table.td}>
                     <div className="font-medium text-foreground">
                       {p.title || <span className="text-muted-foreground">(untitled)</span>}
                     </div>
                     <div className="text-xs text-muted-foreground">{p.slug}</div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', statusStyles[p.status])}>
-                      {p.status}
-                    </span>
+                  <td className={table.td}>
+                    <StatusBadge status={p.status} />
                   </td>
-                  <td className="px-4 py-3">
+                  <td className={table.td}>
                     {p.featured ? (
                       <Star size={16} className="fill-current text-amber-500" aria-label="Featured" />
                     ) : (
                       <span className="text-muted-foreground">—</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{p.sortOrder}</td>
-                  <td className="px-4 py-3">
+                  <td className={cn(table.td, 'text-muted-foreground tabular-nums')}>{p.sortOrder}</td>
+                  <td className={table.td}>
                     <div className="flex gap-1">
                       {PROJECT_LOCALES.map((loc) => (
                         <span
@@ -127,7 +130,7 @@ export default function ProjectsTable({ projects }: { projects: ProjectRowVM[] }
                           className={cn(
                             'rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase',
                             p.locales[loc]
-                              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                              ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400'
                               : 'bg-muted text-muted-foreground/60',
                           )}
                         >
@@ -136,7 +139,7 @@ export default function ProjectsTable({ projects }: { projects: ProjectRowVM[] }
                       ))}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className={table.td}>
                     <div className="flex justify-end gap-1">
                       <Button asChild variant="ghost" size="sm">
                         <Link href={`/admin/projects/${p.id}`}>Edit</Link>

@@ -4,6 +4,7 @@ import { ArrowLeft, Mail } from 'lucide-react'
 import { getMessage } from '@/features/inbox/queries'
 import { updateMessageStatusAction } from '@/features/inbox/actions'
 import { MESSAGE_STATUSES } from '@/features/inbox/schema'
+import { AdminSelectField } from '@/components/admin/AdminFormControls'
 import { Button } from '@/components/ui/button'
 
 function formatDateTime(value: string): string {
@@ -69,23 +70,14 @@ export default async function MessageDetailPage({
 
         <form action={updateMessageStatusAction} className="flex items-end gap-2">
           <input type="hidden" name="id" value={message.id} />
-          <div className="space-y-1.5">
-            <label htmlFor="status" className="text-sm font-medium text-foreground">
-              Status
-            </label>
-            <select
-              id="status"
-              name="status"
-              defaultValue={message.status}
-              className="rounded-md border border-border bg-background px-3 py-2 text-sm capitalize text-foreground shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-            >
-              {MESSAGE_STATUSES.map((s) => (
-                <option key={s} value={s} className="capitalize">
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
+          <AdminSelectField
+            id="status"
+            label="Status"
+            name="status"
+            options={MESSAGE_STATUSES.map((s) => ({ value: s, label: s.charAt(0).toUpperCase() + s.slice(1) }))}
+            defaultValue={message.status}
+            className="w-44"
+          />
           <Button type="submit" variant="outline">
             Update
           </Button>

@@ -2,29 +2,42 @@
 
 import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
-import { Github, Linkedin, Mail, Heart, Code } from 'lucide-react'
+import { Heart, Code } from 'lucide-react'
+import type { PublicSocialLink } from '@/features/cms/queries'
+import SocialIcon from '@/components/ui/SocialIcon'
 
-export default function Footer() {
+export default function Footer({ links }: { links?: PublicSocialLink[] }) {
   const t = useTranslations('footer')
   const currentYear = new Date().getFullYear()
 
-  const socialLinks = [
+  const fallbackLinks = [
     {
       name: t('links.github'),
       href: 'https://github.com/keltoummalouki',
-      icon: Github,
+      platform: 'github',
+      icon: 'github',
     },
     {
       name: t('links.linkedin'),
       href: 'https://www.linkedin.com/in/keltoummalouki',
-      icon: Linkedin,
+      platform: 'linkedin',
+      icon: 'linkedin',
     },
     {
       name: t('links.email'),
       href: 'mailto:keltoummalouki@gmail.com',
-      icon: Mail,
+      platform: 'email',
+      icon: 'email',
     },
   ]
+  const socialLinks = links?.length
+    ? links.map((link) => ({
+        name: link.label,
+        href: link.url,
+        platform: link.platform,
+        icon: link.icon,
+      }))
+    : fallbackLinks
 
   return (
     <footer className="relative py-12 border-t border-border bg-background">
@@ -55,12 +68,12 @@ export default function Footer() {
               <a
                 key={link.name}
                 href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={link.href.startsWith('mailto:') || link.href.startsWith('tel:') ? undefined : '_blank'}
+                rel={link.href.startsWith('mailto:') || link.href.startsWith('tel:') ? undefined : 'noopener noreferrer'}
                 className="p-2.5 rounded-full border border-border bg-card text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
                 aria-label={link.name}
               >
-                <link.icon size={18} />
+                <SocialIcon platform={link.platform} icon={link.icon} className="size-[18px]" />
               </a>
             ))}
           </motion.div>

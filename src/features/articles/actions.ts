@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import type { PostgrestError } from '@supabase/supabase-js'
 import { requireAdmin } from '@/features/auth/session'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { uploadImageFromForm } from '@/features/cms/media'
 import {
   ARTICLE_LOCALES,
   articleFormSchema,
@@ -87,13 +88,10 @@ function resolvePublishedAt(values: ArticleFormValues): string | null {
   return values.publishedAt
 }
 
-function revalidateBlog(translations: ArticleFormValues['translations']) {
-  revalidatePath('/blog')
+function revalidateBlog() {
+  // Public blog index/detail are rendered dynamically, so they always reflect
+  // the latest published content; just refresh the admin list cache.
   revalidatePath('/admin/blog')
-  for (const locale of ARTICLE_LOCALES) {
-    const slug = translations[locale].slug
-    if (slug) revalidatePath(`/blog/${slug}`)
-  }
 }
 
 export async function createArticleAction(
@@ -107,13 +105,20 @@ export async function createArticleAction(
   const v = parsed.data
 
   const supabase = await createServerSupabaseClient()
+  let coverImageUrl = v.coverImageUrl
+  try {
+    coverImageUrl = (await uploadImageFromForm(supabase, formData, 'coverImageFile', 'blog')) ?? coverImageUrl
+  } catch {
+    return { ok: false, message: 'Could not upload the cover image. Use JPG, PNG, or WebP up to 5 MB.' }
+  }
+
   const { data: created, error } = await supabase
     .from('articles')
     .insert({
       slug: v.translations.fr.slug, // base slug = French slug
       status: v.status,
       featured: v.featured,
-      cover_image_url: v.coverImageUrl,
+      cover_image_url: coverImageUrl,
       author_name: v.authorName,
       published_at: resolvePublishedAt(v),
     })
@@ -130,7 +135,7 @@ export async function createArticleAction(
     }
   }
 
-  revalidateBlog(v.translations)
+  revalidateBlog()
   redirect('/admin/blog')
 }
 
@@ -146,13 +151,20 @@ export async function updateArticleAction(
   const v = parsed.data
 
   const supabase = await createServerSupabaseClient()
+  let coverImageUrl = v.coverImageUrl
+  try {
+    coverImageUrl = (await uploadImageFromForm(supabase, formData, 'coverImageFile', 'blog')) ?? coverImageUrl
+  } catch {
+    return { ok: false, message: 'Could not upload the cover image. Use JPG, PNG, or WebP up to 5 MB.' }
+  }
+
   const { error } = await supabase
     .from('articles')
     .update({
       slug: v.translations.fr.slug,
       status: v.status,
       featured: v.featured,
-      cover_image_url: v.coverImageUrl,
+      cover_image_url: coverImageUrl,
       author_name: v.authorName,
       published_at: resolvePublishedAt(v),
     })
@@ -186,7 +198,7 @@ export async function updateArticleAction(
     }
   }
 
-  revalidateBlog(v.translations)
+  revalidateBlog()
   redirect('/admin/blog')
 }
 
@@ -199,7 +211,6 @@ export async function deleteArticleAction(formData: FormData): Promise<void> {
   const supabase = await createServerSupabaseClient()
   await supabase.from('articles').delete().eq('id', id) // cascade removes translations
 
-  revalidatePath('/blog')
   revalidatePath('/admin/blog')
   redirect('/admin/blog')
 }

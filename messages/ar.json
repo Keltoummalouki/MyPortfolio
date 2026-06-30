@@ -64,6 +64,7 @@
     }
   },
   "nav": {
+    "home": "الرئيسية",
     "about": "نبذة عني",
     "skills": "المهارات",
     "experience": "الخبرة",
@@ -71,7 +72,26 @@
     "projects": "المشاريع",
     "certifications": "الشهادات",
     "github": "جيت هب",
-    "contact": "تواصل"
+    "blog": "المدونة",
+    "freelance": "العمل الحر",
+    "contact": "تواصل",
+    "login": "تسجيل الدخول",
+    "profile": "الملف الشخصي",
+    "admin": "الإدارة",
+    "more": "المزيد",
+    "searchPlaceholder": "ابحث أو انتقل إلى…",
+    "openCommand": "فتح قائمة الأوامر",
+    "commandTitle": "قائمة الأوامر",
+    "closeMenu": "إغلاق القائمة",
+    "groupExplore": "استكشاف",
+    "groupPages": "الصفحات",
+    "groupManage": "الإدارة",
+    "groupActions": "إجراءات",
+    "backToTop": "العودة إلى الأعلى",
+    "noResults": "لا توجد نتائج لـ",
+    "current": "الحالي",
+    "hintNavigate": "تنقل",
+    "hintSelect": "اختيار"
   },
   "hero": {
     "greeting": "مرحباً، أنا",
@@ -82,6 +102,11 @@
     "contactMe": "تواصل معي",
     "scrollDown": "مرر للاستكشاف",
     "openToWork": "متاحة للعمل",
+    "availability": {
+      "available": "متاحة للعمل",
+      "limited": "متاحة بشكل محدود",
+      "unavailable": "غير متاحة حالياً"
+    },
     "location": "الدار البيضاء (تنقل / انتقال)"
   },
   "about": {
@@ -92,7 +117,8 @@
       "projects": "مشاريع منجزة",
       "experience": "سنوات الخبرة",
       "technologies": "تقنيات",
-      "commits": "مساهمات جيت هب"
+      "commits": "مساهمات جيت هب",
+      "githubRepos": "مستودعات جيت هب"
     },
     "qualities": {
       "creative": "مبدعة",

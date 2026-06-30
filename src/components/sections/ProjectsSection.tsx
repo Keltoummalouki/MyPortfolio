@@ -9,6 +9,7 @@ import { Github, ExternalLink, Star, Folder, Code2, ArrowUpRight } from 'lucide-
 import { Button } from '@/components/ui/button'
 import SectionHeader from '@/components/ui/SectionHeader'
 import BentoCard from '@/components/ui/BentoCard'
+import SkillIcon from '@/components/ui/SkillIcon'
 import type { ProjectCardData } from '@/features/content/projects.map'
 
 if (typeof window !== 'undefined') {
@@ -71,20 +72,24 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
   const items: ProjectCardData[] =
     projects && projects.length > 0
       ? projects
-      : FALLBACK_PROJECTS.map((p) => ({
-          id: p.id,
-          title: t(`items.${p.id}.title`),
-          description: t(`items.${p.id}.description`),
-          image: p.image,
-          github: p.github || null,
-          demo: p.demo || null,
-          featured: p.featured,
-          stack: t(`items.${p.id}.stack`)
+      : FALLBACK_PROJECTS.map((p) => {
+          const stack = t(`items.${p.id}.stack`)
             .split(',')
             .map((s) => s.trim())
-            .filter(Boolean),
-          dateLabel: t(`items.${p.id}.date`),
-        }))
+            .filter(Boolean)
+          return {
+            id: p.id,
+            title: t(`items.${p.id}.title`),
+            description: t(`items.${p.id}.description`),
+            image: p.image,
+            github: p.github || null,
+            demo: p.demo || null,
+            featured: p.featured,
+            stack,
+            stackItems: stack.map((name) => ({ name, icon: null, imageUrl: null })),
+            dateLabel: t(`items.${p.id}.date`),
+          }
+        })
 
   return (
     <section
@@ -155,12 +160,13 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
                   )}
 
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {project.stack.slice(0, 6).map((tech) => (
+                    {project.stackItems.slice(0, 6).map((tech) => (
                       <span
-                        key={tech}
-                        className="px-2.5 py-1 text-xs font-medium rounded-full bg-secondary text-muted-foreground border border-border"
+                        key={tech.name}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-secondary text-muted-foreground border border-border"
                       >
-                        {tech}
+                        <SkillIcon name={tech.name} icon={tech.icon} imageUrl={tech.imageUrl} className="text-primary" size={13} />
+                        {tech.name}
                       </span>
                     ))}
                   </div>

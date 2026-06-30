@@ -7,12 +7,13 @@ import { useTranslations } from 'next-intl'
 import { Award, ExternalLink } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
+import type { PublicCertification } from '@/features/cms/queries'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-export default function CertificationsSection() {
+export default function CertificationsSection({ items: cmsItems }: { items?: PublicCertification[] }) {
   const t = useTranslations('certifications')
   const sectionRef = useRef<HTMLElement>(null)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
@@ -45,6 +46,26 @@ export default function CertificationsSection() {
     return () => ctx.revert()
   }, [prefersReducedMotion])
 
+  const items = cmsItems?.length
+    ? cmsItems.map((item) => ({
+        id: item.id,
+        title: item.name,
+        issuer: item.issuer,
+        description: item.description,
+        credentialUrl: item.credentialUrl,
+        imageUrl: item.imageUrl,
+      }))
+    : [
+        {
+          id: 'docker',
+          title: t('items.docker.title'),
+          issuer: t('items.docker.issuer'),
+          description: t('items.docker.description'),
+          credentialUrl: 'https://www.linkedin.com/in/keltoummalouki',
+          imageUrl: '',
+        },
+      ]
+
   return (
     <section
       id="certifications"
@@ -58,27 +79,33 @@ export default function CertificationsSection() {
       <div className="relative container-main">
         <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
 
-        <div className="max-w-2xl mx-auto">
-          <div className="certification-card">
+        <div className="grid max-w-5xl mx-auto gap-6 md:grid-cols-2">
+          {items.map((item) => (
+          <div key={item.id} className="certification-card">
             <GlassCard className="p-8 md:p-10 text-center">
-              <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-primary to-violet-500 text-white mb-6">
-                <Award size={40} />
-              </div>
+              {item.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={item.imageUrl} alt={item.title} className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover" />
+              ) : (
+                <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-primary to-violet-500 text-white mb-6">
+                  <Award size={40} />
+                </div>
+              )}
 
               <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-                {t('items.docker.title')}
+                {item.title}
               </h3>
 
               <p className="text-primary font-medium mb-2">
-                {t('items.docker.issuer')}
+                {item.issuer}
               </p>
 
               <p className="text-muted-foreground mb-6">
-                {t('items.docker.description')}
+                {item.description}
               </p>
 
               <a
-                href="https://www.linkedin.com/in/keltoummalouki"
+                href={item.credentialUrl || 'https://www.linkedin.com/in/keltoummalouki'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-secondary text-foreground font-medium hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
@@ -88,6 +115,7 @@ export default function CertificationsSection() {
               </a>
             </GlassCard>
           </div>
+          ))}
         </div>
       </div>
     </section>

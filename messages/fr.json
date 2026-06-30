@@ -64,6 +64,7 @@
     }
   },
   "nav": {
+    "home": "Accueil",
     "about": "À propos",
     "skills": "Compétences",
     "experience": "Expérience",
@@ -71,7 +72,26 @@
     "projects": "Projets",
     "certifications": "Certifications",
     "github": "GitHub",
-    "contact": "Contact"
+    "blog": "Blog",
+    "freelance": "Freelance",
+    "contact": "Contact",
+    "login": "Connexion",
+    "profile": "Profil",
+    "admin": "Admin",
+    "more": "Plus",
+    "searchPlaceholder": "Rechercher ou aller à…",
+    "openCommand": "Ouvrir le menu de commandes",
+    "commandTitle": "Menu de commandes",
+    "closeMenu": "Fermer le menu",
+    "groupExplore": "Explorer",
+    "groupPages": "Pages",
+    "groupManage": "Gérer",
+    "groupActions": "Actions",
+    "backToTop": "Retour en haut",
+    "noResults": "Aucun résultat pour",
+    "current": "Actuel",
+    "hintNavigate": "Naviguer",
+    "hintSelect": "Sélectionner"
   },
   "hero": {
     "greeting": "Bonjour, je suis",
@@ -82,6 +102,11 @@
     "contactMe": "Me Contacter",
     "scrollDown": "Défiler pour explorer",
     "openToWork": "Disponible",
+    "availability": {
+      "available": "Disponible",
+      "limited": "Disponibilité limitée",
+      "unavailable": "Non disponible"
+    },
     "location": "Casablanca (mobilité / relocation)"
   },
   "about": {
@@ -92,7 +117,8 @@
       "projects": "Projets Réalisés",
       "experience": "Années d'Expérience",
       "technologies": "Technologies",
-      "commits": "Commits GitHub"
+      "commits": "Commits GitHub",
+      "githubRepos": "Dépôts GitHub"
     },
     "qualities": {
       "creative": "Créative",

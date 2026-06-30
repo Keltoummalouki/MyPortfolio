@@ -10,8 +10,10 @@ import { Mail, Phone, MapPin, Send, CheckCircle, Loader2, AlertCircle } from 'lu
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
 import TurnstileWidget from '@/components/ui/TurnstileWidget'
+import SocialIcon from '@/components/ui/SocialIcon'
 import { submitContactMessage } from '@/features/inbox/actions'
 import { cn } from '@/lib/utils'
+import type { PublicSocialLink } from '@/features/cms/queries'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -127,7 +129,7 @@ function FloatingLabelInput({
   )
 }
 
-export default function ContactSection() {
+export default function ContactSection({ socialLinks = [] }: { socialLinks?: PublicSocialLink[] }) {
   const t = useTranslations('contact')
   const tCommon = useTranslations('common')
   const sectionRef = useRef<HTMLElement>(null)
@@ -311,7 +313,11 @@ export default function ContactSection() {
       <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative container-main">
-        <SectionHeader eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
+        <SectionHeader
+          eyebrow={t('eyebrow')}
+          title={t('title')}
+          subtitle={t('subtitle')}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {contactInfo.map((info) => {
@@ -344,6 +350,24 @@ export default function ContactSection() {
             )
           })}
         </div>
+
+        {socialLinks.length > 0 && (
+          <div className="mb-12 flex flex-wrap justify-center gap-3">
+            {socialLinks.map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target={link.url.startsWith('mailto:') || link.url.startsWith('tel:') ? undefined : '_blank'}
+                rel={link.url.startsWith('mailto:') || link.url.startsWith('tel:') ? undefined : 'noopener noreferrer'}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+                aria-label={link.label || link.platform}
+              >
+                <SocialIcon platform={link.platform} icon={link.icon} className="size-4" />
+                {link.label || link.platform}
+              </a>
+            ))}
+          </div>
+        )}
 
         <motion.div
           className="max-w-2xl mx-auto"

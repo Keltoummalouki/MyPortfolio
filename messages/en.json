@@ -64,6 +64,7 @@
     }
   },
   "nav": {
+    "home": "Home",
     "about": "About",
     "skills": "Skills",
     "experience": "Experience",
@@ -71,7 +72,26 @@
     "projects": "Projects",
     "certifications": "Certifications",
     "github": "GitHub",
-    "contact": "Contact"
+    "blog": "Blog",
+    "freelance": "Freelance",
+    "contact": "Contact",
+    "login": "Login",
+    "profile": "Profile",
+    "admin": "Admin",
+    "more": "More",
+    "searchPlaceholder": "Search or jump to…",
+    "openCommand": "Open command menu",
+    "commandTitle": "Command menu",
+    "closeMenu": "Close menu",
+    "groupExplore": "Explore",
+    "groupPages": "Pages",
+    "groupManage": "Manage",
+    "groupActions": "Actions",
+    "backToTop": "Back to top",
+    "noResults": "No results for",
+    "current": "Current",
+    "hintNavigate": "Navigate",
+    "hintSelect": "Select"
   },
   "hero": {
     "greeting": "Hello, I'm",
@@ -82,6 +102,11 @@
     "contactMe": "Contact Me",
     "scrollDown": "Scroll to explore",
     "openToWork": "Open to work",
+    "availability": {
+      "available": "Open to work",
+      "limited": "Limited availability",
+      "unavailable": "Not available"
+    },
     "location": "Casablanca (mobile / relocation)"
   },
   "about": {
@@ -92,7 +117,8 @@
       "projects": "Projects Completed",
       "experience": "Years Experience",
       "technologies": "Technologies",
-      "commits": "GitHub Commits"
+      "commits": "GitHub Commits",
+      "githubRepos": "GitHub repositories"
     },
     "qualities": {
       "creative": "Creative",

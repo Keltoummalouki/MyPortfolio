@@ -1,15 +1,9 @@
 import Link from 'next/link'
+import { Inbox } from 'lucide-react'
 import { listMessages, getStatusCounts } from '@/features/inbox/queries'
-import { MESSAGE_STATUSES, messageStatusSchema, type MessageStatus } from '@/features/inbox/schema'
+import { MESSAGE_STATUSES, messageStatusSchema } from '@/features/inbox/schema'
+import { EmptyState, FilterTabs, PageHeader, StatusBadge } from '@/components/admin/ui'
 import { cn } from '@/lib/utils'
-
-const statusStyles: Record<MessageStatus, string> = {
-  new: 'bg-primary/15 text-primary',
-  read: 'bg-muted text-muted-foreground',
-  replied: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  archived: 'bg-muted text-muted-foreground',
-  spam: 'bg-destructive/15 text-destructive',
-}
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString(undefined, {
@@ -36,47 +30,33 @@ export default async function InboxPage({
   const [messages, counts] = await Promise.all([listMessages(activeStatus), getStatusCounts()])
   const total = MESSAGE_STATUSES.reduce((sum, s) => sum + counts[s], 0)
 
-  const tabs: { key: MessageStatus | 'all'; label: string; count: number; href: string }[] = [
-    { key: 'all', label: 'All', count: total, href: '/admin/inbox' },
+  const tabs = [
+    { key: 'all', label: 'All', count: total, href: '/admin/inbox', active: !activeStatus },
     ...MESSAGE_STATUSES.map((s) => ({
       key: s,
       label: s,
       count: counts[s],
       href: `/admin/inbox?status=${s}`,
+      active: s === activeStatus,
     })),
   ]
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Inbox</h1>
-        <p className="text-sm text-muted-foreground">Messages submitted through the contact form.</p>
-      </div>
+      <PageHeader title="Inbox" description="Messages submitted through the contact form." />
 
-      <nav aria-label="Filter by status" className="flex flex-wrap gap-2">
-        {tabs.map((tab) => {
-          const active = tab.key === 'all' ? !activeStatus : tab.key === activeStatus
-          return (
-            <Link
-              key={tab.key}
-              href={tab.href}
-              aria-current={active ? 'page' : undefined}
-              className={cn(
-                'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors',
-                active ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:bg-secondary/60',
-              )}
-            >
-              {tab.label}
-              <span className="rounded-full bg-muted px-1.5 text-xs text-muted-foreground">{tab.count}</span>
-            </Link>
-          )
-        })}
-      </nav>
+      <FilterTabs tabs={tabs} ariaLabel="Filter messages by status" />
 
       {messages.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          No messages{activeStatus ? ` with status “${activeStatus}”` : ' yet'}.
-        </div>
+        <EmptyState
+          icon={Inbox}
+          title={activeStatus ? `No ${activeStatus} messages` : 'No messages yet'}
+          description={
+            activeStatus
+              ? 'Try a different status filter.'
+              : 'Messages from your contact form will appear here.'
+          }
+        />
       ) : (
         <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
           {messages.map((m) => (
@@ -98,14 +78,7 @@ export default async function InboxPage({
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  <span
-                    className={cn(
-                      'rounded-full px-2 py-0.5 text-xs font-medium capitalize',
-                      statusStyles[m.status],
-                    )}
-                  >
-                    {m.status}
-                  </span>
+                  <StatusBadge status={m.status} />
                   <time className="text-xs text-muted-foreground" dateTime={m.created_at}>
                     {formatDate(m.created_at)}
                   </time>

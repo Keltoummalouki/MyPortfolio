@@ -34,6 +34,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      about_profile: {
+        Row: {
+          avatar_url: string | null
+          bio: Json
+          created_at: string
+          full_name: string | null
+          headline: Json
+          id: boolean
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: Json
+          created_at?: string
+          full_name?: string | null
+          headline?: Json
+          id?: boolean
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: Json
+          created_at?: string
+          full_name?: string | null
+          headline?: Json
+          id?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_profiles: {
         Row: {
           created_at: string
@@ -147,6 +177,80 @@ export type Database = {
         }
         Relationships: []
       }
+      certification_translations: {
+        Row: {
+          certification_id: string
+          created_at: string
+          description: string | null
+          id: string
+          locale: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          certification_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          locale: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          certification_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          locale?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certification_translations_certification_id_fkey"
+            columns: ["certification_id"]
+            isOneToOne: false
+            referencedRelation: "certifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      certifications: {
+        Row: {
+          created_at: string
+          credential_url: string | null
+          id: string
+          image_url: string | null
+          issue_date: string | null
+          issuer: string | null
+          sort_order: number
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credential_url?: string | null
+          id?: string
+          image_url?: string | null
+          issue_date?: string | null
+          issuer?: string | null
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credential_url?: string | null
+          id?: string
+          image_url?: string | null
+          issue_date?: string | null
+          issuer?: string | null
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
@@ -177,6 +281,220 @@ export type Database = {
           status?: Database["public"]["Enums"]["message_status"]
           subject?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      design_settings: {
+        Row: {
+          accent_color: string | null
+          created_at: string
+          cursor_style: string | null
+          default_locale: string
+          default_theme: string
+          extra: Json
+          font_body: string | null
+          font_heading: string | null
+          header_position: string
+          id: boolean
+          nav_items: Json
+          primary_color: string | null
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          created_at?: string
+          cursor_style?: string | null
+          default_locale?: string
+          default_theme?: string
+          extra?: Json
+          font_body?: string | null
+          font_heading?: string | null
+          header_position?: string
+          id?: boolean
+          nav_items?: Json
+          primary_color?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          created_at?: string
+          cursor_style?: string | null
+          default_locale?: string
+          default_theme?: string
+          extra?: Json
+          font_body?: string | null
+          font_heading?: string | null
+          header_position?: string
+          id?: boolean
+          nav_items?: Json
+          primary_color?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      education: {
+        Row: {
+          created_at: string
+          end_date: string | null
+          id: string
+          image_url: string | null
+          institution: string | null
+          location: string | null
+          sort_order: number
+          start_date: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          institution?: string | null
+          location?: string | null
+          sort_order?: number
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          institution?: string | null
+          location?: string | null
+          sort_order?: number
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      education_translations: {
+        Row: {
+          created_at: string
+          degree: string
+          description: string | null
+          education_id: string
+          field: string | null
+          id: string
+          locale: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          degree: string
+          description?: string | null
+          education_id: string
+          field?: string | null
+          id?: string
+          locale: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          degree?: string
+          description?: string | null
+          education_id?: string
+          field?: string | null
+          id?: string
+          locale?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_translations_education_id_fkey"
+            columns: ["education_id"]
+            isOneToOne: false
+            referencedRelation: "education"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_translations: {
+        Row: {
+          created_at: string
+          description: string | null
+          experience_id: string
+          id: string
+          locale: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          experience_id: string
+          id?: string
+          locale: string
+          role: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          experience_id?: string
+          id?: string
+          locale?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_translations_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experiences: {
+        Row: {
+          company: string | null
+          created_at: string
+          end_date: string | null
+          id: string
+          image_url: string | null
+          is_current: boolean
+          location: string | null
+          sort_order: number
+          start_date: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          technologies: string[]
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_current?: boolean
+          location?: string | null
+          sort_order?: number
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          technologies?: string[]
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_current?: boolean
+          location?: string | null
+          sort_order?: number
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          technologies?: string[]
+          updated_at?: string
+          url?: string | null
         }
         Relationships: []
       }
@@ -224,6 +542,120 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      languages: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          level: Json
+          name: Json
+          sort_order: number
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          level?: Json
+          name?: Json
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          level?: Json
+          name?: Json
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      media_assets: {
+        Row: {
+          alt: Json
+          bucket: string
+          created_at: string
+          height: number | null
+          id: string
+          kind: string | null
+          mime_type: string | null
+          path: string
+          size_bytes: number | null
+          updated_at: string
+          url: string | null
+          width: number | null
+        }
+        Insert: {
+          alt?: Json
+          bucket?: string
+          created_at?: string
+          height?: number | null
+          id?: string
+          kind?: string | null
+          mime_type?: string | null
+          path: string
+          size_bytes?: number | null
+          updated_at?: string
+          url?: string | null
+          width?: number | null
+        }
+        Update: {
+          alt?: Json
+          bucket?: string
+          created_at?: string
+          height?: number | null
+          id?: string
+          kind?: string | null
+          mime_type?: string | null
+          path?: string
+          size_bytes?: number | null
+          updated_at?: string
+          url?: string | null
+          width?: number | null
+        }
+        Relationships: []
+      }
+      project_skills: {
+        Row: {
+          created_at: string
+          project_id: string
+          skill_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          project_id: string
+          skill_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          project_id?: string
+          skill_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_skills_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_skills_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skills"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       project_translations: {
         Row: {
@@ -351,6 +783,7 @@ export type Database = {
           created_at: string
           cv_url: string | null
           id: boolean
+          location: Json
           profile: Json
           social_links: Json
           updated_at: string
@@ -361,6 +794,7 @@ export type Database = {
           created_at?: string
           cv_url?: string | null
           id?: boolean
+          location?: Json
           profile?: Json
           social_links?: Json
           updated_at?: string
@@ -371,9 +805,126 @@ export type Database = {
           created_at?: string
           cv_url?: string | null
           id?: boolean
+          location?: Json
           profile?: Json
           social_links?: Json
           updated_at?: string
+        }
+        Relationships: []
+      }
+      skill_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: Json
+          slug: string
+          sort_order: number
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: Json
+          slug: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: Json
+          slug?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          icon: string | null
+          id: string
+          image_url: string | null
+          level: number | null
+          name: string
+          skill_type: string
+          sort_order: number
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          level?: number | null
+          name: string
+          skill_type?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          level?: number | null
+          name?: string
+          skill_type?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skills_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "skill_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_links: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          label: string | null
+          platform: string
+          sort_order: number
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          label?: string | null
+          platform: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          label?: string | null
+          platform?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+          url?: string
         }
         Relationships: []
       }
@@ -539,4 +1090,3 @@ export const Constants = {
     },
   },
 } as const
-

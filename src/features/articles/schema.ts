@@ -10,6 +10,10 @@ export const articleStatusSchema = z.enum(ARTICLE_STATUSES)
 export const ARTICLE_LOCALES = ['fr', 'en', 'ar'] as const
 export type ArticleLocale = (typeof ARTICLE_LOCALES)[number]
 
+// Default byline for new articles. Kept here (a pure, shared module) so the form,
+// any future server defaults, and tests reference one source of truth.
+export const DEFAULT_AUTHOR_NAME = 'Keltoum Malouki'
+
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 const optionalText = (max: number) =>

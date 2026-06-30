@@ -1,13 +1,17 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { Search } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
+import CommandPalette from '@/components/ui/CommandPalette'
+import { NAV_ICONS } from '@/components/ui/navIcons'
+import { Link, usePathname } from '@/i18n/navigation'
+import type { PublicDesignSettings } from '@/features/cms/queries'
+import { DEFAULT_PUBLIC_NAV_ITEMS, NAV_ITEMS, normalizeNavItems, type NavItemKey } from '@/features/cms/design-options'
 import { cn } from '@/lib/utils'
 
 const Logo3D = dynamic(() => import('@/components/three/Logo3D'), {
@@ -19,28 +23,72 @@ const Logo3D = dynamic(() => import('@/components/three/Logo3D'), {
   ),
 })
 
-const navItems = [
-  { href: '#about', key: 'about' },
-  { href: '#skills', key: 'skills' },
-  { href: '#experience', key: 'experience' },
-  { href: '#education', key: 'education' },
-  { href: '#projects', key: 'projects' },
-  { href: '#certifications', key: 'certifications' },
-  { href: '#github', key: 'github' },
-  { href: '#contact', key: 'contact' },
-] as const
+type NavItem = (typeof NAV_ITEMS)[number]
 
-export default function Header() {
+const HOME_ITEM = NAV_ITEMS.find((item) => item.value === 'home')!
+
+const pillSpring = { type: 'spring', stiffness: 380, damping: 32 } as const
+
+function tr(t: ReturnType<typeof useTranslations>, key: string, fallback: string) {
+  try {
+    const value = t(key)
+    return value === key ? fallback : value
+  } catch {
+    return fallback
+  }
+}
+
+function translateNav(t: ReturnType<typeof useTranslations>, item: NavItem) {
+  return tr(t, item.value, item.label)
+}
+
+function isTypingTarget(target: EventTarget | null) {
+  const el = target as HTMLElement | null
+  if (!el) return false
+  const tag = el.tagName
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable
+}
+
+export default function Header({
+  brandName,
+  design,
+}: {
+  brandName?: string
+  design?: PublicDesignSettings
+}) {
   const t = useTranslations('nav')
+  const locale = useLocale()
+  const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isCommandOpen, setIsCommandOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
+  const [mounted, setMounted] = useState(false)
+  const [isMac, setIsMac] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
+
+  const navKeys = design?.navItems?.length ? design.navItems : DEFAULT_PUBLIC_NAV_ITEMS
+  const visibleNavItems = useMemo(() => {
+    const normalizedKeys = new Set<NavItemKey>(normalizeNavItems(navKeys))
+    return NAV_ITEMS.filter((item) => normalizedKeys.has(item.value))
+  }, [navKeys])
+
+  const sectionItems = useMemo(() => visibleNavItems.filter((item) => item.kind === 'section'), [visibleNavItems])
+  const pageItems = useMemo(() => {
+    const pages = visibleNavItems.filter((item) => item.kind === 'page' && item.value !== 'home')
+    return [HOME_ITEM, ...pages]
+  }, [visibleNavItems])
+
+  // The top bar stays fixed for identity and page links. The Header-position
+  // setting controls where the section dock floats: bottom, left, or right.
+  const headerPosition = design?.headerPosition ?? 'bottom'
+  const dockSide: 'bottom' | 'left' | 'right' =
+    headerPosition === 'left' ? 'left' : headerPosition === 'right' ? 'right' : 'bottom'
+  const dockHorizontal = dockSide === 'bottom'
 
   const handleScroll = useCallback(() => {
     setIsScrolled(window.scrollY > 20)
 
-    for (const item of navItems) {
+    for (const item of sectionItems) {
       const element = document.getElementById(item.href.slice(1))
       if (element) {
         const rect = element.getBoundingClientRect()
@@ -50,7 +98,7 @@ export default function Header() {
         }
       }
     }
-  }, [])
+  }, [sectionItems])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -62,155 +110,209 @@ export default function Header() {
   }, [handleScroll])
 
   useEffect(() => {
+    setMounted(true)
+    setIsMac(/Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent))
+  }, [])
+
+  // Global shortcuts: ⌘K / Ctrl+K toggles, "/" opens (when not typing).
+  useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsMobileMenuOpen(false)
+    const handleKeydown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setIsCommandOpen((open) => !open)
+      } else if (event.key === '/' && !isTypingTarget(event.target)) {
+        event.preventDefault()
+        setIsCommandOpen(true)
       }
     }
 
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    window.addEventListener('keydown', handleKeydown)
+    return () => window.removeEventListener('keydown', handleKeydown)
   }, [])
 
-  const handleNavClick = (href: string) => {
-    setIsMobileMenuOpen(false)
-
+  const handleSectionClick = (href: string) => {
     const element = document.querySelector(href)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
+      return
     }
+    window.location.href = `/${locale}${href}`
   }
 
-  return (
-    <header
-      ref={headerRef}
-      className="fixed top-4 left-4 right-4 z-50"
-    >
-      <div
-        className={cn(
-          'max-w-7xl mx-auto transition-all duration-300 rounded-2xl px-4 py-3',
-          isScrolled
-            ? 'bg-background/85 backdrop-blur-xl border border-border shadow-lg shadow-black/5'
-            : 'bg-background/50 backdrop-blur-md border border-transparent'
-        )}
-      >
-        <div className="flex items-center justify-between">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link
-              href="/"
-              className="relative flex items-center gap-2 group"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            >
-              <div className="w-10 h-10">
-                <Logo3D className="w-full h-full" />
-              </div>
-              <span className="hidden sm:block text-lg font-semibold text-foreground tracking-tight">
-                <span className="text-primary">M</span>alouki
-              </span>
-            </Link>
-          </motion.div>
+  const isPageActive = (item: NavItem) => {
+    if (item.value === 'home') return pathname === '/'
+    return pathname === item.href || pathname.startsWith(`${item.href}/`)
+  }
 
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
-            {navItems.map((item) => (
+  const displayBrand = brandName?.trim() || 'Malouki'
+  const openLabel = tr(t, 'openCommand', 'Open command menu')
+
+  return (
+    <>
+      {/* ── Top bar: logo · page switcher · utilities ── */}
+      <header ref={headerRef} className="fixed left-4 right-4 top-4 z-50">
+        <div
+          className={cn(
+            'mx-auto max-w-7xl rounded-2xl border px-4 py-3 transition-all duration-300',
+            isScrolled
+              ? 'border-border bg-background/85 shadow-lg shadow-black/5 backdrop-blur-xl'
+              : 'border-transparent bg-background/50 backdrop-blur-md',
+          )}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
+              <Link
+                href="/"
+                className="relative flex items-center gap-2 group"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                <div className="h-10 w-10">
+                  <Logo3D className="h-full w-full" />
+                </div>
+                <span className="hidden text-lg font-semibold tracking-tight text-foreground sm:block">
+                  <span className="text-primary">{displayBrand.charAt(0)}</span>{displayBrand.slice(1)}
+                </span>
+              </Link>
+            </motion.div>
+
+            {/* Page switcher — sliding segmented control */}
+            {pageItems.length > 1 && (
+              <nav
+                className="flex flex-1 justify-center"
+                aria-label={tr(t, 'groupPages', 'Pages')}
+              >
+                <div className="flex items-center gap-0.5 rounded-full bg-secondary p-1">
+                  {pageItems.map((item) => {
+                    const active = isPageActive(item)
+                    const Icon = NAV_ICONS[item.value]
+                    const label = translateNav(t, item)
+                    return (
+                      <Link
+                        key={item.value}
+                        href={item.href}
+                        aria-current={active ? 'page' : undefined}
+                        className={cn(
+                          'relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors duration-200',
+                          active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+                        )}
+                      >
+                        {active && (
+                          <motion.span
+                            layoutId="pagePill"
+                            className="absolute inset-0 rounded-full bg-background shadow-sm ring-1 ring-border"
+                            transition={pillSpring}
+                          />
+                        )}
+                        <span className="relative z-10 flex items-center gap-1.5">
+                          <Icon size={15} className="shrink-0" aria-hidden />
+                          <span className="hidden sm:inline">{label}</span>
+                        </span>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </nav>
+            )}
+
+            <div className="flex items-center gap-1.5">
               <button
-                key={item.href}
-                onClick={() => handleNavClick(item.href)}
+                type="button"
+                onClick={() => setIsCommandOpen(true)}
+                aria-label={openLabel}
+                aria-keyshortcuts="Control+K Meta+K"
                 className={cn(
-                  'group relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg',
-                  activeSection === item.href.slice(1)
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                  'group flex h-10 items-center gap-2 rounded-xl border border-border bg-secondary/40 px-2.5 text-muted-foreground transition-all duration-200',
+                  'hover:border-primary/40 hover:bg-secondary hover:text-foreground hover:shadow-sm',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                  'active:scale-[0.98]',
                 )}
               >
-                {t(item.key)}
-                {activeSection === item.href.slice(1) && (
-                  <motion.span
-                    layoutId="activeNav"
-                    className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
+                <Search size={16} className="shrink-0 transition-transform duration-200 group-hover:scale-110" aria-hidden />
+                {mounted && (
+                  <kbd className="hidden items-center gap-0.5 rounded-md border border-border bg-background/60 px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground sm:flex">
+                    <span className="text-[13px] leading-none">{isMac ? '⌘' : 'Ctrl'}</span>
+                    <span>K</span>
+                  </kbd>
                 )}
               </button>
-            ))}
-          </nav>
 
-          <div className="flex items-center gap-1">
-            <LanguageSwitcher />
-            <ThemeToggle />
-
-            <button
-              className="lg:hidden p-2 rounded-lg hover:bg-secondary transition-colors duration-200"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={isMobileMenuOpen}
-              aria-controls="mobile-menu"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {isMobileMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ opacity: 0, rotate: -45 }}
-                    animate={{ opacity: 1, rotate: 0 }}
-                    exit={{ opacity: 0, rotate: 45 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    <X size={20} className="text-primary" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ opacity: 0, rotate: 45 }}
-                    animate={{ opacity: 1, rotate: 0 }}
-                    exit={{ opacity: 0, rotate: -45 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    <Menu size={20} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </div>
           </div>
         </div>
+      </header>
 
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              id="mobile-menu"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden overflow-hidden"
-            >
-              <nav className="flex flex-col gap-1 pt-4 pb-2 border-t border-border mt-3" aria-label="Mobile navigation">
-                {navItems.map((item, index) => (
-                  <motion.button
-                    key={item.href}
-                    onClick={() => handleNavClick(item.href)}
-                    className={cn(
-                      'w-full py-3 px-4 rounded-xl text-left font-medium transition-colors duration-200',
-                      activeSection === item.href.slice(1)
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-                    )}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.05 * index }}
-                  >
-                    {t(item.key)}
-                  </motion.button>
-                ))}
-              </nav>
-            </motion.div>
+      {/* ── Floating section dock — placement driven by Header-position setting ── */}
+      {sectionItems.length > 0 && (
+        <motion.nav
+          aria-label={tr(t, 'groupExplore', 'Explore')}
+          data-section-dock
+          initial={{ opacity: 0, y: dockHorizontal ? 24 : 0, x: dockSide === 'left' ? -24 : dockSide === 'right' ? 24 : 0 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15, ease: 'easeOut' }}
+          className={cn(
+            'fixed z-40 flex max-w-[calc(100vw-1.5rem)] items-center rounded-full border border-border bg-background/80 p-1.5 shadow-xl shadow-black/10 backdrop-blur-xl',
+            dockSide === 'bottom' && 'bottom-4 left-1/2 -translate-x-1/2 gap-0.5',
+            dockSide === 'left' && 'left-4 top-1/2 -translate-y-1/2 flex-col gap-0.5',
+            dockSide === 'right' && 'right-4 top-1/2 -translate-y-1/2 flex-col gap-0.5',
           )}
-        </AnimatePresence>
-      </div>
-    </header>
+        >
+          {sectionItems.map((item) => {
+            const active = activeSection === item.href.slice(1)
+            const Icon = NAV_ICONS[item.value]
+            const label = translateNav(t, item)
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => handleSectionClick(item.href)}
+                title={label}
+                aria-label={label}
+                aria-current={active ? 'true' : undefined}
+                className={cn(
+                  'group relative flex items-center rounded-full px-2.5 py-2 transition-colors duration-200',
+                  active ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="sectionPill"
+                    className="absolute inset-0 rounded-full bg-primary/15"
+                    transition={pillSpring}
+                  />
+                )}
+                <span className="relative z-10 flex items-center">
+                  <Icon size={17} className="shrink-0 transition-transform duration-200 group-hover:scale-110" aria-hidden />
+                  <AnimatePresence initial={false}>
+                    {active && dockHorizontal && (
+                      <motion.span
+                        initial={{ width: 0, opacity: 0, marginLeft: 0 }}
+                        animate={{ width: 'auto', opacity: 1, marginLeft: 6 }}
+                        exit={{ width: 0, opacity: 0, marginLeft: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        className="overflow-hidden whitespace-nowrap text-xs font-semibold"
+                      >
+                        {label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </span>
+              </button>
+            )
+          })}
+        </motion.nav>
+      )}
+
+      <CommandPalette
+        open={isCommandOpen}
+        onClose={() => setIsCommandOpen(false)}
+        items={visibleNavItems}
+        activeSection={activeSection}
+        pathname={pathname}
+      />
+    </>
   )
 }

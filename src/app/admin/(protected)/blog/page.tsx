@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/admin/ui'
 import { listAdminArticles } from '@/features/articles/queries'
 import ArticlesTable, { type ArticleRowVM } from './ArticlesTable'
 
@@ -24,15 +26,18 @@ export default async function AdminBlogPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Blog</h1>
-          <p className="text-sm text-muted-foreground">Write and publish multilingual articles.</p>
-        </div>
-        <Button asChild>
-          <Link href="/admin/blog/new">New article</Link>
-        </Button>
-      </div>
+      <PageHeader
+        title="Blog"
+        description="Write and publish multilingual articles."
+        action={
+          <Button asChild>
+            <Link href="/admin/blog/new">
+              <Plus size={16} />
+              New article
+            </Link>
+          </Button>
+        }
+      />
 
       <ArticlesTable articles={rows} />
     </div>

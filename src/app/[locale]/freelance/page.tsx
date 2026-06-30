@@ -1,20 +1,40 @@
 import type { Metadata } from 'next'
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import Header from '@/components/layouts/Header'
 import Footer from '@/components/layouts/Footer'
+import { getPublishedCmsContent } from '@/features/cms/queries'
 import { PROJECT_TYPES } from '@/features/freelance/schema'
+import { localizedAlternates } from '@/i18n/metadata'
+import type { Locale } from '@/lib/validation/locale'
 import FreelanceLeadForm from './FreelanceLeadForm'
 
-export const metadata: Metadata = {
-  title: 'Work with me',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'freelance' })
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+    alternates: {
+      canonical: `/${locale}/freelance`,
+      languages: localizedAlternates((l) => `/${l}/freelance`),
+    },
+  }
 }
 
 export default async function FreelancePage() {
-  const t = await getTranslations('freelance')
+  const locale = (await getLocale()) as Locale
+  const [t, cms] = await Promise.all([
+    getTranslations('freelance'),
+    getPublishedCmsContent(locale),
+  ])
 
   return (
     <div className="min-h-screen relative">
-      <Header />
+      <Header brandName={cms.about?.fullName} design={cms.design} />
       <main id="main-content" className="section-padding">
         <div className="container-main max-w-4xl">
           <header className="mb-10 text-center">
@@ -41,7 +61,7 @@ export default async function FreelancePage() {
           </section>
         </div>
       </main>
-      <Footer />
+      <Footer links={cms.socialLinks} />
     </div>
   )
 }

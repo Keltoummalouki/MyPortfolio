@@ -1,15 +1,33 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import Image from 'next/image'
 import { getLocale, getTranslations } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 import Header from '@/components/layouts/Header'
 import Footer from '@/components/layouts/Footer'
 import { getPublishedArticles } from '@/features/articles/queries'
 import { toArticleCard, type ArticleCardData } from '@/features/articles/map'
+import { getPublishedCmsContent } from '@/features/cms/queries'
+import { localizedAlternates } from '@/i18n/metadata'
 import type { Locale } from '@/lib/validation/locale'
 
-export const metadata: Metadata = {
-  title: 'Blog',
+// Rendered per request so newly published articles appear without a rebuild.
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'blog' })
+  return {
+    title: t('title'),
+    description: t('subtitle'),
+    alternates: {
+      canonical: `/${locale}/blog`,
+      languages: localizedAlternates((l) => `/${l}/blog`),
+    },
+  }
 }
 
 function formatDate(value: string | null, locale: string): string | null {
@@ -21,13 +39,17 @@ export default async function BlogIndexPage() {
   const locale = (await getLocale()) as Locale
   const t = await getTranslations('blog')
 
-  const articles = (await getPublishedArticles())
+  const [articleRows, cms] = await Promise.all([
+    getPublishedArticles(),
+    getPublishedCmsContent(locale),
+  ])
+  const articles = articleRows
     .map((a) => toArticleCard(a, locale))
     .filter((a): a is ArticleCardData => a !== null)
 
   return (
     <div className="min-h-screen relative">
-      <Header />
+      <Header brandName={cms.about?.fullName} design={cms.design} />
       <main id="main-content" className="section-padding">
         <div className="container-main">
           <header className="mb-12 text-center">
@@ -79,7 +101,7 @@ export default async function BlogIndexPage() {
           )}
         </div>
       </main>
-      <Footer />
+      <Footer links={cms.socialLinks} />
     </div>
   )
 }

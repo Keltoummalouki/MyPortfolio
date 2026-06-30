@@ -1,26 +1,38 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { getLocale, getTranslations } from 'next-intl/server'
+import { Link } from '@/i18n/navigation'
 import Header from '@/components/layouts/Header'
 import Footer from '@/components/layouts/Footer'
 import Markdown from '@/components/ui/Markdown'
-import { getPublishedArticleBySlug } from '@/features/articles/queries'
+import { getPublishedArticleBySlug, getArticleLocaleSlugs } from '@/features/articles/queries'
 import { readingMinutes } from '@/features/articles/reading-time'
+import { getPublishedCmsContent } from '@/features/cms/queries'
+import type { Locale } from '@/lib/validation/locale'
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ locale: string; slug: string }>
 }): Promise<Metadata> {
-  const { slug } = await params
+  const { locale, slug } = await params
   const detail = await getPublishedArticleBySlug(slug)
   if (!detail) return { title: 'Article' }
+
+  const localeSlugs = await getArticleLocaleSlugs(slug)
+  const languages = Object.fromEntries(
+    Object.entries(localeSlugs).map(([l, s]) => [l, `/${l}/blog/${s}`]),
+  )
+
   return {
     title: detail.seo_title ?? detail.title,
     description: detail.seo_description ?? detail.excerpt ?? undefined,
+    alternates: {
+      canonical: `/${locale}/blog/${slug}`,
+      languages: Object.keys(languages).length > 0 ? languages : undefined,
+    },
   }
 }
 
@@ -35,10 +47,13 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const locale = await getLocale()
+  const locale = (await getLocale()) as Locale
   const t = await getTranslations('blog')
 
-  const detail = await getPublishedArticleBySlug(slug)
+  const [detail, cms] = await Promise.all([
+    getPublishedArticleBySlug(slug),
+    getPublishedCmsContent(locale),
+  ])
   if (!detail) notFound()
 
   const published = formatDate(detail.articles.published_at, locale)
@@ -47,7 +62,7 @@ export default async function ArticleDetailPage({
 
   return (
     <div className="min-h-screen relative">
-      <Header />
+      <Header brandName={cms.about?.fullName} design={cms.design} />
       <main id="main-content" className="section-padding">
         <article className="container-main max-w-3xl" dir={rtl ? 'rtl' : 'ltr'}>
           <Link
@@ -90,7 +105,7 @@ export default async function ArticleDetailPage({
           </div>
         </article>
       </main>
-      <Footer />
+      <Footer links={cms.socialLinks} />
     </div>
   )
 }

@@ -2,12 +2,15 @@
 
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { AdminSelectField, CheckboxField, DatePickerField } from '@/components/admin/AdminFormControls'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import Markdown from '@/components/ui/Markdown'
+import MarkdownEditor from '@/components/admin/MarkdownEditor'
 import {
   ARTICLE_LOCALES,
   ARTICLE_STATUSES,
+  DEFAULT_AUTHOR_NAME,
   type ArticleFormState,
   type ArticleLocale,
   type ArticleStatus,
@@ -50,7 +53,7 @@ const EMPTY: ArticleFormDefaults = {
   status: 'draft',
   featured: false,
   coverImageUrl: '',
-  authorName: '',
+  authorName: DEFAULT_AUTHOR_NAME,
   publishedAt: '',
   translations: { fr: emptyTranslation, en: emptyTranslation, ar: emptyTranslation },
 }
@@ -61,11 +64,47 @@ const field =
   'w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-[invalid=true]:border-destructive'
 const labelClass = 'text-sm font-medium text-foreground'
 
+/**
+ * Author chooser: defaults to the site owner, with a "Custom author…" option for
+ * the occasional guest byline. A single hidden `authorName` carries the resolved
+ * value to the Server Action, so the rest of the form is unchanged.
+ */
+function AuthorField({ defaultAuthor }: { defaultAuthor: string }) {
+  const startsCustom = defaultAuthor !== '' && defaultAuthor !== DEFAULT_AUTHOR_NAME
+  const [mode, setMode] = useState<'default' | 'custom'>(startsCustom ? 'custom' : 'default')
+  const [custom, setCustom] = useState(startsCustom ? defaultAuthor : '')
+  const resolved = mode === 'default' ? DEFAULT_AUTHOR_NAME : custom
+
+  return (
+    <div className="space-y-1.5">
+      <AdminSelectField
+        id="authorMode"
+        value={mode}
+        label="Author"
+        options={[
+          { value: 'default', label: DEFAULT_AUTHOR_NAME, description: 'Use me as the author' },
+          { value: 'custom', label: 'Custom author…', description: 'Guest or collaborator byline' },
+        ]}
+        onValueChange={(next) => setMode(next as 'default' | 'custom')}
+      />
+      {mode === 'custom' && (
+        <input
+          aria-label="Custom author name"
+          value={custom}
+          onChange={(e) => setCustom(e.target.value)}
+          placeholder="Author name"
+          className={field}
+        />
+      )}
+      <input type="hidden" name="authorName" value={resolved} />
+    </div>
+  )
+}
+
 export default function ArticleForm({ action, submitLabel, defaultValues }: ArticleFormProps) {
   const dv = defaultValues ?? EMPTY
   const [state, formAction, pending] = useActionState<ArticleFormState, FormData>(action, {})
   const [activeLocale, setActiveLocale] = useState<ArticleLocale>('fr')
-  const [preview, setPreview] = useState(false)
   const [titles, setTitles] = useState<Record<ArticleLocale, string>>({
     fr: dv.translations.fr.title,
     en: dv.translations.en.title,
@@ -94,34 +133,42 @@ export default function ArticleForm({ action, submitLabel, defaultValues }: Arti
         <legend className="mb-2 text-sm font-semibold text-foreground">Article</legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <label htmlFor="status" className={labelClass}>Status</label>
-            <select id="status" name="status" defaultValue={dv.status} className={field}>
-              {ARTICLE_STATUSES.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+            <AdminSelectField
+              id="status"
+              label="Status"
+              name="status"
+              options={ARTICLE_STATUSES.map((status) => ({ value: status, label: status }))}
+              defaultValue={dv.status}
+            />
           </div>
 
-          <div className="space-y-1.5">
-            <label htmlFor="publishedAt" className={labelClass}>Published date</label>
-            <input id="publishedAt" name="publishedAt" type="date" defaultValue={dv.publishedAt} className={field} />
-          </div>
+          <DatePickerField id="publishedAt" label="Published date" name="publishedAt" defaultValue={dv.publishedAt} />
 
-          <div className="space-y-1.5">
-            <label htmlFor="authorName" className={labelClass}>Author</label>
-            <input id="authorName" name="authorName" defaultValue={dv.authorName} className={field} />
-          </div>
+          <AuthorField defaultAuthor={dv.authorName} />
 
-          <div className="flex items-center gap-2">
-            <input id="featured" name="featured" type="checkbox" defaultChecked={dv.featured} className="size-4 rounded border-border" />
-            <label htmlFor="featured" className={labelClass}>Featured</label>
-          </div>
+          <CheckboxField id="featured" name="featured" label="Featured" defaultChecked={dv.featured} />
+
+          {/* The saved cover URL is preserved silently; uploading a new file replaces it. */}
+          <input type="hidden" name="coverImageUrl" defaultValue={dv.coverImageUrl} />
 
           <div className="space-y-1.5 sm:col-span-2">
-            <label htmlFor="coverImageUrl" className={labelClass}>Cover image (URL or /path)</label>
-            <input id="coverImageUrl" name="coverImageUrl" defaultValue={dv.coverImageUrl}
-              placeholder="/images/article.png" aria-invalid={err('coverImageUrl') ? true : undefined} className={field} />
-            {err('coverImageUrl') && <p className="text-xs text-destructive">{err('coverImageUrl')}</p>}
+            <label htmlFor="coverImageFile" className={labelClass}>Cover image</label>
+            {dv.coverImageUrl && (
+              <div className="flex items-center gap-3">
+                <Image
+                  src={dv.coverImageUrl}
+                  alt="Current cover"
+                  width={160}
+                  height={90}
+                  className="h-16 w-28 rounded-md border border-border object-cover"
+                />
+                <span className="text-xs text-muted-foreground">Current cover — upload a new file to replace it.</span>
+              </div>
+            )}
+            <input id="coverImageFile" name="coverImageFile" type="file" accept="image/jpeg,image/png,image/webp" className={field} />
+            <p className="text-xs text-muted-foreground">
+              Upload a cover image (JPG, PNG, or WebP up to 5 MB). Leave empty to keep the current image.
+            </p>
           </div>
         </div>
       </fieldset>
@@ -201,38 +248,17 @@ export default function ArticleForm({ action, submitLabel, defaultValues }: Arti
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label htmlFor={`${loc}.body`} className={labelClass}>
-                    Body (Markdown) {loc === 'fr' && <span className="text-destructive">*</span>}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setPreview((p) => !p)}
-                    className="text-xs font-medium text-primary hover:underline"
-                  >
-                    {preview ? 'Edit' : 'Preview'}
-                  </button>
-                </div>
-                <textarea
+                <label htmlFor={`${loc}.body`} className={labelClass}>
+                  Body (Markdown) {loc === 'fr' && <span className="text-destructive">*</span>}
+                </label>
+                <MarkdownEditor
                   id={`${loc}.body`}
                   name={`${loc}.body`}
                   value={bodies[loc]}
-                  onChange={(e) => setBodies((b) => ({ ...b, [loc]: e.target.value }))}
+                  onChange={(v) => setBodies((b) => ({ ...b, [loc]: v }))}
                   dir={rtl ? 'rtl' : 'ltr'}
-                  rows={14}
-                  hidden={preview}
-                  aria-invalid={err(`translations.${loc}.bodyMarkdown`) ? true : undefined}
-                  className={cn(field, 'font-mono')}
+                  ariaInvalid={err(`translations.${loc}.bodyMarkdown`) ? true : undefined}
                 />
-                {preview && (
-                  <div className="min-h-40 rounded-md border border-border bg-background p-4" dir={rtl ? 'rtl' : 'ltr'}>
-                    {bodies[loc].trim() ? (
-                      <Markdown>{bodies[loc]}</Markdown>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">Nothing to preview.</p>
-                    )}
-                  </div>
-                )}
                 {err(`translations.${loc}.bodyMarkdown`) && (
                   <p className="text-xs text-destructive">{err(`translations.${loc}.bodyMarkdown`)}</p>
                 )}

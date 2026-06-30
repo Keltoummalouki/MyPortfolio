@@ -57,15 +57,10 @@ export const projectFormSchema = z.object({
   status: projectStatusSchema,
   featured: z.boolean(),
   sortOrder: z.coerce.number().int().min(0).max(100000),
-  techStack: z
-    .string()
-    .max(1000)
-    .transform((s) =>
-      s
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean),
-    ),
+  // Technical skills linked to this project (skills.id values). The picker only
+  // offers skills where skill_type = 'technical'; these become the project's
+  // public tech stack via the project_skills join table.
+  skillIds: z.array(z.uuid('Invalid skill')).max(60, 'Too many skills').default([]),
   repoUrl: optionalUrl,
   demoUrl: optionalUrl,
   coverImageUrl: optionalImageRef,
@@ -87,4 +82,26 @@ export interface ProjectFormState {
   ok?: boolean
   message?: string
   errors?: Record<string, string>
+}
+
+// Validation for inline creation of a technical skill from the project form.
+export const newSkillNameSchema = z
+  .string()
+  .trim()
+  .min(1, 'Skill name is required')
+  .max(120, 'Skill name is too long')
+
+// Shape consumed by the technical-skills picker (and returned when a skill is
+// created inline). Pure so it can be imported from Client Components.
+export interface ProjectSkillOption {
+  id: string
+  name: string
+  icon: string | null
+  imageUrl: string | null
+}
+
+export interface CreateSkillResult {
+  ok: boolean
+  skill?: ProjectSkillOption
+  error?: string
 }

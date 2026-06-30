@@ -6,9 +6,12 @@ import { redirect } from 'next/navigation'
 import type { PostgrestError } from '@supabase/supabase-js'
 import { requireAdmin } from '@/features/auth/session'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { uploadImageFromForm } from '@/features/cms/media'
 import {
   PROJECT_LOCALES,
+  newSkillNameSchema,
   projectFormSchema,
+  type CreateSkillResult,
   type ProjectFormState,
   type ProjectFormValues,
 } from './projects.schema'
@@ -20,7 +23,7 @@ function rawForm(formData: FormData) {
     status: text('status'),
     featured: formData.get('featured') === 'on',
     sortOrder: text('sortOrder'),
-    techStack: text('techStack'),
+    skillIds: formData.getAll('skillIds').map(String).filter(Boolean),
     repoUrl: text('repoUrl'),
     demoUrl: text('demoUrl'),
     coverImageUrl: text('coverImageUrl'),
@@ -59,8 +62,36 @@ function translationRows(projectId: string, translations: ProjectFormValues['tra
 }
 
 function revalidateProjects() {
-  revalidatePath('/') // public home (ProjectsSection)
+  // The public home is rendered dynamically (force-dynamic), so it always
+  // reflects the latest projects; just refresh the admin list cache.
   revalidatePath('/admin/projects')
+}
+
+/**
+ * Replace the project's linked technical skills. Delete-then-insert keeps the
+ * join table in sync with the picker selection and stores the chosen order as
+ * sort_order. Returns a PostgrestError on failure (caller decides how to react).
+ */
+async function syncProjectSkills(
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  projectId: string,
+  skillIds: string[],
+): Promise<PostgrestError | null> {
+  const { error: delError } = await supabase
+    .from('project_skills')
+    .delete()
+    .eq('project_id', projectId)
+  if (delError) return delError
+
+  if (skillIds.length === 0) return null
+
+  const rows = skillIds.map((skillId, index) => ({
+    project_id: projectId,
+    skill_id: skillId,
+    sort_order: index,
+  }))
+  const { error: insError } = await supabase.from('project_skills').insert(rows)
+  return insError
 }
 
 export async function createProjectAction(
@@ -74,6 +105,13 @@ export async function createProjectAction(
   const v = parsed.data
 
   const supabase = await createServerSupabaseClient()
+  let coverImageUrl = v.coverImageUrl
+  try {
+    coverImageUrl = (await uploadImageFromForm(supabase, formData, 'coverImageFile', 'project')) ?? coverImageUrl
+  } catch {
+    return { ok: false, message: 'Could not upload the cover image. Use JPG, PNG, or WebP up to 5 MB.' }
+  }
+
   const { data: created, error } = await supabase
     .from('projects')
     .insert({
@@ -81,10 +119,9 @@ export async function createProjectAction(
       status: v.status,
       featured: v.featured,
       sort_order: v.sortOrder,
-      tech_stack: v.techStack,
       repo_url: v.repoUrl,
       demo_url: v.demoUrl,
-      cover_image_url: v.coverImageUrl,
+      cover_image_url: coverImageUrl,
       started_at: v.startedAt,
     })
     .select('id')
@@ -99,6 +136,12 @@ export async function createProjectAction(
       await supabase.from('projects').delete().eq('id', created.id)
       return { ok: false, message: friendlyDbMessage(trError) }
     }
+  }
+
+  const skillError = await syncProjectSkills(supabase, created.id, v.skillIds)
+  if (skillError) {
+    await supabase.from('projects').delete().eq('id', created.id)
+    return { ok: false, message: friendlyDbMessage(skillError) }
   }
 
   revalidateProjects()
@@ -117,6 +160,15 @@ export async function updateProjectAction(
   const v = parsed.data
 
   const supabase = await createServerSupabaseClient()
+  let coverImageUrl = v.coverImageUrl
+  try {
+    coverImageUrl = (await uploadImageFromForm(supabase, formData, 'coverImageFile', 'project')) ?? coverImageUrl
+  } catch {
+    return { ok: false, message: 'Could not upload the cover image. Use JPG, PNG, or WebP up to 5 MB.' }
+  }
+
+  // tech_stack is intentionally not written here: new projects use linked
+  // skills, while any legacy tech_stack value is preserved for fallback.
   const { error } = await supabase
     .from('projects')
     .update({
@@ -124,14 +176,16 @@ export async function updateProjectAction(
       status: v.status,
       featured: v.featured,
       sort_order: v.sortOrder,
-      tech_stack: v.techStack,
       repo_url: v.repoUrl,
       demo_url: v.demoUrl,
-      cover_image_url: v.coverImageUrl,
+      cover_image_url: coverImageUrl,
       started_at: v.startedAt,
     })
     .eq('id', id)
   if (error) return { ok: false, message: friendlyDbMessage(error) }
+
+  const skillError = await syncProjectSkills(supabase, id, v.skillIds)
+  if (skillError) return { ok: false, message: friendlyDbMessage(skillError) }
 
   // Sync translations: upsert locales with a title, remove locales left blank.
   for (const locale of PROJECT_LOCALES) {
@@ -156,6 +210,57 @@ export async function updateProjectAction(
 
   revalidateProjects()
   redirect('/admin/projects')
+}
+
+/**
+ * Inline creation of a *technical* skill from the project form. The new skill is
+ * inserted as skill_type = 'technical' and status = 'published' so it shows up in
+ * the public skills section and at /admin/skills, then returned to the caller so
+ * the picker can select it immediately. Soft skills can never be created here.
+ */
+export async function createTechnicalSkillAction(name: string): Promise<CreateSkillResult> {
+  await requireAdmin()
+
+  const parsed = newSkillNameSchema.safeParse(name)
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid skill name.' }
+  }
+
+  const supabase = await createServerSupabaseClient()
+
+  // Reuse an existing technical skill with the same name (case-insensitive) so
+  // the picker never creates duplicates, which would otherwise collide elsewhere.
+  const { data: existingRows } = await supabase
+    .from('skills')
+    .select('id, name, icon, image_url')
+    .eq('skill_type', 'technical')
+  const match = (existingRows ?? []).find(
+    (skill) => skill.name.trim().toLowerCase() === parsed.data.toLowerCase(),
+  )
+  if (match) {
+    return {
+      ok: true,
+      skill: { id: match.id, name: match.name, icon: match.icon, imageUrl: match.image_url },
+    }
+  }
+
+  const { data, error } = await supabase
+    .from('skills')
+    .insert({ name: parsed.data, skill_type: 'technical', status: 'published' })
+    .select('id, name, icon, image_url')
+    .single()
+  if (error || !data) {
+    return { ok: false, error: 'Could not create the skill. Please try again.' }
+  }
+
+  // Surface the new skill on the public skills section and the skills dashboard.
+  revalidatePath('/admin/skills')
+  for (const path of ['/fr', '/en', '/ar']) revalidatePath(path)
+
+  return {
+    ok: true,
+    skill: { id: data.id, name: data.name, icon: data.icon, imageUrl: data.image_url },
+  }
 }
 
 export async function deleteProjectAction(formData: FormData): Promise<void> {

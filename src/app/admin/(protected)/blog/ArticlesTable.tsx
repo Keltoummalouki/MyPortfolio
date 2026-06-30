@@ -2,8 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Star } from 'lucide-react'
+import { FileText, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { EmptyState, StatusBadge, table } from '@/components/admin/ui'
 import { cn } from '@/lib/utils'
 import { deleteArticleAction } from '@/features/articles/actions'
 import {
@@ -21,12 +29,6 @@ export interface ArticleRowVM {
   featured: boolean
   publishedAt: string | null
   locales: Record<ArticleLocale, boolean>
-}
-
-const statusStyles: Record<ArticleStatus, string> = {
-  draft: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  published: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  archived: 'bg-muted text-muted-foreground',
 }
 
 const control =
@@ -55,67 +57,68 @@ export default function ArticlesTable({ articles }: { articles: ArticleRowVM[] }
           aria-label="Search articles"
           className={cn(control, 'sm:max-w-xs sm:flex-1')}
         />
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as ArticleStatus | 'all')}
-          aria-label="Filter by status"
-          className={control}
-        >
-          <option value="all">All statuses</option>
-          {ARTICLE_STATUSES.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+        <Select value={status} onValueChange={(next) => setStatus(next as ArticleStatus | 'all')}>
+          <SelectTrigger aria-label="Filter by status" className="w-full sm:w-44">
+            <SelectValue placeholder="All statuses" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            {ARTICLE_STATUSES.map((s) => (
+              <SelectItem key={s} value={s}>{s}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-          {articles.length === 0 ? (
-            <>
-              No articles yet.{' '}
-              <Link href="/admin/blog/new" className="text-primary hover:underline">
-                Write your first article
-              </Link>
-              .
-            </>
-          ) : (
-            'No articles match your filters.'
-          )}
-        </div>
+        <EmptyState
+          icon={FileText}
+          title={articles.length === 0 ? 'No articles yet' : 'No matching articles'}
+          description={
+            articles.length === 0
+              ? 'Write your first article to start your blog.'
+              : 'No articles match your search and filters.'
+          }
+          action={
+            articles.length === 0 ? (
+              <Button asChild size="sm">
+                <Link href="/admin/blog/new">Write article</Link>
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+        <div className={table.shell}>
+          <table className={table.table}>
+            <thead className={table.thead}>
               <tr>
-                <th className="px-4 py-3 font-medium">Article</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Featured</th>
-                <th className="px-4 py-3 font-medium">Locales</th>
-                <th className="px-4 py-3 text-right font-medium">Actions</th>
+                <th className={table.th}>Article</th>
+                <th className={table.th}>Status</th>
+                <th className={table.th}>Featured</th>
+                <th className={table.th}>Locales</th>
+                <th className={cn(table.th, 'text-right')}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className={table.tbody}>
               {filtered.map((a) => (
-                <tr key={a.id} className="hover:bg-muted/30">
-                  <td className="px-4 py-3">
+                <tr key={a.id} className={table.tr}>
+                  <td className={table.td}>
                     <div className="font-medium text-foreground">
                       {a.title || <span className="text-muted-foreground">(untitled)</span>}
                     </div>
                     <div className="text-xs text-muted-foreground">{a.slug}</div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', statusStyles[a.status])}>
-                      {a.status}
-                    </span>
+                  <td className={table.td}>
+                    <StatusBadge status={a.status} />
                   </td>
-                  <td className="px-4 py-3">
+                  <td className={table.td}>
                     {a.featured ? (
                       <Star size={16} className="fill-current text-amber-500" aria-label="Featured" />
                     ) : (
                       <span className="text-muted-foreground">—</span>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className={table.td}>
                     <div className="flex gap-1">
                       {ARTICLE_LOCALES.map((loc) => (
                         <span
@@ -124,7 +127,7 @@ export default function ArticlesTable({ articles }: { articles: ArticleRowVM[] }
                           className={cn(
                             'rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase',
                             a.locales[loc]
-                              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                              ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400'
                               : 'bg-muted text-muted-foreground/60',
                           )}
                         >
@@ -133,7 +136,7 @@ export default function ArticlesTable({ articles }: { articles: ArticleRowVM[] }
                       ))}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className={table.td}>
                     <div className="flex justify-end gap-1">
                       <Button asChild variant="ghost" size="sm">
                         <Link href={`/admin/blog/${a.id}`}>Edit</Link>

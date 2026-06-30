@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
+import { AdminSelectField, CheckboxField, DatePickerField } from '@/components/admin/AdminFormControls'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
@@ -9,15 +10,17 @@ import {
   PROJECT_STATUSES,
   type ProjectFormState,
   type ProjectLocale,
+  type ProjectSkillOption,
   type ProjectStatus,
 } from '@/features/content/projects.schema'
+import SkillPicker from './SkillPicker'
 
 export interface ProjectFormDefaults {
   slug: string
   status: ProjectStatus
   featured: boolean
   sortOrder: number
-  techStack: string
+  skillIds: string[]
   repoUrl: string
   demoUrl: string
   coverImageUrl: string
@@ -28,6 +31,7 @@ export interface ProjectFormDefaults {
 interface ProjectFormProps {
   action: (state: ProjectFormState, formData: FormData) => Promise<ProjectFormState>
   submitLabel: string
+  technicalSkills: ProjectSkillOption[]
   defaultValues?: ProjectFormDefaults
 }
 
@@ -36,7 +40,7 @@ const EMPTY: ProjectFormDefaults = {
   status: 'draft',
   featured: false,
   sortOrder: 0,
-  techStack: '',
+  skillIds: [],
   repoUrl: '',
   demoUrl: '',
   coverImageUrl: '',
@@ -54,7 +58,7 @@ const field =
   'w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-[invalid=true]:border-destructive'
 const labelClass = 'text-sm font-medium text-foreground'
 
-export default function ProjectForm({ action, submitLabel, defaultValues }: ProjectFormProps) {
+export default function ProjectForm({ action, submitLabel, technicalSkills, defaultValues }: ProjectFormProps) {
   const dv = defaultValues ?? EMPTY
   const [state, formAction, pending] = useActionState<ProjectFormState, FormData>(action, {})
   const [activeLocale, setActiveLocale] = useState<ProjectLocale>('fr')
@@ -90,12 +94,13 @@ export default function ProjectForm({ action, submitLabel, defaultValues }: Proj
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="status" className={labelClass}>Status</label>
-            <select id="status" name="status" defaultValue={dv.status} className={field}>
-              {PROJECT_STATUSES.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+            <AdminSelectField
+              id="status"
+              label="Status"
+              name="status"
+              options={PROJECT_STATUSES.map((status) => ({ value: status, label: status }))}
+              defaultValue={dv.status}
+            />
           </div>
 
           <div className="space-y-1.5">
@@ -105,21 +110,18 @@ export default function ProjectForm({ action, submitLabel, defaultValues }: Proj
             {err('sortOrder') && <p className="text-xs text-destructive">{err('sortOrder')}</p>}
           </div>
 
-          <div className="space-y-1.5">
-            <label htmlFor="startedAt" className={labelClass}>Started at</label>
-            <input id="startedAt" name="startedAt" type="date" defaultValue={dv.startedAt} className={field} />
-          </div>
+          <DatePickerField id="startedAt" label="Started at" name="startedAt" defaultValue={dv.startedAt} />
 
-          <div className="flex items-center gap-2 sm:col-span-2">
-            <input id="featured" name="featured" type="checkbox" defaultChecked={dv.featured}
-              className="size-4 rounded border-border" />
-            <label htmlFor="featured" className={labelClass}>Featured</label>
-          </div>
+          <CheckboxField
+            id="featured"
+            name="featured"
+            label="Featured"
+            defaultChecked={dv.featured}
+            className="sm:col-span-2"
+          />
 
-          <div className="space-y-1.5 sm:col-span-2">
-            <label htmlFor="techStack" className={labelClass}>Tech stack <span className="text-muted-foreground">(comma-separated)</span></label>
-            <input id="techStack" name="techStack" defaultValue={dv.techStack}
-              placeholder="Next.js, TypeScript, PostgreSQL" className={field} />
+          <div className="sm:col-span-2">
+            <SkillPicker options={technicalSkills} defaultSelectedIds={dv.skillIds} />
           </div>
 
           <div className="space-y-1.5">
@@ -136,11 +138,21 @@ export default function ProjectForm({ action, submitLabel, defaultValues }: Proj
             {err('demoUrl') && <p className="text-xs text-destructive">{err('demoUrl')}</p>}
           </div>
 
+          {/* Cover image is upload-only; the existing saved value is preserved
+              via a hidden field and kept unless a new file is uploaded. */}
+          <input type="hidden" name="coverImageUrl" value={dv.coverImageUrl} />
+
           <div className="space-y-1.5 sm:col-span-2">
-            <label htmlFor="coverImageUrl" className={labelClass}>Cover image (URL or /path)</label>
-            <input id="coverImageUrl" name="coverImageUrl" defaultValue={dv.coverImageUrl}
-              placeholder="/images/project.png" aria-invalid={err('coverImageUrl') ? true : undefined}
-              className={field} />
+            <label htmlFor="coverImageFile" className={labelClass}>Upload cover image</label>
+            {dv.coverImageUrl && (
+              <p className="text-xs text-muted-foreground">
+                A cover image is already saved. Uploading a new file replaces it.
+              </p>
+            )}
+            <input id="coverImageFile" name="coverImageFile" type="file" accept="image/jpeg,image/png,image/webp" className={field} />
+            <p className="text-xs text-muted-foreground">
+              JPG, PNG, or WebP up to 5 MB.
+            </p>
             {err('coverImageUrl') && <p className="text-xs text-destructive">{err('coverImageUrl')}</p>}
           </div>
         </div>
