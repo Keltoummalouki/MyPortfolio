@@ -113,6 +113,7 @@
     "title": "About Me",
     "subtitle": "Get to know me",
     "description": "I'm Keltoum Malouki, a Full Stack Web Developer from Casablanca, Morocco. With hands-on training at YouCode (UM6P), I deliver complete web solutions from front-end interfaces to back-end architecture. I care about clean code, user experience, and continuous learning.",
+    "lead": "What I build, how I work, and the languages I speak.",
     "stats": {
       "projects": "Projects Completed",
       "experience": "Years Experience",

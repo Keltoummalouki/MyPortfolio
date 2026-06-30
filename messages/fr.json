@@ -113,6 +113,7 @@
     "title": "À propos de moi",
     "subtitle": "Apprenez à me connaître",
     "description": "Je suis Keltoum Malouki, développeuse web full stack basée à Casablanca, Maroc. Formée chez YouCode (UM6P), je livre des solutions web complètes, de l'interface utilisateur à l'architecture back-end. Je privilégie le code propre, l'expérience utilisateur et l'apprentissage continu.",
+    "lead": "Ce que je construis, ma façon de travailler et les langues que je parle.",
     "stats": {
       "projects": "Projets Réalisés",
       "experience": "Années d'Expérience",
