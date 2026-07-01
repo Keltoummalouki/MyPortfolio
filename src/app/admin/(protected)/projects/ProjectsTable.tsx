@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -63,10 +64,12 @@ export default function ProjectsTable({ projects }: { projects: ProjectRowVM[] }
             <SelectValue placeholder="All statuses" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
-            {PROJECT_STATUSES.map((s) => (
-              <SelectItem key={s} value={s}>{s}</SelectItem>
-            ))}
+            <SelectGroup>
+              <SelectItem value="all">All statuses</SelectItem>
+              {PROJECT_STATUSES.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>

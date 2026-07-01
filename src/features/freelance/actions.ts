@@ -4,6 +4,8 @@ import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { requireAdmin } from '@/features/auth/session'
+import { reservePublicSubmission } from '@/features/submissions/rate-limit'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { verifyTurnstileToken } from '@/features/inbox/turnstile'
 import { leadFormSchema, leadStatusSchema, type LeadSubmitState } from './schema'
@@ -33,8 +35,8 @@ function fieldErrorState(error: z.ZodError): LeadSubmitState {
 
 /**
  * Public freelance inquiry. Validates with Zod, optionally verifies Turnstile,
- * and inserts as the anonymous role (RLS permits INSERT only). No `.select()` /
- * RETURNING — anon has no SELECT privilege, so leads are never browser-readable.
+ * reserves an IP-based submission slot, and inserts with the server-only
+ * service role. No `.select()` / RETURNING — leads are never browser-readable.
  */
 export async function submitFreelanceLeadAction(
   _prev: LeadSubmitState,
@@ -46,20 +48,34 @@ export async function submitFreelanceLeadAction(
   const isHuman = await verifyTurnstileToken(String(formData.get('turnstileToken') ?? ''))
   if (!isHuman) return { ok: false, error: 'captcha' }
 
+  const submissionGate = await reservePublicSubmission('freelance_lead')
+  if (!submissionGate.ok) return { ok: false, error: submissionGate.error }
+
   const v = parsed.data
-  const supabase = await createServerSupabaseClient()
-  const { error } = await supabase.from('freelance_leads').insert({
-    name: v.name,
-    email: v.email,
-    company: v.company,
-    project_type: v.projectType,
-    budget_range: v.budget,
-    timeline: v.timeline,
-    contact_preference: v.contactPreference,
-    details: v.details,
-  })
-  if (error) {
-    console.error('freelance_leads insert failed:', error.message)
+  try {
+    const supabase = createAdminSupabaseClient()
+    const { error } = await supabase.from('freelance_leads').insert({
+      name: v.name,
+      email: v.email,
+      company: v.company,
+      project_type: v.projectType,
+      budget_range: v.budget,
+      timeline: v.timeline,
+      contact_preference: v.contactPreference,
+      details: v.details,
+      status: submissionGate.shouldMarkSpam ? 'spam' : 'new',
+      ip_hash: submissionGate.ipHash,
+      spam_reason: submissionGate.shouldMarkSpam ? 'ip_submission_threshold' : null,
+    })
+    if (error) {
+      console.error('freelance_leads insert failed:', error.message)
+      return { ok: false, error: 'server' }
+    }
+  } catch (error) {
+    console.error(
+      'freelance_leads insert failed:',
+      error instanceof Error ? error.message : 'unknown error',
+    )
     return { ok: false, error: 'server' }
   }
 

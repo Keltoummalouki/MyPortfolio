@@ -24,5 +24,5 @@ export type ContactMessageValues = z.output<typeof contactMessageSchema>
 export interface ContactSubmitResult {
   ok: boolean
   /** Coarse, non-leaking reason code for the client to map to a localized message. */
-  error?: 'invalid' | 'captcha' | 'server'
+  error?: 'invalid' | 'captcha' | 'rate_limited' | 'server'
 }

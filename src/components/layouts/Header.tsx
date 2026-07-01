@@ -8,7 +8,9 @@ import { useLocale, useTranslations } from 'next-intl'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 import CommandPalette from '@/components/ui/CommandPalette'
+import PreferenceMenu from '@/components/ui/PreferenceMenu'
 import { NAV_ICONS } from '@/components/ui/navIcons'
+import { useOptionalPreference } from '@/components/providers/PreferenceProvider'
 import { Link, usePathname } from '@/i18n/navigation'
 import type { PublicDesignSettings } from '@/features/cms/queries'
 import { DEFAULT_PUBLIC_NAV_ITEMS, NAV_ITEMS, normalizeNavItems, type NavItemKey } from '@/features/cms/design-options'
@@ -65,6 +67,7 @@ export default function Header({
   const [mounted, setMounted] = useState(false)
   const [isMac, setIsMac] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
+  const preferences = useOptionalPreference()
 
   const navKeys = design?.navItems?.length ? design.navItems : DEFAULT_PUBLIC_NAV_ITEMS
   const visibleNavItems = useMemo(() => {
@@ -80,7 +83,7 @@ export default function Header({
 
   // The top bar stays fixed for identity and page links. The Header-position
   // setting controls where the section dock floats: bottom, left, or right.
-  const headerPosition = design?.headerPosition ?? 'bottom'
+  const headerPosition = preferences?.design.headerPosition ?? design?.headerPosition ?? 'bottom'
   const dockSide: 'bottom' | 'left' | 'right' =
     headerPosition === 'left' ? 'left' : headerPosition === 'right' ? 'right' : 'bottom'
   const dockHorizontal = dockSide === 'bottom'
@@ -239,6 +242,7 @@ export default function Header({
               </button>
 
               <LanguageSwitcher />
+              <PreferenceMenu />
               <ThemeToggle />
             </div>
           </div>

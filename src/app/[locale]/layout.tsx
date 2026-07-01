@@ -5,7 +5,8 @@ import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
 import { localizedAlternates } from '@/i18n/metadata'
 import { getPublishedDesignSettings } from '@/features/cms/queries'
-import DesignSettingsStyle from '@/components/ui/DesignSettingsStyle'
+import { readVisitorDesignPreference } from '@/features/preferences/cookie'
+import { PreferenceProvider } from '@/components/providers/PreferenceProvider'
 
 // Note: no `generateStaticParams` — public pages read Supabase per request, so
 // the locale subtree is rendered on demand (always reflects published content).
@@ -47,11 +48,16 @@ export default async function LocaleLayout({
   // Enable static rendering for this locale segment.
   setRequestLocale(locale)
 
-  const [messages, design] = await Promise.all([getMessages(), getPublishedDesignSettings()])
+  const [messages, design, visitorPreference] = await Promise.all([
+    getMessages(),
+    getPublishedDesignSettings(),
+    readVisitorDesignPreference(),
+  ])
   return (
     <NextIntlClientProvider messages={messages}>
-      <DesignSettingsStyle settings={design} />
-      {children}
+      <PreferenceProvider adminDesign={design} initialPreference={visitorPreference}>
+        {children}
+      </PreferenceProvider>
     </NextIntlClientProvider>
   )
 }

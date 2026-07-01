@@ -28,6 +28,7 @@
       "sending": "Envoi…",
       "success": "Merci — votre demande a bien été reçue. Je vous recontacte bientôt.",
       "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
+      "errorRateLimited": "Trop de messages proviennent de votre réseau. Veuillez réessayer dans 24 heures.",
       "errors": {
         "nameRequired": "Veuillez saisir votre nom.",
         "emailInvalid": "Veuillez saisir un e-mail valide.",
@@ -92,6 +93,21 @@
     "current": "Actuel",
     "hintNavigate": "Naviguer",
     "hintSelect": "Sélectionner"
+  },
+  "preferences": {
+    "trigger": "Préférence",
+    "open": "Ouvrir le panneau de préférences",
+    "title": "Préférence",
+    "description": "Choisissez une apparence personnelle. Les changements s’appliquent aussitôt.",
+    "skip": "Ignorer",
+    "themeLabel": "Thème",
+    "current": "Actuel",
+    "select": "Choisir",
+    "comingSoon": "Bientôt",
+    "bodyFont": "Police du texte",
+    "headingFont": "Police des titres",
+    "cursorStyle": "Style du curseur",
+    "headerPosition": "Position du menu"
   },
   "hero": {
     "greeting": "Bonjour, je suis",
@@ -285,6 +301,7 @@
   "common": {
     "loading": "Chargement...",
     "error": "Une erreur s'est produite",
+    "rateLimited": "Trop de messages proviennent de votre réseau. Veuillez réessayer dans 24 heures.",
     "retry": "Réessayer",
     "close": "Fermer",
     "menu": "Menu"

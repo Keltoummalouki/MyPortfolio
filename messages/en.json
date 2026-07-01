@@ -28,6 +28,7 @@
       "sending": "Sending…",
       "success": "Thanks — your inquiry has been received. I’ll be in touch soon.",
       "errorGeneric": "Something went wrong. Please try again.",
+      "errorRateLimited": "Too many messages from your network. Please try again in 24 hours.",
       "errors": {
         "nameRequired": "Please enter your name.",
         "emailInvalid": "Please enter a valid email.",
@@ -92,6 +93,21 @@
     "current": "Current",
     "hintNavigate": "Navigate",
     "hintSelect": "Select"
+  },
+  "preferences": {
+    "trigger": "Preference",
+    "open": "Open preference panel",
+    "title": "Preference",
+    "description": "Pick a personal look. Changes apply instantly.",
+    "skip": "Skip",
+    "themeLabel": "Theme preset",
+    "current": "Current",
+    "select": "Select",
+    "comingSoon": "Coming soon",
+    "bodyFont": "Body font",
+    "headingFont": "Heading font",
+    "cursorStyle": "Cursor style",
+    "headerPosition": "Header position"
   },
   "hero": {
     "greeting": "Hello, I'm",
@@ -285,6 +301,7 @@
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
+    "rateLimited": "Too many messages from your network. Please try again in 24 hours.",
     "retry": "Retry",
     "close": "Close",
     "menu": "Menu"
