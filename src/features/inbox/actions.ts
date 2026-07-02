@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { requireAdmin } from '@/features/auth/session'
+import { reservePublicSubmission } from '@/features/submissions/rate-limit'
+import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { contactMessageSchema, messageStatusSchema, type ContactSubmitResult } from './schema'
 import { verifyTurnstileToken } from './turnstile'
@@ -17,10 +19,9 @@ export interface ContactSubmitInput {
 
 /**
  * Public contact submission. Validates with Zod, optionally verifies Turnstile,
- * and inserts as the anonymous role (RLS permits INSERT only). The insert does
- * NOT use `.select()`, so no row is returned — anon has no SELECT privilege and
- * the browser must never read stored messages. Errors are returned as coarse,
- * non-leaking codes.
+ * reserves an IP-based submission slot, and inserts with the server-only
+ * service role. The browser never reads stored messages, and errors are
+ * returned as coarse, non-leaking codes.
  */
 export async function submitContactMessage(input: ContactSubmitInput): Promise<ContactSubmitResult> {
   const parsed = contactMessageSchema.safeParse(input)
@@ -29,16 +30,30 @@ export async function submitContactMessage(input: ContactSubmitInput): Promise<C
   const isHuman = await verifyTurnstileToken(input.turnstileToken)
   if (!isHuman) return { ok: false, error: 'captcha' }
 
-  const supabase = await createServerSupabaseClient()
-  const { error } = await supabase.from('contact_messages').insert({
-    name: parsed.data.name,
-    email: parsed.data.email,
-    subject: parsed.data.subject,
-    message: parsed.data.message,
-  })
-  if (error) {
-    // Log server-side without the message body; never surface raw errors.
-    console.error('contact_messages insert failed:', error.message)
+  const submissionGate = await reservePublicSubmission('contact_message')
+  if (!submissionGate.ok) return { ok: false, error: submissionGate.error }
+
+  try {
+    const supabase = createAdminSupabaseClient()
+    const { error } = await supabase.from('contact_messages').insert({
+      name: parsed.data.name,
+      email: parsed.data.email,
+      subject: parsed.data.subject,
+      message: parsed.data.message,
+      status: submissionGate.shouldMarkSpam ? 'spam' : 'new',
+      ip_hash: submissionGate.ipHash,
+      spam_reason: submissionGate.shouldMarkSpam ? 'ip_submission_threshold' : null,
+    })
+    if (error) {
+      // Log server-side without the message body; never surface raw errors.
+      console.error('contact_messages insert failed:', error.message)
+      return { ok: false, error: 'server' }
+    }
+  } catch (error) {
+    console.error(
+      'contact_messages insert failed:',
+      error instanceof Error ? error.message : 'unknown error',
+    )
     return { ok: false, error: 'server' }
   }
 

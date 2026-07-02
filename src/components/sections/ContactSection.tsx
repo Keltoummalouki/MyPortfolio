@@ -258,7 +258,14 @@ export default function ContactSection({ socialLinks = [] }: { socialLinks?: Pub
       })
 
       if (!result.ok) {
-        throw new Error(result.error ?? 'server')
+        setSubmitStatus('error')
+        setErrorMessage(result.error === 'rate_limited' ? tCommon('rateLimited') : tCommon('error'))
+
+        setTimeout(() => {
+          setSubmitStatus('idle')
+          setErrorMessage('')
+        }, 5000)
+        return
       }
 
       setSubmitStatus('success')

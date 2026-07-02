@@ -256,8 +256,10 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          ip_hash: string | null
           message: string
           name: string
+          spam_reason: string | null
           status: Database["public"]["Enums"]["message_status"]
           subject: string | null
           updated_at: string
@@ -266,8 +268,10 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          ip_hash?: string | null
           message: string
           name: string
+          spam_reason?: string | null
           status?: Database["public"]["Enums"]["message_status"]
           subject?: string | null
           updated_at?: string
@@ -276,8 +280,10 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          ip_hash?: string | null
           message?: string
           name?: string
+          spam_reason?: string | null
           status?: Database["public"]["Enums"]["message_status"]
           subject?: string | null
           updated_at?: string
@@ -507,8 +513,10 @@ export type Database = {
           details: string | null
           email: string
           id: string
+          ip_hash: string | null
           name: string
           project_type: string | null
+          spam_reason: string | null
           status: Database["public"]["Enums"]["lead_status"]
           timeline: string | null
           updated_at: string
@@ -521,8 +529,10 @@ export type Database = {
           details?: string | null
           email: string
           id?: string
+          ip_hash?: string | null
           name: string
           project_type?: string | null
+          spam_reason?: string | null
           status?: Database["public"]["Enums"]["lead_status"]
           timeline?: string | null
           updated_at?: string
@@ -535,8 +545,10 @@ export type Database = {
           details?: string | null
           email?: string
           id?: string
+          ip_hash?: string | null
           name?: string
           project_type?: string | null
+          spam_reason?: string | null
           status?: Database["public"]["Enums"]["lead_status"]
           timeline?: string | null
           updated_at?: string
@@ -928,12 +940,61 @@ export type Database = {
         }
         Relationships: []
       }
+      public_submission_rate_limits: {
+        Row: {
+          blocked_until: string | null
+          created_at: string
+          ip_hash: string
+          last_submission_kind: string | null
+          spammed_at: string | null
+          submission_count: number
+          updated_at: string
+          window_started_at: string
+        }
+        Insert: {
+          blocked_until?: string | null
+          created_at?: string
+          ip_hash: string
+          last_submission_kind?: string | null
+          spammed_at?: string | null
+          submission_count?: number
+          updated_at?: string
+          window_started_at?: string
+        }
+        Update: {
+          blocked_until?: string | null
+          created_at?: string
+          ip_hash?: string
+          last_submission_kind?: string | null
+          spammed_at?: string | null
+          submission_count?: number
+          updated_at?: string
+          window_started_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       is_admin: { Args: never; Returns: boolean }
+      reserve_public_submission: {
+        Args: {
+          p_block_duration?: unknown
+          p_block_threshold?: number
+          p_ip_hash: string
+          p_spam_threshold?: number
+          p_submission_kind: string
+          p_window?: unknown
+        }
+        Returns: {
+          allowed: boolean
+          blocked_until: string | null
+          should_spam: boolean
+          submission_count: number
+        }[]
+      }
     }
     Enums: {
       content_status: "draft" | "published" | "archived"

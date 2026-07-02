@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -82,16 +83,18 @@ export function AdminSelectField({
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent id={`${id}-listbox`}>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value} textValue={option.label}>
-              <span className="flex flex-col gap-0.5">
-                <span className="font-medium">{option.label}</span>
-                {option.description && (
-                  <span className="text-xs text-muted-foreground">{option.description}</span>
-                )}
-              </span>
-            </SelectItem>
-          ))}
+          <SelectGroup>
+            {options.map((option) => (
+              <SelectItem key={option.value} value={option.value} textValue={option.label}>
+                <span className="flex flex-col gap-0.5">
+                  <span className="font-medium">{option.label}</span>
+                  {option.description && (
+                    <span className="text-xs text-muted-foreground">{option.description}</span>
+                  )}
+                </span>
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
       {help && <p className="text-xs text-muted-foreground">{help}</p>}

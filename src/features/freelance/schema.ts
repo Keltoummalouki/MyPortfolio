@@ -85,6 +85,6 @@ export type LeadFormValues = z.output<typeof leadFormSchema>
 export interface LeadSubmitState {
   ok?: boolean
   /** Coarse, non-leaking reason code mapped to a localized message by the client. */
-  error?: 'invalid' | 'captcha' | 'server'
+  error?: 'invalid' | 'captcha' | 'rate_limited' | 'server'
   errors?: Record<string, string>
 }
