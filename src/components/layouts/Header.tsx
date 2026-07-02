@@ -241,9 +241,13 @@ export default function Header({
                 )}
               </button>
 
-              <LanguageSwitcher />
+              <div className="hidden sm:block">
+                <LanguageSwitcher />
+              </div>
               <PreferenceMenu />
-              <ThemeToggle />
+              <div className="hidden sm:block">
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         </div>
