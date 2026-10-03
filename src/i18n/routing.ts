@@ -9,6 +9,11 @@ export const routing = defineRouting({
   localePrefix: 'always',
   // Reuse the existing `locale` cookie name as the preference store.
   localeCookie: { name: 'locale' },
+  // hreflang comes from page metadata (src/features/seo/metadata.ts) and the
+  // sitemap. The middleware's own `Link` header would point x-default at the
+  // unprefixed `/` and list every locale even for untranslated content,
+  // contradicting the HTML tags.
+  alternateLinks: false,
 })
 
 export type AppLocale = (typeof routing.locales)[number]

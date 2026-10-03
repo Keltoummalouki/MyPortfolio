@@ -59,6 +59,30 @@ describe('personInputFromCms', () => {
     expect(input.knowsLanguage).toEqual(['Arabic'])
   })
 
+  it('never puts messaging links (phone numbers) into sameAs', () => {
+    const input = personInputFromCms({
+      socialLinks: [
+        { id: '1', platform: 'whatsapp', label: 'WhatsApp', url: 'https://wa.me/212600000000', icon: 'whatsapp' },
+        { id: '2', platform: 'telegram', label: 'Telegram', url: 'https://t.me/someone', icon: 'telegram' },
+        { id: '3', platform: 'github', label: 'GitHub', url: ' https://github.com/x ', icon: 'github' },
+      ],
+      experiences: [], education: [], skillCategories: [], certifications: [], languages: [],
+    })
+    expect(input.sameAs).toEqual(['https://github.com/x'])
+    expect(JSON.stringify(personSchema(input))).not.toContain('wa.me')
+  })
+
+  it('ignores a placeholder CMS headline for jobTitle', () => {
+    const input = personInputFromCms(
+      {
+        about: { fullName: 'Keltoum Malouki', avatarUrl: '', headline: 'Get to know me', bio: '', cvUrl: '', availabilityStatus: 'available', location: '' },
+        socialLinks: [], experiences: [], education: [], skillCategories: [], certifications: [], languages: [],
+      },
+      { jobTitle: 'Full Stack Web Developer' },
+    )
+    expect(input.jobTitle).toBe('Full Stack Web Developer')
+  })
+
   it('uses fallbacks when the CMS is empty', () => {
     const input = personInputFromCms(
       { socialLinks: [], experiences: [], education: [], skillCategories: [], certifications: [], languages: [] },
@@ -98,10 +122,12 @@ describe('graph nodes', () => {
       name: 'X',
       locale: 'en',
       repoUrl: 'https://github.com/a/x',
-      technologies: ['Next.js', 'Next.js', 'NestJS'],
+      technologies: ['Next.js', 'TypeScript', 'NestJS', 'TypeScript', 'Docker'],
     })
     expect(project['@type']).toBe('SoftwareSourceCode')
-    expect(project.programmingLanguage).toEqual(['Next.js', 'NestJS'])
+    // Only actual languages; frameworks/tools stay in `keywords`.
+    expect(project.programmingLanguage).toEqual(['TypeScript'])
+    expect(project.keywords).toBe('Next.js, TypeScript, NestJS, Docker')
     expect(projectSchema({ path: '/en/projects/y', name: 'Y', locale: 'en' })['@type']).toBe('CreativeWork')
   })
 })

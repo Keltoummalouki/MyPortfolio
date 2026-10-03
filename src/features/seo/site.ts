@@ -22,9 +22,12 @@ export const PERSON = {
   address: { locality: 'Casablanca', country: 'MA', countryName: 'Morocco' },
 } as const
 
-/** The freelance practice (Organization schema). `founder` points at PERSON. */
+/**
+ * The freelance practice (Organization schema); `founder` points at PERSON.
+ * Uses the personal brand name — set a registered business name here if one exists.
+ */
 export const ORGANIZATION = {
-  name: 'Keltoum Malouki Web Development',
+  name: 'Keltoum Malouki',
   alternateName: 'KM',
   logo: '/images/km-logo-512.png',
 } as const
@@ -37,6 +40,17 @@ export const FALLBACK_SAME_AS = [
   'https://github.com/keltoummalouki',
   'https://www.linkedin.com/in/keltoummalouki',
 ] as const
+
+/**
+ * Whether a URL is a public profile that can identify the person (`sameAs`).
+ * Messaging-app links (wa.me, t.me, …) embed a phone number or handle and are
+ * contact channels, not identity profiles, so they never qualify.
+ */
+export function isPublicProfileUrl(url: string): boolean {
+  const value = url.trim()
+  if (!/^https?:\/\//i.test(value)) return false
+  return !/(^|\.|\/\/)(wa\.me|whatsapp\.com|t\.me|signal\.me|viber\.com)(\/|$)/i.test(value)
+}
 
 /** Open Graph locale codes (language_TERRITORY). */
 export const OG_LOCALES: Record<string, string> = {

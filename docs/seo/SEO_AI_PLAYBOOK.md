@@ -36,7 +36,7 @@
 ## 1. What's now in the code
 
 - **Structured data (JSON-LD):** every page emits one `@graph` containing **Person**, **WebSite** and **WebPage**, all linked by stable `@id`s.
-  - Home and /freelance add **Organization** ("Keltoum Malouki Web Development", founder = you).
+  - Home and /freelance add **Organization** (your freelance practice under your own name, founder = you).
   - /about is a **ProfilePage** with a **FAQPage**.
   - /projects is an **ItemList**, and each case study is a **SoftwareSourceCode/CreativeWork**.
   - Blog posts use **BlogPosting**. Every inner page has a **BreadcrumbList**.
@@ -81,13 +81,13 @@ It must never be "Get to know me". The old seed set it to that, and it leaks int
 
 **Admin → Experience:** DabaDoc must be published and marked **current**, with the company URL filled in. This becomes `worksFor` in the schema. Also check Caisse Manager, Admin → Education (YouCode – UM6P) and Admin → Certifications (Docker Foundations, with credential URL).
 
-**Admin → Social:** add your real profiles. Every published `https://` link becomes `Person.sameAs`, which is the strongest "these profiles are the same person" signal.
+**Admin → Social:** add your real profiles. Every published `https://` profile link becomes `Person.sameAs`, which is the strongest "these profiles are the same person" signal. Messaging links (WhatsApp, Telegram, Signal, Viber) are deliberately left out of `sameAs`, because they're contact channels and a wa.me link exposes your phone number.
 - Platform `medium` → `https://keltoummalouki.medium.com`
 - Platform `x` → `https://x.com/KeltoumMalouki`
 - dev.to → `https://dev.to/keltoummalouki`
 - Stack Overflow → `https://stackoverflow.com/users/23517421`
 
-Medium and X get their own icons. Other platforms show a generic globe icon.
+Medium and X are in Admin's platform list. **dev.to and Stack Overflow aren't yet** (the picker only offers email, GitHub, WhatsApp, Instagram, LinkedIn, Telegram, X, Discord, Reddit and Medium), so they need a small code change to add those platforms. Until then, keep them linked from your other profiles.
 
 ### 4. Domains and env vars on Vercel
 - **Vercel → Domains:** `keltoummalouki.com` (no www) must **redirect (308) to `www.keltoummalouki.com`**. Every canonical URL uses `www`.
@@ -152,7 +152,7 @@ Two notes on what to expect:
 
 **Canonical bio sentence.** Use it as the first line of every "About" field:
 - **EN:** Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco, currently at DabaDoc, building web applications with React, Next.js, Angular, NestJS, Laravel and Ruby on Rails.
-- **FR:** Keltoum Malouki est développeuse web full stack basée à Casablanca, au Maroc, actuellement chez DabaDoc. Elle crée des applications web avec React, Next.js, Angular, NestJS, Laravel et Ruby on Rails.
+- **FR:** Keltoum Malouki est développeuse web full stack basée à Casablanca, au Maroc, actuellement chez DabaDoc, et crée des applications web avec React, Next.js, Angular, NestJS, Laravel et Ruby on Rails.
 - **AR:** كلثوم ملوكي (Keltoum Malouki) مطورة ويب متكاملة (Full Stack) مقيمة في الدار البيضاء بالمغرب، تعمل حالياً لدى DabaDoc، وتبني تطبيقات الويب باستخدام React وNext.js وAngular وNestJS وLaravel وRuby on Rails.
 
 **When a fact changes** (new job, new city), update it **everywhere in the same week**: Admin, LinkedIn, GitHub, X, dev.to, Medium, CV.
@@ -198,9 +198,9 @@ Publish on your site first, then cross-post with a canonical link pointing back 
 #### Freelance marketplaces (only if you want leads)
 - **Malt:** eligibility for freelancers registered outside Malt's core countries depends on your country and legal status. Check Malt's help article *"S'inscrire sur Malt depuis l'étranger"*. You'll need a legal status such as Moroccan auto-entrepreneur.
 - **Upwork:** an option too.
-- On any marketplace, use the identity kit, list exactly the services on `/freelance` (full-stack web development; backend & API development), and link your case studies.
+- On any marketplace, use the identity kit, list exactly the three services on `/about` (full-stack web development; back-end & API development; responsive UI/UX integration), and link your case studies.
 - **Truelancer "Kltoum malouki":** if that profile is yours, fix the name spelling, title and link, or delete it. If it isn't, leave it alone.
-- **If you name your freelance practice anywhere,** use exactly **"Keltoum Malouki Web Development"**. That's the Organization name in the site's schema (in `src/features/seo/site.ts`).
+- **The Organization in the site's schema uses your own name** ("Keltoum Malouki"). If you ever register a business name, set it in `ORGANIZATION.name` (`src/features/seo/site.ts`) and use exactly that name everywhere.
 
 #### Google Business Profile: be honest about the rule
 - Google requires **in-person contact with customers**, at a storefront or by visiting them as a *service-area business*. **Online-only businesses are explicitly ineligible.**
@@ -254,7 +254,7 @@ Ordered by value-per-hour. Do 1–4 this month, then add one item from 5–8 eac
 |---|---|---|---|
 | 1 | Building an event booking app with NestJS, Next.js and PostgreSQL | `nestjs nextjs event booking app` | Architecture, roles and permissions, capacity rules, PDF tickets with QR code, unit + e2e tests: the Event Booking App case study in long form |
 | 2 | Dockerizing a NestJS + Next.js + PostgreSQL app and adding CI with GitHub Actions | `docker compose nestjs nextjs postgres github actions` | Step by step from the real repo: Compose services, env handling, the CI pipeline, and what broke along the way |
-| 3 | Designing a service-booking platform with Laravel and MySQL, UML first | `laravel reservation system availability` | Réservez-Moi: from UML/Merise models and the Jira backlog to Laravel code for availability and reservations |
+| 3 | Designing a service-booking platform with Laravel and MySQL, UML first | `laravel reservation system availability` | Réservez-Moi: from UML models and the Jira backlog to Laravel code for availability and reservations |
 | 4 | What building features for a medical appointment-booking platform taught me | `medical appointment booking ux` | General lessons on booking UX and working in a Rails / Angular / MongoDB codebase. **No confidential details; get DabaDoc's OK first** |
 | 5 | Docker fundamentals I actually use as a full-stack developer | `docker basics for web developers` | Practical notes from the Docker Foundations Professional Certificate, applied to your own projects |
 | 6 | Building a trilingual (FR/EN/AR) portfolio with Next.js 15, next-intl and Supabase, including RTL | `next-intl arabic rtl next.js` | Logical CSS utilities, locale routing, hreflang, JSON-LD: this exact site. Strong developer interest and naturally linkable |
@@ -326,7 +326,7 @@ Ordered by value-per-hour. Do 1–4 this month, then add one item from 5–8 eac
 | Priority | Change | Status | Your next step |
 |---|---|---|---|
 | Red 1 | Clear Keltoum Malouki description on homepage | **Done in code:** "Who is Keltoum Malouki?" section, key facts, explicit title/description in FR/EN/AR | Deploy; check Admin → About headline is the job title; request indexing for `/fr`, `/en`, `/ar` |
-| Red 2 | Organization + WebSite JSON-LD | **Done in code:** Person + Organization + WebSite + WebPage graph, linked by `@id`, on every page | Validate (section 2, step 9); fill Admin → Social / Experience / Certifications so `sameAs` and `worksFor` are complete |
+| Red 2 | Organization + WebSite JSON-LD | **Done in code:** Person + WebSite + WebPage graph on every page (Organization on home and /freelance), linked by `@id` | Validate (section 2, step 9); fill Admin → Social / Experience / Certifications so `sameAs` and `worksFor` are complete |
 | Red 3 | Search Console + sitemap/indexing | **Code done** (sitemap, robots, verification env vars). **Your action:** DNS + submissions | Domain property via DNS TXT, submit sitemap, request indexing, Bing import (section 2) |
 | Orange 5 | Detailed About page | **Done in code:** `/[locale]/about` (ProfilePage, visible FAQ, experience, education, skills) | Keep the CMS data complete; add it to LinkedIn Featured |
 | Orange 6 | Individual portfolio case studies | **Done in code:** `/projects` + `/projects/[slug]`; 2 case studies ship via migration | `supabase db push`; write 2–4 more in Admin → Projects; point repo Website fields at them |

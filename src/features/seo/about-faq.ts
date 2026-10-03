@@ -7,6 +7,7 @@ import {
   pickCoreStack,
   resolveRole,
   type ProfileAvailability,
+  roleInSentence,
 } from './profile-summary'
 import { FALLBACK_SAME_AS, PERSON, SITE_URL, localePath } from './site'
 
@@ -259,17 +260,17 @@ export function resolveAboutProfile(
 // ---------------------------------------------------------------------------
 
 /** Definitional intro: who, where, current position and craft, one sentence each. */
-export function composeAboutIntro(profile: AboutProfile, t: AboutTranslate): string {
+export function composeAboutIntro(profile: AboutProfile, t: AboutTranslate, locale = 'en'): string {
   const sentences = [
     t('intro.identity', {
       fullName: profile.fullName,
-      role: profile.role,
+      role: roleInSentence(profile.role, locale),
       roleArticle: englishArticle(profile.role),
     }),
     profile.current
       ? t('intro.current', {
           givenName: profile.givenName,
-          currentRole: profile.current.role,
+          currentRole: roleInSentence(profile.current.role, locale),
           currentArticle: englishArticle(profile.current.role),
           company: profile.current.company,
         })
@@ -358,7 +359,7 @@ export function buildAboutFaq(profile: AboutProfile, t: AboutTranslate, locale: 
     site,
     freelanceUrl: `${site}${localePath(locale, '/freelance')}`,
   }
-  const role = { role: profile.role, roleArticle: englishArticle(profile.role) }
+  const role = { role: roleInSentence(profile.role, locale), roleArticle: englishArticle(profile.role) }
   const items: AboutFaqItem[] = []
 
   items.push({
@@ -381,7 +382,7 @@ export function buildAboutFaq(profile: AboutProfile, t: AboutTranslate, locale: 
       current
         ? t(current.place ? 'faq.current.answerWithPlace' : 'faq.current.answer', {
             ...base,
-            currentRole: current.role,
+            currentRole: roleInSentence(current.role, locale),
             currentArticle: englishArticle(current.role),
             company: current.company,
             place: current.place,
@@ -393,7 +394,7 @@ export function buildAboutFaq(profile: AboutProfile, t: AboutTranslate, locale: 
       previous
         ? t('faq.current.previous', {
             ...base,
-            previousRole: previous.role,
+            previousRole: roleInSentence(previous.role, locale),
             previousArticle: englishArticle(previous.role),
             previousCompany: previous.company,
           })

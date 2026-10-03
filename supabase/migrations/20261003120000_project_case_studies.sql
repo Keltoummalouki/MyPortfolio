@@ -38,7 +38,7 @@ comment on column public.project_translations.body_markdown is
 update public.project_translations
 set body_markdown = $cs$## Vue d'ensemble
 
-Event Booking App est une application web full stack réalisée par Keltoum Malouki, développeuse web full stack basée à Casablanca, au Maroc, pour gérer des événements et leurs réservations avec une gestion rigoureuse des rôles et de la sécurité. Elle associe une API NestJS, une interface Next.js en TypeScript et une base de données PostgreSQL, conteneurisées avec Docker et vérifiées par un pipeline d'intégration continue GitHub Actions.
+Event Booking App est une application web full stack réalisée par Keltoum Malouki, développeuse web full stack basée à Casablanca, au Maroc, pour gérer des événements et leurs réservations avec une gestion rigoureuse des rôles et de la sécurité. L'application associe une API NestJS, une interface Next.js en TypeScript et une base de données PostgreSQL, conteneurisées avec Docker et vérifiées par un pipeline d'intégration continue GitHub Actions.
 
 ## Le problème
 
@@ -248,7 +248,7 @@ where body_markdown is null
 update public.project_translations
 set body_markdown = $cs$## Vue d'ensemble
 
-Réservez-Moi est une plateforme web de réservation de services développée avec Laravel et MySQL par Keltoum Malouki, développeuse web full stack basée à Casablanca, au Maroc. Elle met en relation clients et prestataires : les clients trouvent un service disponible et le réservent, tandis que les prestataires gèrent leurs services, leurs disponibilités et leurs réservations depuis un tableau de bord dédié.
+Réservez-Moi est une plateforme web de réservation de services développée avec Laravel et MySQL par Keltoum Malouki, développeuse web full stack basée à Casablanca, au Maroc. La plateforme met en relation clients et prestataires : les clients trouvent un service disponible et le réservent, tandis que les prestataires gèrent leurs services, leurs disponibilités et leurs réservations depuis un tableau de bord dédié.
 
 ## Le problème
 

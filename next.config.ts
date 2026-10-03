@@ -36,6 +36,11 @@ const nextConfig: NextConfig = {
         ],
     },
     transpilePackages: ['three'],
+    // The OG image route reads the profile photo from disk at runtime; make sure
+    // output file tracing bundles it into that serverless function.
+    outputFileTracingIncludes: {
+        '/[locale]/opengraph-image': ['./public/images/keltoum.png'],
+    },
     // Pin the workspace root so Turbopack doesn't infer it from a stray parent lockfile.
     turbopack: {
         root: __dirname,

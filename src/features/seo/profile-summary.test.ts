@@ -12,6 +12,7 @@ import {
   type ProfileFacts,
   type ProfileFactsFallbacks,
   type ProfileTranslate,
+  roleInSentence,
 } from './profile-summary'
 import type { PublicCmsContent } from '@/features/cms/queries'
 
@@ -23,7 +24,7 @@ const EN_TEMPLATES: Record<string, string> = {
     '{name} is {roleArticle, select, an {an} other {a}} {role} based in Casablanca, Morocco, currently working as {currentArticle, select, an {an} other {a}} {currentRole} at {company}.',
   craftSchool: 'Trained at {school}, Keltoum builds complete web applications.',
   craft: 'Keltoum builds complete web applications.',
-  'openness.available': 'Keltoum is open to freelance projects and full-time opportunities, including relocation.',
+  'openness.available': 'Keltoum is open to freelance projects and new opportunities, including relocation.',
   'openness.limited': 'Keltoum currently has limited availability.',
   'openness.unavailable': 'Keltoum is not taking on new projects at the moment.',
   'facts.role': 'Role',
@@ -36,7 +37,7 @@ const EN_TEMPLATES: Record<string, string> = {
   'values.location': 'Casablanca, Morocco',
   'values.current': '{role} at {company}',
   'values.education': '{degree}, {school}',
-  'values.openTo.available': 'Freelance projects, full-time roles and relocation',
+  'values.openTo.available': 'Freelance projects, new opportunities and relocation',
   'values.openTo.limited': 'Selected freelance projects (limited availability)',
 }
 
@@ -225,7 +226,7 @@ describe('composeProfileSummary', () => {
     expect(summary.paragraph).toBe(
       'Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco, currently working as a Full Stack Developer at DabaDoc. ' +
         'Trained at YouCode (UM6P), Keltoum builds complete web applications. ' +
-        'Keltoum is open to freelance projects and full-time opportunities, including relocation.',
+        'Keltoum is open to freelance projects and new opportunities, including relocation.',
     )
     expect(summary.facts.map((fact) => fact.id)).toEqual(['role', 'basedIn', 'current', 'education', 'stack', 'languages', 'openTo'])
     expect(summary.facts.find((fact) => fact.id === 'current')?.value).toBe('Full Stack Developer at DabaDoc')
@@ -297,5 +298,17 @@ describe('enrichPersonInput', () => {
   it('leaves worksFor empty when the CMS says there is no current position', () => {
     const facts = resolveProfileFacts({ ...EMPTY_CMS, experiences: [experience({ isCurrent: false })] }, FALLBACKS)
     expect(enrichPersonInput({ worksFor: null }, facts).worksFor).toBeNull()
+  })
+})
+
+describe('roleInSentence', () => {
+  it('lowercases French job titles but keeps acronyms', () => {
+    expect(roleInSentence('Développeuse Web Full Stack', 'fr')).toBe('développeuse web full stack')
+    expect(roleInSentence('Designer UX/UI', 'fr')).toBe('designer UX/UI')
+  })
+
+  it('leaves other locales untouched', () => {
+    expect(roleInSentence('Full Stack Web Developer', 'en')).toBe('Full Stack Web Developer')
+    expect(roleInSentence('مطورة ويب متكاملة', 'ar')).toBe('مطورة ويب متكاملة')
   })
 })

@@ -1,6 +1,7 @@
 import { getPublishedArticles } from '@/features/articles/queries'
 import { getPublishedCmsContent } from '@/features/cms/queries'
 import { getPublishedProjectBySlug, getPublishedProjects } from '@/features/content/projects.queries'
+import { cookies } from 'next/headers'
 import { llmsTextResponse, renderLlmsDocument } from '@/features/seo/llms'
 
 // /llms-full.txt: the complete, self-contained profile of Keltoum Malouki for
@@ -22,5 +23,6 @@ export async function GET(): Promise<Response> {
     projectDetail: getPublishedProjectBySlug,
     articles: getPublishedArticles,
   })
-  return llmsTextResponse(body)
+  const personalized = (await cookies()).getAll().some((cookie) => cookie.name.startsWith('sb-'))
+  return llmsTextResponse(body, { personalized })
 }

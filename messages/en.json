@@ -463,7 +463,7 @@
       "craftSchool": "Trained at {school}, Keltoum builds complete web applications, from React, Next.js and Angular interfaces to NestJS, Laravel and Ruby on Rails back ends.",
       "craft": "Keltoum builds complete web applications, from React, Next.js and Angular interfaces to NestJS, Laravel and Ruby on Rails back ends.",
       "openness": {
-        "available": "Keltoum is open to freelance projects and full-time opportunities, including relocation.",
+        "available": "Keltoum is open to freelance projects and new opportunities, including relocation.",
         "limited": "Keltoum currently has limited availability but still welcomes freelance projects and new opportunities.",
         "unavailable": "Keltoum is not taking on new projects at the moment."
       },
@@ -482,7 +482,7 @@
         "current": "{role} at {company}",
         "education": "{degree}, {school}",
         "openTo": {
-          "available": "Freelance projects, full-time roles and relocation",
+          "available": "Freelance projects, new opportunities and relocation",
           "limited": "Selected freelance projects (limited availability)"
         }
       },
@@ -508,7 +508,7 @@
     "blogDescription": "Articles, tutorials and technical notes by Keltoum Malouki, a Full Stack Web Developer in Casablanca, Morocco, on building modern web applications.",
     "freelanceTitle": "Hire Keltoum Malouki — Freelance Full Stack Web Developer",
     "freelanceDescription": "Keltoum Malouki is a freelance Full Stack Web Developer in Casablanca, Morocco, building web applications, websites, backends and APIs.",
-    "organizationDescription": "Keltoum Malouki Web Development is the freelance practice of Keltoum Malouki, a Full Stack Web Developer based in Casablanca, Morocco, offering full-stack web development and backend & API development.",
+    "organizationDescription": "Freelance full-stack web development by Keltoum Malouki, a Full Stack Web Developer based in Casablanca, Morocco: web applications, back ends and APIs.",
     "breadcrumbLabel": "Breadcrumb"
   },
   "projectPages": {

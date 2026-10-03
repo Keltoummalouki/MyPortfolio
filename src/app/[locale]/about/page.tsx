@@ -142,7 +142,7 @@ export default async function AboutPage({ params }: PageProps) {
     { presentLabel: t('present') },
   )
 
-  const definition = composeAboutIntro(profile, tAbout)
+  const definition = composeAboutIntro(profile, tAbout, locale)
   const facts = buildAboutFacts(profile, tAbout, locale)
   const faq = buildAboutFaq(profile, tAbout, locale)
 

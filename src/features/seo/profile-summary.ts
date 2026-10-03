@@ -224,6 +224,19 @@ export function resolveProfileFacts(cms: ProfileCmsInput, fallbacks: ProfileFact
 // ---------------------------------------------------------------------------
 
 /**
+ * A job title as it reads inside a sentence. French does not capitalize
+ * professions mid-sentence ("est développeuse web full stack"); acronyms such
+ * as UX/UI or PHP are kept. Other locales keep the title as entered.
+ */
+export function roleInSentence(role: string, locale: string): string {
+  if (locale !== 'fr') return role
+  return role
+    .split(' ')
+    .map((word) => (/^[\p{Lu}0-9/.+#&-]{2,}$/u.test(word) ? word : word.toLocaleLowerCase('fr')))
+    .join(' ')
+}
+
+/**
  * Compose the definitional paragraph (one sentence per available fact, so a
  * missing fact never leaves a dangling comma) and the "Key facts" rows.
  */
@@ -232,13 +245,17 @@ export function composeProfileSummary(facts: ProfileFacts, t: ProfileTranslate, 
     facts.current
       ? t('identityCurrent', {
           name: facts.name,
-          role: facts.role,
+          role: roleInSentence(facts.role, locale),
           roleArticle: englishArticle(facts.role),
-          currentRole: facts.current.role,
+          currentRole: roleInSentence(facts.current.role, locale),
           currentArticle: englishArticle(facts.current.role),
           company: facts.current.company,
         })
-      : t('identity', { name: facts.name, role: facts.role, roleArticle: englishArticle(facts.role) }),
+      : t('identity', {
+          name: facts.name,
+          role: roleInSentence(facts.role, locale),
+          roleArticle: englishArticle(facts.role),
+        }),
     facts.education ? t('craftSchool', { school: facts.education.school }) : t('craft'),
     t(`openness.${facts.availability}`),
   ]

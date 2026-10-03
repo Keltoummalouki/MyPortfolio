@@ -481,8 +481,9 @@ describe.skipIf(!merged)('real aboutPage messages', () => {
       expect(`${item.question} ${item.answer}`).not.toMatch(/[{}]|aboutPage\./)
     }
     expect(faq[0].answer).toContain('Keltoum Malouki')
-    const intro = composeAboutIntro(profile, t)
+    const intro = composeAboutIntro(profile, t, locale)
     expect(intro).toContain('Keltoum Malouki')
+    if (locale === 'fr') expect(intro).not.toMatch(/est Développeuse/)
     expect(intro).not.toMatch(/[{}]|aboutPage\./)
     for (const fact of buildAboutFacts(profile, t, locale)) {
       expect(fact.label).not.toMatch(/aboutPage\./)

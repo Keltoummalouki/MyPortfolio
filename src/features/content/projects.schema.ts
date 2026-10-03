@@ -127,7 +127,9 @@ export function projectFormInput(formData: FormData) {
         {
           title: text(`${locale}.title`),
           description: text(`${locale}.description`),
-          bodyMarkdown: text(`${locale}.bodyMarkdown`),
+          // Browsers submit textarea newlines as CRLF; store LF so the server-side
+          // length check matches the client counter.
+          bodyMarkdown: text(`${locale}.bodyMarkdown`).replace(/\r\n?/g, '\n'),
         },
       ]),
     ) as Record<ProjectLocale, { title: string; description: string; bodyMarkdown: string }>,

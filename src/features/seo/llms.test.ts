@@ -774,5 +774,6 @@ describe('llmsTextResponse', () => {
 
   it('marks preview deployments noindex', () => {
     expect(llmsTextResponse('x', { indexable: false }).headers.get('X-Robots-Tag')).toBe('noindex')
+    expect(llmsTextResponse('x', { personalized: true }).headers.get('Cache-Control')).toBe('private, no-store')
   })
 })

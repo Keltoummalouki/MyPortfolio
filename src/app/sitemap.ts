@@ -29,6 +29,8 @@ async function loadProjects(): Promise<SitemapProjectInput[]> {
     return rows.map((row) => ({
       slug: row.slug,
       status: row.status,
+      // Same rule as the case-study page: a locale counts once it has a title.
+      locales: (row.project_translations ?? []).filter((t) => t.title?.trim()).map((t) => t.locale),
       updatedAt: latestDate(row.updated_at, ...(row.project_translations ?? []).map((t) => t.updated_at)),
     }))
   } catch (err) {

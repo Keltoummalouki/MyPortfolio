@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { SITEMAP_ROUTES, buildSitemap, latestDate } from './sitemap'
 
 const ORIGIN = 'https://www.keltoummalouki.com'
-const NOW = new Date('2026-10-01T00:00:00.000Z')
 
 const urls = (entries: ReturnType<typeof buildSitemap>) => entries.map((entry) => entry.url)
 const find = (entries: ReturnType<typeof buildSitemap>, url: string) => entries.find((entry) => entry.url === url)
@@ -21,7 +20,7 @@ describe('latestDate', () => {
 
 describe('buildSitemap', () => {
   it('lists every static route once per locale, with absolute URLs', () => {
-    const entries = buildSitemap({ now: NOW })
+    const entries = buildSitemap()
     expect(urls(entries)).toEqual([
       `${ORIGIN}/fr`,
       `${ORIGIN}/en`,
@@ -40,7 +39,8 @@ describe('buildSitemap', () => {
       `${ORIGIN}/ar/freelance`,
     ])
     for (const entry of entries) {
-      expect(entry.lastModified).toEqual(NOW)
+      // No content date known -> no lastModified (never a fake "now").
+      expect(entry.lastModified).toBeUndefined()
       expect(entry.changeFrequency).toBeDefined()
       expect(entry.priority).toBeGreaterThan(0)
     }
@@ -48,7 +48,6 @@ describe('buildSitemap', () => {
 
   it('applies the priority ladder', () => {
     const entries = buildSitemap({
-      now: NOW,
       projects: [{ slug: 'event-booking-app' }],
       articles: [{ translations: [{ locale: 'en', slug: 'hello' }] }],
     })
@@ -62,20 +61,19 @@ describe('buildSitemap', () => {
   })
 
   it('emits absolute hreflang alternates including x-default on static routes', () => {
-    const about = find(buildSitemap({ now: NOW }), `${ORIGIN}/ar/about`)
+    const about = find(buildSitemap(), `${ORIGIN}/ar/about`)
     expect(about?.alternates?.languages).toEqual({
       fr: `${ORIGIN}/fr/about`,
       en: `${ORIGIN}/en/about`,
       ar: `${ORIGIN}/ar/about`,
       'x-default': `${ORIGIN}/fr/about`,
     })
-    const home = find(buildSitemap({ now: NOW }), `${ORIGIN}/en`)
+    const home = find(buildSitemap(), `${ORIGIN}/en`)
     expect(home?.alternates?.languages).toMatchObject({ fr: `${ORIGIN}/fr`, 'x-default': `${ORIGIN}/fr` })
   })
 
   it('lists each published project in every locale with its own lastModified', () => {
     const entries = buildSitemap({
-      now: NOW,
       projects: [
         { slug: 'event-booking-app', updatedAt: '2026-02-01T10:00:00Z' },
         { slug: 'reservez-moi', updatedAt: '2025-04-15T10:00:00Z' },
@@ -103,9 +101,19 @@ describe('buildSitemap', () => {
     })
   })
 
+  it('lists a project only in the locales it is translated into', () => {
+    const entries = buildSitemap({ projects: [{ slug: 'new-app', locales: ['fr', 'de', 'fr'] }] })
+    const projectUrls = urls(entries).filter((url) => url.includes('/projects/new-app'))
+    expect(projectUrls).toEqual([`${ORIGIN}/fr/projects/new-app`])
+    expect(find(entries, `${ORIGIN}/fr/projects/new-app`)?.alternates?.languages).toEqual({
+      fr: `${ORIGIN}/fr/projects/new-app`,
+      'x-default': `${ORIGIN}/fr/projects/new-app`,
+    })
+    expect(find(entries, `${ORIGIN}/fr/projects/new-app`)).not.toHaveProperty('lastModified')
+  })
+
   it('never lists drafts, empty slugs or duplicate projects', () => {
     const entries = buildSitemap({
-      now: NOW,
       projects: [
         { slug: 'draft-project', status: 'draft' },
         { slug: '   ' },
@@ -122,7 +130,6 @@ describe('buildSitemap', () => {
 
   it('lists each article translation at its own localized slug with per-article alternates', () => {
     const entries = buildSitemap({
-      now: NOW,
       articles: [
         {
           updatedAt: '2026-05-01T00:00:00Z',
@@ -151,7 +158,6 @@ describe('buildSitemap', () => {
 
   it('falls back to the first available translation for x-default', () => {
     const entries = buildSitemap({
-      now: NOW,
       articles: [{ translations: [{ locale: 'ar', slug: 'docker' }] }],
     })
     expect(find(entries, `${ORIGIN}/ar/blog/docker`)?.alternates?.languages).toEqual({
@@ -162,7 +168,6 @@ describe('buildSitemap', () => {
 
   it('ignores unsupported locales and percent-encodes non-ASCII slugs', () => {
     const entries = buildSitemap({
-      now: NOW,
       articles: [
         {
           translations: [
@@ -178,7 +183,7 @@ describe('buildSitemap', () => {
   })
 
   it('skips articles with no usable translation', () => {
-    const entries = buildSitemap({ now: NOW, articles: [{ translations: [] }] })
+    const entries = buildSitemap({ articles: [{ translations: [] }] })
     expect(urls(entries).some((url) => url.includes('/blog/'))).toBe(false)
   })
 })

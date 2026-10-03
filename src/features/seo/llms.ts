@@ -19,7 +19,7 @@ import {
   resolveRole,
   type ProfileAvailability,
 } from './profile-summary'
-import { FALLBACK_SAME_AS, ORGANIZATION, PERSON, SITE_URL, absoluteUrl, isIndexable, localePath } from './site'
+import { FALLBACK_SAME_AS, PERSON, SITE_URL, absoluteUrl, isIndexable, isPublicProfileUrl, localePath } from './site'
 
 // /llms.txt and /llms-full.txt (https://llmstxt.org): Markdown guides that tell
 // AI assistants who Keltoum Malouki is and where the detail lives. Everything
@@ -543,12 +543,6 @@ function profileLink(url: string, label: string, platform = ''): LlmsLink {
   return { label: name, url: url.trim(), description }
 }
 
-/** Public profile URL (http/https only; never messaging apps or phone links). */
-function isPublicProfileUrl(url: string): boolean {
-  if (!/^https?:\/\//i.test(url.trim())) return false
-  return !/(^|\.|\/\/)(wa\.me|whatsapp\.com|t\.me|signal\.me|viber\.com)(\/|$)/i.test(url)
-}
-
 function urlKey(url: string): string {
   return url.trim().toLowerCase().replace(/^https?:\/\/(www\.)?/, '').replace(/\/+$/, '')
 }
@@ -774,7 +768,7 @@ function availabilitySentence(profile: LlmsProfile): string {
     case 'unavailable':
       return `${profile.givenName} is not taking on new projects at the moment.`
     default:
-      return `${profile.givenName} is open to freelance projects and full-time opportunities, including relocation.`
+      return `${profile.givenName} is open to freelance projects and new opportunities, including relocation.`
   }
 }
 
@@ -1073,8 +1067,6 @@ export function buildLlmsFullTxt(data: LlmsData, options: { generatedAt?: Date }
   const services = [
     ...data.services.map((service) => `- ${oneLine(service.title)}: ${oneLine(service.description)}`),
     '',
-    `Freelance work is offered as ${ORGANIZATION.name}, the freelance practice of ${name}.`,
-    '',
     ...(data.projectTypes.length
       ? [`Project types accepted through the freelance inquiry form: ${data.projectTypes.map(oneLine).join(', ')}.`, '']
       : []),
@@ -1287,11 +1279,16 @@ export const LLMS_CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while
  * Plain-text response for both documents. Preview/development deployments add
  * `X-Robots-Tag: noindex` (they are blocked in robots.txt too).
  */
-export function llmsTextResponse(body: string, options: { indexable?: boolean } = {}): Response {
+export function llmsTextResponse(
+  body: string,
+  options: { indexable?: boolean; personalized?: boolean } = {},
+): Response {
   const indexable = options.indexable ?? isIndexable()
   const headers: Record<string, string> = {
     'Content-Type': 'text/plain; charset=utf-8',
-    'Cache-Control': LLMS_CACHE_CONTROL,
+    // A request carrying a Supabase session may get a refreshed auth cookie on
+    // the response; never let a shared cache store that.
+    'Cache-Control': options.personalized ? 'private, no-store' : LLMS_CACHE_CONTROL,
   }
   if (!indexable) headers['X-Robots-Tag'] = 'noindex'
   return new Response(body, { status: 200, headers })

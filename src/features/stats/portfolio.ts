@@ -1,5 +1,5 @@
 export const PORTFOLIO_STATS = {
-  projects: 40,
+  projects: 50,
   experience: 1,
   technologies: 20,
   commits: 500,

@@ -1,6 +1,7 @@
 import { getPublishedArticles } from '@/features/articles/queries'
 import { getPublishedCmsContent } from '@/features/cms/queries'
 import { getPublishedProjects } from '@/features/content/projects.queries'
+import { cookies } from 'next/headers'
 import { llmsTextResponse, renderLlmsDocument } from '@/features/seo/llms'
 
 // /llms.txt (https://llmstxt.org): the curated Markdown guide that tells AI
@@ -20,5 +21,6 @@ export async function GET(): Promise<Response> {
     projects: getPublishedProjects,
     articles: getPublishedArticles,
   })
-  return llmsTextResponse(body)
+  const personalized = (await cookies()).getAll().some((cookie) => cookie.name.startsWith('sb-'))
+  return llmsTextResponse(body, { personalized })
 }

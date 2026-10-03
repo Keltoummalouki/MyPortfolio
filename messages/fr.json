@@ -463,7 +463,7 @@
       "craftSchool": "Formée chez {school}, Keltoum conçoit des applications web complètes, des interfaces React, Next.js et Angular aux back-ends NestJS, Laravel et Ruby on Rails.",
       "craft": "Keltoum conçoit des applications web complètes, des interfaces React, Next.js et Angular aux back-ends NestJS, Laravel et Ruby on Rails.",
       "openness": {
-        "available": "Keltoum est ouverte aux missions freelance comme aux postes à temps plein, avec possibilité de relocation.",
+        "available": "Keltoum est ouverte aux missions freelance comme aux nouvelles opportunités, avec possibilité de relocation.",
         "limited": "Keltoum a actuellement une disponibilité limitée, mais reste ouverte aux missions freelance et aux nouvelles opportunités.",
         "unavailable": "Keltoum n'accepte pas de nouveaux projets pour le moment."
       },
@@ -482,7 +482,7 @@
         "current": "{role} chez {company}",
         "education": "{degree}, {school}",
         "openTo": {
-          "available": "Missions freelance, postes à temps plein et relocation",
+          "available": "Missions freelance, nouvelles opportunités et relocation",
           "limited": "Missions freelance ciblées (disponibilité limitée)"
         }
       },
@@ -508,7 +508,7 @@
     "blogDescription": "Articles, tutoriels et notes techniques de Keltoum Malouki, développeuse web full stack à Casablanca, au Maroc, sur la création d'applications web modernes.",
     "freelanceTitle": "Travailler avec Keltoum Malouki — Développeuse web full stack freelance",
     "freelanceDescription": "Keltoum Malouki est développeuse web full stack freelance à Casablanca, au Maroc, et réalise des applications web, des sites web, des back-ends et des API.",
-    "organizationDescription": "Keltoum Malouki Web Development est l'activité freelance de Keltoum Malouki, développeuse web full stack basée à Casablanca, au Maroc : développement web full stack, back-end et API.",
+    "organizationDescription": "Développement web full stack en freelance par Keltoum Malouki, développeuse web full stack basée à Casablanca, au Maroc : applications web, back-end et API.",
     "breadcrumbLabel": "Fil d'Ariane"
   },
   "projectPages": {

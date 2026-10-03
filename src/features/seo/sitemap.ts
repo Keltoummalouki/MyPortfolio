@@ -15,6 +15,12 @@ export interface SitemapProjectInput {
   updatedAt?: string | Date | null
   /** Defensive: anything other than `published` is skipped when provided. */
   status?: string | null
+  /**
+   * Locales with a real translation. The case-study page canonicalizes an
+   * untranslated locale to a translated one, so only these are listed.
+   * Omitted/empty = every locale (static fallback projects).
+   */
+  locales?: string[]
 }
 
 export interface SitemapArticleTranslationInput {
@@ -33,11 +39,6 @@ export interface SitemapArticleInput {
 export interface BuildSitemapInput {
   projects?: SitemapProjectInput[]
   articles?: SitemapArticleInput[]
-  /**
-   * `lastModified` for pages without their own content date (home, about,
-   * freelance — CMS-driven) and fallback for items without one. Defaults to now.
-   */
-  now?: Date
 }
 
 interface RouteConfig {
@@ -86,19 +87,30 @@ function absoluteAlternates(
   )
 }
 
-/** One entry per locale for a route whose path is the same in every language. */
-function everyLocale(path: string, route: RouteConfig, lastModified: Date): MetadataRoute.Sitemap {
-  const languages = absoluteAlternates(path)
-  return LOCALES.map((locale) => ({
+/**
+ * One entry per locale for a route whose path is the same in every language
+ * (restricted to `locales` when given). `lastModified` is omitted when unknown:
+ * a fake "now" on every fetch teaches crawlers to ignore the field.
+ */
+function everyLocale(
+  path: string,
+  route: RouteConfig,
+  lastModified: Date | undefined,
+  locales: readonly string[] = LOCALES,
+): MetadataRoute.Sitemap {
+  const localizedPaths =
+    locales.length === LOCALES.length ? undefined : Object.fromEntries(locales.map((locale) => [locale, path]))
+  const languages = absoluteAlternates(path, localizedPaths)
+  return LOCALES.filter((locale) => locales.includes(locale)).map((locale) => ({
     url: absoluteUrl(localePath(locale, path)),
-    lastModified,
+    ...(lastModified ? { lastModified } : {}),
     changeFrequency: route.changeFrequency,
     priority: route.priority,
     alternates: { languages },
   }))
 }
 
-export function buildSitemap({ projects = [], articles = [], now = new Date() }: BuildSitemapInput = {}): MetadataRoute.Sitemap {
+export function buildSitemap({ projects = [], articles = [] }: BuildSitemapInput = {}): MetadataRoute.Sitemap {
   const publishedProjects = projects.filter((project) => isPublished(project.status) && project.slug?.trim())
   const publishedArticles = articles.filter((article) => isPublished(article.status))
 
@@ -108,9 +120,9 @@ export function buildSitemap({ projects = [], articles = [], now = new Date() }:
   )
 
   const entries: MetadataRoute.Sitemap = [
-    ...everyLocale('/', SITEMAP_ROUTES.home, now),
-    ...everyLocale('/about', SITEMAP_ROUTES.about, now),
-    ...everyLocale('/projects', SITEMAP_ROUTES.projects, latestProject ?? now),
+    ...everyLocale('/', SITEMAP_ROUTES.home, undefined),
+    ...everyLocale('/about', SITEMAP_ROUTES.about, undefined),
+    ...everyLocale('/projects', SITEMAP_ROUTES.projects, latestProject),
   ]
 
   const seenProjects = new Set<string>()
@@ -118,10 +130,18 @@ export function buildSitemap({ projects = [], articles = [], now = new Date() }:
     const slug = slugSegment(project.slug)
     if (seenProjects.has(slug)) continue
     seenProjects.add(slug)
-    entries.push(...everyLocale(`/projects/${slug}`, SITEMAP_ROUTES.project, latestDate(project.updatedAt) ?? now))
+    const locales = [...new Set((project.locales ?? []).filter(isLocale))]
+    entries.push(
+      ...everyLocale(
+        `/projects/${slug}`,
+        SITEMAP_ROUTES.project,
+        latestDate(project.updatedAt),
+        locales.length ? locales : LOCALES,
+      ),
+    )
   }
 
-  entries.push(...everyLocale('/blog', SITEMAP_ROUTES.blog, latestArticle ?? now))
+  entries.push(...everyLocale('/blog', SITEMAP_ROUTES.blog, latestArticle))
 
   for (const article of publishedArticles) {
     // One translation per supported locale (first wins), non-empty slugs only.
@@ -142,9 +162,10 @@ export function buildSitemap({ projects = [], articles = [], now = new Date() }:
     for (const locale of LOCALES) {
       const translation = byLocale.get(locale)
       if (!translation) continue
+      const lastModified = latestDate(article.updatedAt, translation.updatedAt)
       entries.push({
         url: absoluteUrl(localePath(locale, localizedPaths[locale])),
-        lastModified: latestDate(article.updatedAt, translation.updatedAt) ?? now,
+        ...(lastModified ? { lastModified } : {}),
         changeFrequency: SITEMAP_ROUTES.post.changeFrequency,
         priority: SITEMAP_ROUTES.post.priority,
         alternates: { languages },
@@ -152,7 +173,7 @@ export function buildSitemap({ projects = [], articles = [], now = new Date() }:
     }
   }
 
-  entries.push(...everyLocale('/freelance', SITEMAP_ROUTES.freelance, now))
+  entries.push(...everyLocale('/freelance', SITEMAP_ROUTES.freelance, undefined))
 
   return entries
 }

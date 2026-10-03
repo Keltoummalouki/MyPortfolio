@@ -8,8 +8,10 @@ import {
   SITE_URL,
   FALLBACK_SAME_AS,
   absoluteUrl,
+  isPublicProfileUrl,
   localePath,
 } from './site'
+import { resolveRole } from './profile-summary'
 
 // Pure schema.org (JSON-LD) builders. Every page emits ONE `@graph` whose nodes
 // reference the shared Person / Organization / WebSite entities by stable `@id`,
@@ -122,7 +124,7 @@ export function personInputFromCms(
   fallback: { jobTitle?: string; description?: string } = {},
 ): PersonSchemaInput {
   const links = cms.socialLinks ?? []
-  const sameAs = links.map((link) => link.url).filter((url) => /^https?:\/\//i.test(url))
+  const sameAs = links.map((link) => link.url.trim()).filter(isPublicProfileUrl)
   const email = links
     .map((link) => link.url)
     .find((url) => url.startsWith('mailto:'))
@@ -132,7 +134,8 @@ export function personInputFromCms(
 
   return {
     name: cms.about?.fullName || undefined,
-    jobTitle: cms.about?.headline || fallback.jobTitle,
+    // resolveRole drops known placeholder headlines (e.g. a seeded "Get to know me").
+    jobTitle: resolveRole(cms.about?.headline, fallback.jobTitle ?? '') || undefined,
     description: cms.about?.bio || fallback.description,
     image: cms.about?.avatarUrl || undefined,
     sameAs,
@@ -297,6 +300,12 @@ export function itemListSchema(pagePath: string, items: { name: string; path: st
 // Content: projects (case studies) and blog posts
 // ---------------------------------------------------------------------------
 
+/** Stack entries that are programming languages (vs frameworks, databases, tools). */
+const PROGRAMMING_LANGUAGES = new Set([
+  'typescript', 'javascript', 'php', 'ruby', 'python', 'java', 'c', 'c#', 'c++', 'go', 'dart',
+  'kotlin', 'swift', 'sql', 'html', 'html5', 'css', 'css3', 'coffeescript',
+])
+
 export interface ProjectSchemaInput {
   /** Localized pathname of the case study, e.g. `/en/projects/event-booking-app`. */
   path: string
@@ -326,7 +335,9 @@ export function projectSchema(input: ProjectSchemaInput): JsonLdNode {
     codeRepository: input.repoUrl || undefined,
     sameAs: input.demoUrl || undefined,
     keywords: unique(input.technologies ?? []).join(', ') || undefined,
-    programmingLanguage: input.repoUrl ? unique(input.technologies ?? []) : undefined,
+    programmingLanguage: input.repoUrl
+      ? unique(input.technologies ?? []).filter((tech) => PROGRAMMING_LANGUAGES.has(tech.toLowerCase()))
+      : undefined,
     dateCreated: input.dateCreated || undefined,
     dateModified: input.dateModified || undefined,
     author: personRef,
