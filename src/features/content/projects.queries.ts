@@ -1,10 +1,12 @@
 import 'server-only'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/supabase/database.types'
-import type { ProjectSkillOption } from './projects.schema'
+import { isValidProjectSlug, type ProjectSkillOption } from './projects.schema'
 
 type ProjectRow = Database['public']['Tables']['projects']['Row']
 type ProjectTranslationRow = Database['public']['Tables']['project_translations']['Row']
+/** Translation columns returned by list reads (no case-study body). */
+export type ProjectTranslationSummary = Omit<ProjectTranslationRow, 'body_markdown'>
 
 export type AdminProject = ProjectRow & {
   project_translations: ProjectTranslationRow[]
@@ -21,7 +23,15 @@ export interface ProjectSkillLink {
   } | null
 }
 
-export type PublicProject = AdminProject & {
+/** A published project as listed publicly (cards, sitemap): no case-study body. */
+export type PublicProject = ProjectRow & {
+  project_translations: ProjectTranslationSummary[]
+  project_skills: ProjectSkillLink[]
+}
+
+/** A published project with full translations (case study included). */
+export type PublicProjectDetail = ProjectRow & {
+  project_translations: ProjectTranslationRow[]
   project_skills: ProjectSkillLink[]
 }
 
@@ -30,8 +40,10 @@ export type AdminProjectDetail = AdminProject & {
 }
 
 const LIST_SELECT = '*, project_translations(*)'
-const PUBLIC_SELECT =
-  '*, project_translations(*), project_skills(sort_order, skills(id, name, icon, image_url))'
+const PUBLIC_SKILLS_SELECT = 'project_skills(sort_order, skills(id, name, icon, image_url))'
+// Lists never need the (potentially long) case-study Markdown.
+const PUBLIC_LIST_SELECT = `*, project_translations(id, project_id, locale, title, description, created_at, updated_at), ${PUBLIC_SKILLS_SELECT}`
+const PUBLIC_DETAIL_SELECT = `*, project_translations(*), ${PUBLIC_SKILLS_SELECT}`
 const DETAIL_SELECT = '*, project_translations(*), project_skills(skill_id, sort_order)'
 
 /**
@@ -45,7 +57,7 @@ export async function getPublishedProjects(): Promise<PublicProject[]> {
     const supabase = await createServerSupabaseClient()
     const { data, error } = await supabase
       .from('projects')
-      .select(PUBLIC_SELECT)
+      .select(PUBLIC_LIST_SELECT)
       .eq('status', 'published')
       .order('featured', { ascending: false })
       .order('sort_order', { ascending: true })
@@ -54,6 +66,31 @@ export async function getPublishedProjects(): Promise<PublicProject[]> {
   } catch (err) {
     console.error('getPublishedProjects failed; falling back to static content:', err)
     return []
+  }
+}
+
+/**
+ * Public read of one PUBLISHED project by slug, with every translation (case
+ * study included) and its linked skills — for /[locale]/projects/[slug].
+ * Returns null when the slug is malformed, the project is missing or not
+ * published, or the database is unreachable (the page then decides between the
+ * static fallback and a 404).
+ */
+export async function getPublishedProjectBySlug(slug: string): Promise<PublicProjectDetail | null> {
+  if (!isValidProjectSlug(slug)) return null
+  try {
+    const supabase = await createServerSupabaseClient()
+    const { data, error } = await supabase
+      .from('projects')
+      .select(PUBLIC_DETAIL_SELECT)
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .maybeSingle()
+    if (error) throw error
+    return (data as unknown as PublicProjectDetail | null) ?? null
+  } catch (err) {
+    console.error('getPublishedProjectBySlug failed:', err)
+    return null
   }
 }
 

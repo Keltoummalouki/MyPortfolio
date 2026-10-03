@@ -300,6 +300,14 @@
       "arabic": "Arabic",
       "french": "French",
       "english": "English"
+    },
+    "nav": {
+      "label": "Site links",
+      "home": "Home",
+      "about": "About",
+      "projects": "Projects",
+      "blog": "Blog",
+      "freelance": "Work with me"
     }
   },
   "common": {
@@ -309,5 +317,234 @@
     "retry": "Retry",
     "close": "Close",
     "menu": "Menu"
+  },
+  "aboutPage": {
+    "meta": {
+      "title": "About Keltoum Malouki — Full Stack Web Developer",
+      "description": "Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco. Full profile: experience, education, skills, languages and FAQ."
+    },
+    "eyebrow": "Profile",
+    "title": "About {name}",
+    "present": "Present",
+    "intro": {
+      "identity": "{fullName} is {roleArticle, select, an {an} other {a}} {role} based in Casablanca, Morocco.",
+      "current": "{givenName} currently works as {currentArticle, select, an {an} other {a}} {currentRole} at {company}.",
+      "craft": "{givenName} builds complete web applications, from front-end interfaces to back-end APIs and databases.",
+      "cta": {
+        "label": "Profile actions",
+        "downloadCv": "Download CV",
+        "workWithMe": "Work with me",
+        "email": "Email me"
+      }
+    },
+    "glance": {
+      "title": "At a glance",
+      "labels": {
+        "role": "Role",
+        "location": "Based in",
+        "current": "Current position",
+        "education": "Education",
+        "languages": "Languages",
+        "openTo": "Open to",
+        "email": "Email"
+      },
+      "values": {
+        "location": "Casablanca, Morocco",
+        "current": "{role} at {company}",
+        "education": "{degree}, {institution}",
+        "openTo": {
+          "available": "Freelance projects, new opportunities and relocation",
+          "limited": "Selected freelance projects and new opportunities"
+        }
+      }
+    },
+    "services": {
+      "title": "What I do",
+      "lead": "The kind of work Keltoum Malouki takes on for teams and freelance clients.",
+      "items": {
+        "fullStack": {
+          "title": "Full-stack web development",
+          "description": "Complete web applications, from the interface to the database: React, Next.js and Angular on the front end, NestJS, Laravel and Ruby on Rails on the back end, with PostgreSQL, MySQL or MongoDB."
+        },
+        "backend": {
+          "title": "Backend & API development",
+          "description": "REST and GraphQL APIs, data modelling with Merise and UML, server-side integrations, and containerised delivery with Docker and CI/CD pipelines (GitHub Actions, GitLab)."
+        },
+        "frontend": {
+          "title": "Responsive UI & UX integration",
+          "description": "Responsive, accessible interfaces built from Figma or Adobe XD designs with Tailwind CSS, shadcn/ui, GSAP and Framer Motion."
+        }
+      }
+    },
+    "experience": {
+      "title": "Experience",
+      "current": "Current",
+      "technologies": "Technologies used"
+    },
+    "education": {
+      "title": "Education"
+    },
+    "skills": {
+      "title": "Skills",
+      "lead": "Languages, frameworks, databases and tools Keltoum Malouki works with."
+    },
+    "certifications": {
+      "title": "Certifications",
+      "viewCredential": "View credential"
+    },
+    "languages": {
+      "title": "Languages"
+    },
+    "softSkills": {
+      "title": "How I work",
+      "lead": "The soft skills that shape how Keltoum Malouki works with teams and clients."
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "lead": "Quick answers about {name}.",
+      "who": {
+        "question": "Who is {name}?",
+        "answer": "{fullName} is {roleArticle, select, an {an} other {a}} {role} based in Casablanca, Morocco. {name} builds complete web applications, from front-end interfaces to back-end APIs and databases."
+      },
+      "location": {
+        "question": "Where is {name} based?",
+        "answer": "{name} is based in Casablanca, Morocco, and is open to mobility and relocation."
+      },
+      "current": {
+        "question": "What does {name} do today?",
+        "answer": "{name} currently works as {currentArticle, select, an {an} other {a}} {currentRole} at {company}.",
+        "answerWithPlace": "{name} currently works as {currentArticle, select, an {an} other {a}} {currentRole} at {company} ({place}).",
+        "stack": "In this role, {name} works with {technologies}.",
+        "previous": "Previously, {name} worked as {previousArticle, select, an {an} other {a}} {previousRole} at {previousCompany}.",
+        "none": "{name} works as {roleArticle, select, an {an} other {a}} {role}, focusing on full-stack web development and backend and API development."
+      },
+      "technologies": {
+        "question": "Which technologies does {name} use?",
+        "answer": "{name} works mainly with {technologies}.",
+        "more": "{name} also uses {technologies}."
+      },
+      "education": {
+        "question": "Where did {name} study?",
+        "answer": "{name}’s education includes: {items}."
+      },
+      "availability": {
+        "question": "Is {name} available for freelance projects or hiring?",
+        "answer": {
+          "available": "Yes. {name} is open to freelance web development projects and new opportunities, including mobility and relocation. Project requests can be sent through the freelance page at {freelanceUrl}.",
+          "limited": "{name} currently has limited availability but still welcomes selected freelance projects and new opportunities. Project requests can be sent through the freelance page at {freelanceUrl}.",
+          "unavailable": "{name} is not taking on new projects at the moment but can still be contacted by email at {email}."
+        }
+      },
+      "contact": {
+        "question": "How can I contact {name}?",
+        "answer": "You can contact {name} by email at {email}. For freelance projects, a project request form is available at {freelanceUrl}.",
+        "answerWithLinkedin": "You can contact {name} by email at {email} or on LinkedIn ({linkedin}). For freelance projects, a project request form is available at {freelanceUrl}."
+      }
+    },
+    "contact": {
+      "title": "Let’s work together",
+      "text": "Have a project, a role or a question? Write to {email} or share the details of your project through the freelance form.",
+      "email": "Send an email",
+      "freelance": "Describe your project",
+      "linkedin": "LinkedIn profile",
+      "github": "GitHub profile"
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "Keltoum Malouki — Full Stack Web Developer in Casablanca, Morocco",
+      "description": "Keltoum Malouki is a Full Stack Web Developer in Casablanca, Morocco, currently at DabaDoc, building web apps with React, Next.js, Angular, NestJS and Laravel."
+    },
+    "profile": {
+      "eyebrow": "Profile at a glance",
+      "title": "Who is Keltoum Malouki?",
+      "identity": "{name} is {roleArticle, select, an {an} other {a}} {role} based in Casablanca, Morocco.",
+      "identityCurrent": "{name} is {roleArticle, select, an {an} other {a}} {role} based in Casablanca, Morocco, currently working as {currentArticle, select, an {an} other {a}} {currentRole} at {company}.",
+      "craftSchool": "Trained at {school}, Keltoum builds complete web applications, from React, Next.js and Angular interfaces to NestJS, Laravel and Ruby on Rails back ends.",
+      "craft": "Keltoum builds complete web applications, from React, Next.js and Angular interfaces to NestJS, Laravel and Ruby on Rails back ends.",
+      "openness": {
+        "available": "Keltoum is open to freelance projects and full-time opportunities, including relocation.",
+        "limited": "Keltoum currently has limited availability but still welcomes freelance projects and new opportunities.",
+        "unavailable": "Keltoum is not taking on new projects at the moment."
+      },
+      "factsTitle": "Key facts",
+      "facts": {
+        "role": "Role",
+        "basedIn": "Based in",
+        "current": "Currently",
+        "education": "Education",
+        "stack": "Core stack",
+        "languages": "Languages",
+        "openTo": "Open to"
+      },
+      "values": {
+        "location": "Casablanca, Morocco",
+        "current": "{role} at {company}",
+        "education": "{degree}, {school}",
+        "openTo": {
+          "available": "Freelance projects, full-time roles and relocation",
+          "limited": "Selected freelance projects (limited availability)"
+        }
+      },
+      "fallback": {
+        "currentCompany": "DabaDoc",
+        "school": "YouCode (UM6P)"
+      },
+      "cta": {
+        "label": "Learn more about Keltoum Malouki",
+        "about": "Full profile",
+        "projects": "Case studies",
+        "freelance": "Work with me"
+      }
+    },
+    "aboutLink": {
+      "readFullStory": "Read my full story"
+    }
+  },
+  "seo": {
+    "defaultDescription": "Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco, building web applications with React, Next.js, NestJS, Laravel and Ruby on Rails.",
+    "ogImageAlt": "Keltoum Malouki — Full Stack Web Developer based in Casablanca, Morocco",
+    "blogTitle": "Blog — Web development notes by Keltoum Malouki",
+    "blogDescription": "Articles, tutorials and technical notes by Keltoum Malouki, a Full Stack Web Developer in Casablanca, Morocco, on building modern web applications.",
+    "freelanceTitle": "Hire Keltoum Malouki — Freelance Full Stack Web Developer",
+    "freelanceDescription": "Keltoum Malouki is a freelance Full Stack Web Developer in Casablanca, Morocco, building web applications, websites, backends and APIs.",
+    "organizationDescription": "Keltoum Malouki Web Development is the freelance practice of Keltoum Malouki, a Full Stack Web Developer based in Casablanca, Morocco, offering full-stack web development and backend & API development.",
+    "breadcrumbLabel": "Breadcrumb"
+  },
+  "projectPages": {
+    "breadcrumbLabel": "Breadcrumb",
+    "caseStudy": "Case study",
+    "readCaseStudy": "Read case study",
+    "readCaseStudyAria": "Read the case study: {title}",
+    "viewCode": "Source code",
+    "viewCodeAria": "Source code of {title}",
+    "liveDemo": "Live demo",
+    "liveDemoAria": "Live demo of {title}",
+    "viewAll": "View all projects",
+    "coverAlt": "Screenshot of {title}, a project by Keltoum Malouki",
+    "index": {
+      "metaTitle": "Projects & case studies — Keltoum Malouki",
+      "metaDescription": "Case studies of web applications built by Keltoum Malouki, Full Stack Web Developer in Casablanca, Morocco, with NestJS, Next.js, Laravel and more.",
+      "title": "Projects & case studies by Keltoum Malouki",
+      "intro": "Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco. Each project below links to a case study that explains the problem, my role, the key features and the tech stack.",
+      "selection": "These case studies are a selection from 50+ completed projects.",
+      "githubCta": "Browse more code on GitHub"
+    },
+    "detail": {
+      "metaTitle": "{title} — Case study",
+      "metaDescriptionFallback": "{title} is a web project built by Keltoum Malouki, a Full Stack Web Developer based in Casablanca, Morocco.",
+      "eyebrow": "Case study",
+      "byline": "Case study by <author>Keltoum Malouki</author>",
+      "languageNote": "This case study is not available in English yet, so it is shown in its original language.",
+      "factsTitle": "Project details",
+      "factDate": "Date",
+      "factStack": "Tech stack",
+      "factLinks": "Links",
+      "overviewTitle": "Overview",
+      "overviewIntro": "{title} is a web project built by Keltoum Malouki, a Full Stack Web Developer based in Casablanca, Morocco.",
+      "stackTitle": "Tech stack",
+      "stackSentence": "{title} is built with {stack}.",
+      "moreTitle": "More projects"
+    }
   }
 }

@@ -10,31 +10,12 @@ import { uploadImageFromForm } from '@/features/cms/media'
 import {
   PROJECT_LOCALES,
   newSkillNameSchema,
+  projectFormInput,
   projectFormSchema,
   type CreateSkillResult,
   type ProjectFormState,
   type ProjectFormValues,
 } from './projects.schema'
-
-function rawForm(formData: FormData) {
-  const text = (key: string) => String(formData.get(key) ?? '')
-  return {
-    slug: text('slug'),
-    status: text('status'),
-    featured: formData.get('featured') === 'on',
-    sortOrder: text('sortOrder'),
-    skillIds: formData.getAll('skillIds').map(String).filter(Boolean),
-    repoUrl: text('repoUrl'),
-    demoUrl: text('demoUrl'),
-    coverImageUrl: text('coverImageUrl'),
-    startedAt: text('startedAt'),
-    translations: {
-      fr: { title: text('fr.title'), description: text('fr.description') },
-      en: { title: text('en.title'), description: text('en.description') },
-      ar: { title: text('ar.title'), description: text('ar.description') },
-    },
-  }
-}
 
 function fieldErrorState(error: z.ZodError): ProjectFormState {
   const errors: Record<string, string> = {}
@@ -50,20 +31,41 @@ function friendlyDbMessage(error: PostgrestError | null): string {
   return 'Could not save the project. Please try again.'
 }
 
+type TranslationRow = {
+  project_id: string
+  locale: string
+  title: string
+  description: string | null
+  body_markdown: string | null
+}
+
+function translationRow(
+  projectId: string,
+  locale: string,
+  tr: ProjectFormValues['translations'][keyof ProjectFormValues['translations']],
+): TranslationRow {
+  return {
+    project_id: projectId,
+    locale,
+    title: tr.title,
+    description: tr.description,
+    body_markdown: tr.bodyMarkdown,
+  }
+}
+
 function translationRows(projectId: string, translations: ProjectFormValues['translations']) {
-  const rows: { project_id: string; locale: string; title: string; description: string | null }[] = []
+  const rows: TranslationRow[] = []
   for (const locale of PROJECT_LOCALES) {
     const tr = translations[locale]
-    if (tr.title) {
-      rows.push({ project_id: projectId, locale, title: tr.title, description: tr.description })
-    }
+    if (tr.title) rows.push(translationRow(projectId, locale, tr))
   }
   return rows
 }
 
 function revalidateProjects() {
-  // The public home is rendered dynamically (force-dynamic), so it always
-  // reflects the latest projects; just refresh the admin list cache.
+  // The public home, /[locale]/projects and /[locale]/projects/[slug] are all
+  // rendered dynamically (force-dynamic), so they always reflect the latest
+  // projects and case studies; just refresh the admin list cache.
   revalidatePath('/admin/projects')
 }
 
@@ -100,7 +102,7 @@ export async function createProjectAction(
 ): Promise<ProjectFormState> {
   await requireAdmin()
 
-  const parsed = projectFormSchema.safeParse(rawForm(formData))
+  const parsed = projectFormSchema.safeParse(projectFormInput(formData))
   if (!parsed.success) return fieldErrorState(parsed.error)
   const v = parsed.data
 
@@ -155,7 +157,7 @@ export async function updateProjectAction(
 ): Promise<ProjectFormState> {
   await requireAdmin()
 
-  const parsed = projectFormSchema.safeParse(rawForm(formData))
+  const parsed = projectFormSchema.safeParse(projectFormInput(formData))
   if (!parsed.success) return fieldErrorState(parsed.error)
   const v = parsed.data
 
@@ -193,10 +195,7 @@ export async function updateProjectAction(
     if (tr.title) {
       const { error: upError } = await supabase
         .from('project_translations')
-        .upsert(
-          { project_id: id, locale, title: tr.title, description: tr.description },
-          { onConflict: 'project_id,locale' },
-        )
+        .upsert(translationRow(id, locale, tr), { onConflict: 'project_id,locale' })
       if (upError) return { ok: false, message: friendlyDbMessage(upError) }
     } else {
       const { error: delError } = await supabase

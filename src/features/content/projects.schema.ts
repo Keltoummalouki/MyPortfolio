@@ -10,12 +10,20 @@ export const projectStatusSchema = z.enum(PROJECT_STATUSES)
 export const PROJECT_LOCALES = ['fr', 'en', 'ar'] as const
 export type ProjectLocale = (typeof PROJECT_LOCALES)[number]
 
+const PROJECT_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const PROJECT_SLUG_MAX = 120
+
 const slugSchema = z
   .string()
   .trim()
   .min(1, 'Slug is required')
-  .max(120, 'Slug is too long')
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use lowercase letters, numbers, and hyphens')
+  .max(PROJECT_SLUG_MAX, 'Slug is too long')
+  .regex(PROJECT_SLUG_PATTERN, 'Use lowercase letters, numbers, and hyphens')
+
+/** Whether `slug` is a well-formed project slug (used to reject bad URLs early). */
+export function isValidProjectSlug(slug: string): boolean {
+  return slug.length <= PROJECT_SLUG_MAX && PROJECT_SLUG_PATTERN.test(slug)
+}
 
 // repo / demo: full URLs only (or empty -> null).
 const optionalUrl = z
@@ -44,13 +52,30 @@ const optionalText = (max: number) =>
     .max(max, `Must be ${max} characters or fewer`)
     .transform((v) => (v === '' ? null : v))
 
+/** Max length of a per-locale case study (Markdown). */
+export const PROJECT_CASE_STUDY_MAX = 20000
+
 const translationSchema = (titleRequired: boolean) =>
-  z.object({
-    title: titleRequired
-      ? z.string().trim().min(1, 'Title is required').max(200, 'Title is too long')
-      : z.string().trim().max(200, 'Title is too long'),
-    description: optionalText(2000),
-  })
+  z
+    .object({
+      title: titleRequired
+        ? z.string().trim().min(1, 'Title is required').max(200, 'Title is too long')
+        : z.string().trim().max(200, 'Title is too long'),
+      description: optionalText(2000),
+      // Case study rendered on the public /projects/<slug> page (optional).
+      bodyMarkdown: optionalText(PROJECT_CASE_STUDY_MAX).default(null),
+    })
+    // A locale is saved only when it has a title (blank title = locale removed),
+    // so refuse content without a title instead of silently discarding it.
+    .superRefine((value, ctx) => {
+      if (!value.title && (value.description || value.bodyMarkdown)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Add a title to save this translation',
+          path: ['title'],
+        })
+      }
+    })
 
 export const projectFormSchema = z.object({
   slug: slugSchema,
@@ -77,6 +102,37 @@ export const projectFormSchema = z.object({
 })
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>
+
+/**
+ * Raw (unvalidated) input for `projectFormSchema`, read from the project form's
+ * FormData. Field names: `slug`, `status`, `featured` (checkbox), `sortOrder`,
+ * `skillIds` (repeated), `repoUrl`, `demoUrl`, `coverImageUrl`, `startedAt`, and
+ * per locale `<locale>.title`, `<locale>.description`, `<locale>.bodyMarkdown`.
+ */
+export function projectFormInput(formData: FormData) {
+  const text = (key: string) => String(formData.get(key) ?? '')
+  return {
+    slug: text('slug'),
+    status: text('status'),
+    featured: formData.get('featured') === 'on',
+    sortOrder: text('sortOrder'),
+    skillIds: formData.getAll('skillIds').map(String).filter(Boolean),
+    repoUrl: text('repoUrl'),
+    demoUrl: text('demoUrl'),
+    coverImageUrl: text('coverImageUrl'),
+    startedAt: text('startedAt'),
+    translations: Object.fromEntries(
+      PROJECT_LOCALES.map((locale) => [
+        locale,
+        {
+          title: text(`${locale}.title`),
+          description: text(`${locale}.description`),
+          bodyMarkdown: text(`${locale}.bodyMarkdown`),
+        },
+      ]),
+    ) as Record<ProjectLocale, { title: string; description: string; bodyMarkdown: string }>,
+  }
+}
 
 export interface ProjectFormState {
   ok?: boolean

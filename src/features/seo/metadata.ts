@@ -15,7 +15,11 @@ export interface PageMetadataInput {
   /** Use the title as-is (skip the `%s | Keltoum Malouki` template). */
   absoluteTitle?: boolean
   type?: 'website' | 'article' | 'profile'
-  /** Absolute or site-relative image URLs. Omit to use the file-based OG image. */
+  /**
+   * Absolute or site-relative image URLs. Defaults to the locale's generated
+   * share card (`/<locale>/opengraph-image`): Next only applies a file-based OG
+   * image to its own segment once a page sets `openGraph`, so pass it explicitly.
+   */
   images?: { url: string; width?: number; height?: number; alt?: string }[]
   /**
    * Per-locale locale-less paths when slugs differ by language (articles).
@@ -64,7 +68,9 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
   const alternateLocale = Object.keys(languages)
     .filter((l) => l !== locale && l !== 'x-default')
     .map((l) => OG_LOCALES[l] ?? l)
-  const ogImages = images?.map((image) => ({ ...image, url: absoluteUrl(image.url) }))
+  const ogImages = (
+    images ?? [{ url: localePath(locale, '/opengraph-image'), width: 1200, height: 630, alt: SITE_NAME }]
+  ).map((image) => ({ ...image, url: absoluteUrl(image.url) }))
 
   const openGraphBase = {
     title,
@@ -73,7 +79,7 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
     siteName: SITE_NAME,
     locale: OG_LOCALES[locale] ?? locale,
     alternateLocale,
-    ...(ogImages ? { images: ogImages } : {}),
+    images: ogImages,
   }
 
   const openGraph: Metadata['openGraph'] =
@@ -98,7 +104,7 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
       card: 'summary_large_image',
       title,
       description,
-      ...(ogImages ? { images: ogImages.map((image) => image.url) } : {}),
+      images: ogImages.map((image) => image.url),
     },
     ...(noindex ? { robots: { index: false, follow: true } } : {}),
   }

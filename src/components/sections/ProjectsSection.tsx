@@ -5,38 +5,22 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { Github, ExternalLink, Star, Folder, Code2, ArrowUpRight } from 'lucide-react'
+import { Github, ExternalLink, Star, Folder, Code2, ArrowUpRight, ArrowRight, BookOpen } from 'lucide-react'
+import { Link } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
 import SectionHeader from '@/components/ui/SectionHeader'
 import BentoCard from '@/components/ui/BentoCard'
 import SkillIcon from '@/components/ui/SkillIcon'
+import { fallbackProjectCards } from '@/features/content/projects.fallback'
 import type { ProjectCardData } from '@/features/content/projects.map'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-// Static fallback, used when the database has no published projects or is
-// unreachable. Preserves the original portfolio content and its translations.
-const FALLBACK_PROJECTS = [
-  {
-    id: 'eventBooking',
-    image: '/images/event-booking-app.png',
-    github: 'https://github.com/Keltoummalouki/event-booking-app',
-    demo: '',
-    featured: true,
-  },
-  {
-    id: 'reservezmoi',
-    image: '/images/reservezmoi.png',
-    github: 'https://github.com/keltoummalouki/Reservez-Moi',
-    demo: '',
-    featured: true,
-  },
-] as const
-
 export default function ProjectsSection({ projects }: { projects?: ProjectCardData[] }) {
   const t = useTranslations('projects')
+  const tp = useTranslations('projectPages')
   const sectionRef = useRef<HTMLElement>(null)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
@@ -68,28 +52,10 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
     return () => ctx.revert()
   }, [prefersReducedMotion])
 
-  // Prefer database-managed projects; otherwise fall back to static content.
+  // Prefer database-managed projects; otherwise fall back to the shared static
+  // projects (same slugs as the /projects case-study pages).
   const items: ProjectCardData[] =
-    projects && projects.length > 0
-      ? projects
-      : FALLBACK_PROJECTS.map((p) => {
-          const stack = t(`items.${p.id}.stack`)
-            .split(',')
-            .map((s) => s.trim())
-            .filter(Boolean)
-          return {
-            id: p.id,
-            title: t(`items.${p.id}.title`),
-            description: t(`items.${p.id}.description`),
-            image: p.image,
-            github: p.github || null,
-            demo: p.demo || null,
-            featured: p.featured,
-            stack,
-            stackItems: stack.map((name) => ({ name, icon: null, imageUrl: null })),
-            dateLabel: t(`items.${p.id}.date`),
-          }
-        })
+    projects && projects.length > 0 ? projects : fallbackProjectCards((key) => t(key))
 
   return (
     <section
@@ -127,11 +93,11 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
                       <Folder size={40} />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/90 hidden md:block" />
+                  <div className="absolute inset-0 bg-gradient-to-r rtl:bg-gradient-to-l from-transparent to-background/90 hidden md:block" />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent md:hidden" />
 
                   {project.featured && (
-                    <span className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                    <span className="absolute top-4 start-4 z-10 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-sm">
                       <Star size={12} className="fill-current" />
                       {t('featured')}
                     </span>
@@ -171,7 +137,17 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
                     ))}
                   </div>
 
-                  <div className="flex gap-3 mt-auto">
+                  <div className="flex flex-wrap gap-3 mt-auto">
+                    <Button size="sm" asChild className="flex-1">
+                      <Link
+                        href={`/projects/${project.slug}`}
+                        aria-label={tp('readCaseStudyAria', { title: project.title })}
+                        className="flex items-center justify-center gap-2"
+                      >
+                        <BookOpen size={16} />
+                        {tp('caseStudy')}
+                      </Link>
+                    </Button>
                     {project.github && (
                       <Button variant="outline" size="sm" asChild className="flex-1">
                         <a
@@ -186,7 +162,7 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
                       </Button>
                     )}
                     {project.demo && (
-                      <Button size="sm" asChild className="flex-1">
+                      <Button variant="outline" size="sm" asChild className="flex-1">
                         <a
                           href={project.demo}
                           target="_blank"
@@ -210,6 +186,12 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
             </div>
             <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-2">50+</h3>
             <p className="text-muted-foreground mb-6">{t('moreProjects')}</p>
+            <Button size="sm" asChild className="mb-4">
+              <Link href="/projects" className="flex items-center justify-center gap-2">
+                {tp('viewAll')}
+                <ArrowRight size={16} className="rtl:rotate-180" />
+              </Link>
+            </Button>
             <a
               href="https://github.com/keltoummalouki"
               target="_blank"

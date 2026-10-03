@@ -671,6 +671,7 @@ export type Database = {
       }
       project_translations: {
         Row: {
+          body_markdown: string | null
           created_at: string
           description: string | null
           id: string
@@ -680,6 +681,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          body_markdown?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -689,6 +691,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          body_markdown?: string | null
           created_at?: string
           description?: string | null
           id?: string

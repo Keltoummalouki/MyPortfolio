@@ -3,9 +3,11 @@
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
 import { AdminSelectField, CheckboxField, DatePickerField } from '@/components/admin/AdminFormControls'
+import MarkdownEditor from '@/components/admin/MarkdownEditor'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
+  PROJECT_CASE_STUDY_MAX,
   PROJECT_LOCALES,
   PROJECT_STATUSES,
   type ProjectFormState,
@@ -25,7 +27,7 @@ export interface ProjectFormDefaults {
   demoUrl: string
   coverImageUrl: string
   startedAt: string
-  translations: Record<ProjectLocale, { title: string; description: string }>
+  translations: Record<ProjectLocale, { title: string; description: string; bodyMarkdown: string }>
 }
 
 interface ProjectFormProps {
@@ -46,9 +48,9 @@ const EMPTY: ProjectFormDefaults = {
   coverImageUrl: '',
   startedAt: '',
   translations: {
-    fr: { title: '', description: '' },
-    en: { title: '', description: '' },
-    ar: { title: '', description: '' },
+    fr: { title: '', description: '', bodyMarkdown: '' },
+    en: { title: '', description: '', bodyMarkdown: '' },
+    ar: { title: '', description: '', bodyMarkdown: '' },
   },
 }
 
@@ -66,6 +68,12 @@ export default function ProjectForm({ action, submitLabel, technicalSkills, defa
     fr: dv.translations.fr.title,
     en: dv.translations.en.title,
     ar: dv.translations.ar.title,
+  })
+  // Case studies are controlled (MarkdownEditor toolbar edits the value).
+  const [bodies, setBodies] = useState<Record<ProjectLocale, string>>({
+    fr: dv.translations.fr.bodyMarkdown,
+    en: dv.translations.en.bodyMarkdown,
+    ar: dv.translations.ar.bodyMarkdown,
   })
 
   const err = (key: string) => state.errors?.[key]
@@ -165,6 +173,9 @@ export default function ProjectForm({ action, submitLabel, technicalSkills, defa
         <div role="tablist" aria-label="Translation language" className="flex gap-1">
           {PROJECT_LOCALES.map((loc) => {
             const complete = titles[loc].trim().length > 0
+            const hasError = Object.keys(state.errors ?? {}).some((key) =>
+              key.startsWith(`translations.${loc}.`),
+            )
             const active = loc === activeLocale
             return (
               <button
@@ -181,9 +192,14 @@ export default function ProjectForm({ action, submitLabel, technicalSkills, defa
                 {LOCALE_LABELS[loc]}
                 <span
                   aria-hidden
-                  className={cn('size-2 rounded-full', complete ? 'bg-emerald-500' : 'bg-muted-foreground/40')}
+                  className={cn(
+                    'size-2 rounded-full',
+                    hasError ? 'bg-destructive' : complete ? 'bg-emerald-500' : 'bg-muted-foreground/40',
+                  )}
                 />
-                <span className="sr-only">{complete ? '(complete)' : '(empty)'}</span>
+                <span className="sr-only">
+                  {hasError ? '(has errors)' : complete ? '(complete)' : '(empty)'}
+                </span>
               </button>
             )
           })}
@@ -217,8 +233,41 @@ export default function ProjectForm({ action, submitLabel, technicalSkills, defa
                 defaultValue={dv.translations[loc].description}
                 dir={loc === 'ar' ? 'rtl' : 'ltr'}
                 rows={4}
+                aria-invalid={err(`translations.${loc}.description`) ? true : undefined}
                 className={field}
               />
+              {err(`translations.${loc}.description`) && (
+                <p className="text-xs text-destructive">{err(`translations.${loc}.description`)}</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor={`${loc}.bodyMarkdown`} className={labelClass}>Case study (Markdown)</label>
+              <p className="text-xs text-muted-foreground">
+                Shown on the public page /{loc}/projects/{'<slug>'}. Start sections with ## headings
+                (the project title is the page&apos;s only H1). Leave empty to show an overview built
+                from the description and tech stack.
+              </p>
+              <MarkdownEditor
+                id={`${loc}.bodyMarkdown`}
+                name={`${loc}.bodyMarkdown`}
+                value={bodies[loc]}
+                onChange={(value) => setBodies((current) => ({ ...current, [loc]: value }))}
+                dir={loc === 'ar' ? 'rtl' : 'ltr'}
+                rows={16}
+                ariaInvalid={err(`translations.${loc}.bodyMarkdown`) ? true : undefined}
+              />
+              <p
+                className={cn(
+                  'text-xs',
+                  bodies[loc].length > PROJECT_CASE_STUDY_MAX ? 'text-destructive' : 'text-muted-foreground',
+                )}
+              >
+                {bodies[loc].length.toLocaleString('en-US')} / {PROJECT_CASE_STUDY_MAX.toLocaleString('en-US')} characters
+              </p>
+              {err(`translations.${loc}.bodyMarkdown`) && (
+                <p className="text-xs text-destructive">{err(`translations.${loc}.bodyMarkdown`)}</p>
+              )}
             </div>
           </div>
         ))}

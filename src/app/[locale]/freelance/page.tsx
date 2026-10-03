@@ -1,10 +1,21 @@
 import type { Metadata } from 'next'
-import { getLocale, getTranslations } from 'next-intl/server'
+import { getTranslations } from 'next-intl/server'
 import Header from '@/components/layouts/Header'
 import Footer from '@/components/layouts/Footer'
+import JsonLd from '@/components/seo/JsonLd'
 import { getPublishedCmsContent } from '@/features/cms/queries'
 import { PROJECT_TYPES } from '@/features/freelance/schema'
-import { localizedAlternates } from '@/i18n/metadata'
+import {
+  breadcrumbSchema,
+  jsonLdGraph,
+  organizationSchema,
+  personInputFromCms,
+  personSchema,
+  webPageSchema,
+  websiteSchema,
+} from '@/features/seo/jsonld'
+import { buildPageMetadata } from '@/features/seo/metadata'
+import { SCHEMA_IDS, localePath } from '@/features/seo/site'
 import type { Locale } from '@/lib/validation/locale'
 import FreelanceLeadForm from './FreelanceLeadForm'
 
@@ -14,26 +25,55 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>
 }): Promise<Metadata> {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'freelance' })
-  return {
-    title: t('title'),
-    description: t('subtitle'),
-    alternates: {
-      canonical: `/${locale}/freelance`,
-      languages: localizedAlternates((l) => `/${l}/freelance`),
-    },
-  }
+  const seo = await getTranslations({ locale, namespace: 'seo' })
+  return buildPageMetadata({
+    locale,
+    path: '/freelance',
+    title: seo('freelanceTitle'),
+    absoluteTitle: true,
+    description: seo('freelanceDescription'),
+    // Explicit: a page-level `openGraph` replaces the layout's file-based image.
+    images: [{ url: localePath(locale, '/opengraph-image'), width: 1200, height: 630, alt: seo('ogImageAlt') }],
+  })
 }
 
-export default async function FreelancePage() {
-  const locale = (await getLocale()) as Locale
-  const [t, cms] = await Promise.all([
-    getTranslations('freelance'),
+export default async function FreelancePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const locale = (await params).locale as Locale
+  const [t, seo, nav, hero, cms] = await Promise.all([
+    getTranslations({ locale, namespace: 'freelance' }),
+    getTranslations({ locale, namespace: 'seo' }),
+    getTranslations({ locale, namespace: 'nav' }),
+    getTranslations({ locale, namespace: 'hero' }),
     getPublishedCmsContent(locale),
   ])
 
+  const pagePath = localePath(locale, '/freelance')
+  const person = personInputFromCms(cms, { jobTitle: hero('role'), description: seo('defaultDescription') })
+  const jsonLd = jsonLdGraph(
+    webPageSchema({
+      path: pagePath,
+      name: seo('freelanceTitle'),
+      description: seo('freelanceDescription'),
+      locale,
+      mainEntityId: SCHEMA_IDS.organization,
+      hasBreadcrumb: true,
+    }),
+    organizationSchema({ description: seo('organizationDescription'), sameAs: person.sameAs }),
+    breadcrumbSchema(pagePath, [
+      { name: nav('home'), path: localePath(locale, '/') },
+      { name: nav('freelance'), path: pagePath },
+    ]),
+    websiteSchema({ description: seo('defaultDescription') }),
+    personSchema(person),
+  )
+
   return (
     <div className="min-h-screen relative">
+      <JsonLd data={jsonLd} />
       <Header brandName={cms.about?.fullName} design={cms.design} />
       <main id="main-content" className="section-padding">
         <div className="container-main max-w-4xl">
