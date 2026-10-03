@@ -62,6 +62,7 @@ export interface PublicExperience {
   url: string
   imageUrl: string
   technologies: string[]
+  isCurrent: boolean
 }
 
 export interface PublicEducation {
@@ -185,6 +186,7 @@ function mapExperiences(rows: ExperienceRow[], locale: Locale): PublicExperience
         url: row.url ?? '',
         imageUrl: row.image_url ?? '',
         technologies: Array.isArray(row.technologies) ? row.technologies : [],
+        isCurrent: Boolean(row.is_current),
       }
     })
     .filter((item): item is PublicExperience => Boolean(item))
