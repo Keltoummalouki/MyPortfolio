@@ -10,7 +10,7 @@
 
 A modern, animated portfolio website built with cutting-edge web technologies featuring 3D graphics, smooth animations, and multilingual support.
 
-[Live Demo](https://www.keltoummalouki.com/) • [LinkedIn](https://www.linkedin.com/in/keltoum-malouki-79a28029a/) • [GitHub](https://github.com/Keltoummalouki)
+[Live Demo](https://www.keltoummalouki.com/) • [LinkedIn](https://www.linkedin.com/in/keltoummalouki) • [GitHub](https://github.com/Keltoummalouki)
 
 </div>
 
@@ -187,7 +187,7 @@ This project is open source and available under the [MIT License](LICENSE).
 **Keltoum Malouki** - Full Stack Developer
 
 - 📧 Email: [keltoummalouki@gmail.com](mailto:keltoummalouki@gmail.com)
-- 💼 LinkedIn: [Keltoum Malouki](https://www.linkedin.com/in/keltoum-malouki-79a28029a/)
+- 💼 LinkedIn: [Keltoum Malouki](https://www.linkedin.com/in/keltoummalouki)
 - 🐙 GitHub: [@Keltoummalouki](https://github.com/Keltoummalouki)
 - 📍 Location: Casablanca, Morocco
 

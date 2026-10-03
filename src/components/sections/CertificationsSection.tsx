@@ -61,7 +61,8 @@ export default function CertificationsSection({ items: cmsItems }: { items?: Pub
           title: t('items.docker.title'),
           issuer: t('items.docker.issuer'),
           description: t('items.docker.description'),
-          credentialUrl: 'https://www.linkedin.com/in/keltoummalouki',
+          credentialUrl:
+            'https://www.linkedin.com/learning/certificates/8556c209c6898f55066429ef88fa4d13bed6d4bdb38b594b6d7dbc02216898b2',
           imageUrl: '',
         },
       ]

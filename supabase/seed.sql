@@ -112,7 +112,7 @@ values (
   true,
   'Keltoum Malouki',
   null,
-  '{"fr": "Apprenez à me connaître", "en": "Get to know me", "ar": "تعرف علي أكثر"}'::jsonb,
+  '{"fr": "Développeuse Web Full Stack", "en": "Full Stack Web Developer", "ar": "مطورة ويب متكاملة"}'::jsonb,
   '{"fr": "Je suis Keltoum Malouki, développeuse web full stack basée à Casablanca, Maroc. Formée chez YouCode (UM6P), je livre des solutions web complètes, de l''interface utilisateur à l''architecture back-end. Je privilégie le code propre, l''expérience utilisateur et l''apprentissage continu.", "en": "I''m Keltoum Malouki, a Full Stack Web Developer from Casablanca, Morocco. With hands-on training at YouCode (UM6P), I deliver complete web solutions from front-end interfaces to back-end architecture. I care about clean code, user experience, and continuous learning.", "ar": "أنا كلثوم ملوكي، مطورة ويب متكاملة من الدار البيضاء، المغرب. تلقيت تدريباً عملياً في YouCode (UM6P)، وأقدم حلولاً ويب متكاملة من واجهات المستخدم إلى البنية التحتية الخلفية. أهتم بالبرمجية النظيفة وتجربة المستخدم والتعلم المستمر."}'::jsonb
 )
 on conflict (id) do nothing;
