@@ -16,6 +16,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { getLocale } from 'next-intl/server';
 
+// Only the default heading (Archivo) and body (Space Grotesk) fonts are preloaded.
+// The others are alternatives picked in the admin theme settings; preloading all
+// ten pushed ~330 KB of fonts ahead of the LCP image. Unused ones never download.
 const archivo = Archivo({
   subsets: ["latin"],
   display: "swap",
@@ -31,48 +34,56 @@ const spaceGrotesk = Space_Grotesk({
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-inter",
 });
 
 const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-manrope",
 });
 
 const outfit = Outfit({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-outfit",
 });
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-plus-jakarta",
 });
 
 const sora = Sora({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-sora",
 });
 
 const urbanist = Urbanist({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-urbanist",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-jetbrains-mono",
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-playfair",
 });
 

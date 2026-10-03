@@ -42,17 +42,30 @@ export default function TurnstileWidget({ onToken }: { onToken: (token: string |
       return
     }
 
-    let script = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT_SRC}"]`)
-    if (!script) {
-      script = document.createElement('script')
-      script.src = SCRIPT_SRC
-      script.async = true
-      script.defer = true
-      script.addEventListener('load', render)
-      document.head.appendChild(script)
-    } else {
+    const load = () => {
+      let script = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT_SRC}"]`)
+      if (!script) {
+        script = document.createElement('script')
+        script.src = SCRIPT_SRC
+        script.async = true
+        script.defer = true
+        document.head.appendChild(script)
+      }
       script.addEventListener('load', render)
     }
+
+    // The form sits at the bottom of the page: defer the third-party script
+    // (and its challenge iframe) until the widget is about to scroll into view.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        observer.disconnect()
+        load()
+      },
+      { rootMargin: '400px 0px' },
+    )
+    observer.observe(container)
+    return () => observer.disconnect()
   }, [onToken])
 
   if (!SITE_KEY) return null

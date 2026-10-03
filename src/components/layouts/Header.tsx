@@ -11,6 +11,7 @@ import CommandPalette from '@/components/ui/CommandPalette'
 import PreferenceMenu from '@/components/ui/PreferenceMenu'
 import { NAV_ICONS } from '@/components/ui/navIcons'
 import { useOptionalPreference } from '@/components/providers/PreferenceProvider'
+import { useThreeReady } from '@/components/three/useThreeReady'
 import { Link, usePathname } from '@/i18n/navigation'
 import type { PublicDesignSettings } from '@/features/cms/queries'
 import { DEFAULT_PUBLIC_NAV_ITEMS, NAV_ITEMS, normalizeNavItems, type NavItemKey } from '@/features/cms/design-options'
@@ -18,12 +19,25 @@ import { cn } from '@/lib/utils'
 
 const Logo3D = dynamic(() => import('@/components/three/Logo3D'), {
   ssr: false,
-  loading: () => (
-    <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-secondary text-primary font-bold">
-      M
-    </div>
-  ),
+  loading: () => <LogoMark />,
 })
+
+// Static stand-in for the 3D logo (same wireframe icosahedron, drawn flat).
+// It's what touch devices always see and what desktop shows until three.js loads.
+function LogoMark() {
+  return (
+    <svg viewBox="0 0 40 40" className="h-full w-full text-primary" fill="none" aria-hidden="true">
+      <polygon points="20,4 33.9,12 33.9,28 20,36 6.1,28 6.1,12" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path
+        d="M27.8,15.5 L20,29 L12.2,15.5 Z M27.8,15.5 L20,4 M27.8,15.5 L33.9,12 M27.8,15.5 L33.9,28 M20,29 L33.9,28 M20,29 L20,36 M20,29 L6.1,28 M12.2,15.5 L6.1,28 M12.2,15.5 L6.1,12 M12.2,15.5 L20,4"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeOpacity="0.7"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 
 type NavItem = (typeof NAV_ITEMS)[number]
 
@@ -68,6 +82,7 @@ export default function Header({
   const [isMac, setIsMac] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
   const preferences = useOptionalPreference()
+  const threeReady = useThreeReady()
 
   const navKeys = design?.navItems?.length ? design.navItems : DEFAULT_PUBLIC_NAV_ITEMS
   const visibleNavItems = useMemo(() => {
@@ -172,7 +187,7 @@ export default function Header({
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
                 <div className="h-10 w-10">
-                  <Logo3D className="h-full w-full" />
+                  {threeReady ? <Logo3D className="h-full w-full" /> : <LogoMark />}
                 </div>
                 <span className="hidden text-lg font-semibold tracking-tight text-foreground sm:block">
                   <span className="text-primary">{displayBrand.charAt(0)}</span>{displayBrand.slice(1)}

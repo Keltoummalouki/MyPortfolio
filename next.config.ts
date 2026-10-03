@@ -19,6 +19,9 @@ const cspHeader = `
 
 const nextConfig: NextConfig = {
     images: {
+        // CMS uploads get a UUID path (immutable), so optimized variants can be cached
+        // for 31 days instead of Next's 60 s default.
+        minimumCacheTTL: 2678400,
         remotePatterns: [
             {
                 protocol: 'https',

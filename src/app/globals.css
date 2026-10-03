@@ -307,6 +307,35 @@
   }
 }
 
+/* Hero entrance — pure CSS so it starts at first paint, not after hydration.
+   `backwards` fill keeps the start frame during the delay, then lets go. */
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes hero-pop {
+  from {
+    transform: scale(0.94);
+  }
+}
+
+@keyframes hero-bob {
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.hero-enter {
+  animation: hero-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) var(--hero-delay, 0s) backwards;
+}
+
+.hero-pop {
+  animation: hero-pop 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -321,7 +350,9 @@
   .float,
   .float-delayed,
   .spin-slow,
-  .pulse-glow {
+  .pulse-glow,
+  .hero-enter,
+  .hero-pop {
     animation: none !important;
   }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useMemo, useEffect } from 'react'
+import { useRef, useMemo, useEffect, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Points, PointMaterial, Float } from '@react-three/drei'
 import * as THREE from 'three'
@@ -277,6 +277,17 @@ export default function ThreeBackground() {
     const mouseRef = useRef({ x: 0, y: 0 })
     const scrollRef = useRef(0)
     const containerRef = useRef<HTMLDivElement>(null)
+    const [inView, setInView] = useState(true)
+
+    // Stop rendering once the hero scrolls out of view; the scene otherwise
+    // keeps the main thread busy every frame for the whole visit.
+    useEffect(() => {
+        const container = containerRef.current
+        if (!container) return
+        const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting))
+        observer.observe(container)
+        return () => observer.disconnect()
+    }, [])
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
@@ -308,7 +319,7 @@ export default function ThreeBackground() {
     return (
         <div
             ref={containerRef}
-            className="three-canvas-container"
+            className="three-canvas-container animate-in fade-in duration-1000"
             style={{
                 position: 'absolute',
                 inset: 0,
@@ -317,6 +328,7 @@ export default function ThreeBackground() {
             }}
         >
             <Canvas
+                frameloop={inView ? 'always' : 'never'}
                 camera={{ position: [0, 0, 5], fov: 75 }}
                 dpr={[1, 1.5]}
                 gl={{
