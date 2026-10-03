@@ -160,9 +160,10 @@ Two notes on what to expect:
 ### Profile checklist
 
 #### LinkedIn (highest priority)
-- **Public profile & URL:** confirm your custom URL is **`linkedin.com/in/keltoummalouki`**.
+- **Public profile & URL:** your custom URL is **`linkedin.com/in/keltoummalouki`** (confirmed).
   - LinkedIn **does not redirect old custom URLs**, so every copy of `/in/keltoum-malouki-79a28029a` is now a dead or weak link.
-  - Replace it on your GitHub profile (Settings → Social accounts), in CV PDFs, in Medium/dev.to/X bios and in your email signature. The site and its README already use the new URL.
+  - Replace it on your GitHub profile (Settings → Social accounts), in Medium/dev.to/X bios and in your email signature. The site and its README already use the new URL.
+  - **`public/cv.pdf`:** the visible text says "keltoummalouki", but the **hyperlink behind it still points to the old URL**. Re-export the CV with the new link.
 - **Headline:** `Full Stack Web Developer at DabaDoc | React · Next.js · Angular · NestJS · Laravel · Ruby on Rails | Casablanca, Morocco`
 - **About:** the first line is the canonical EN sentence, then 3–5 lines on what you build, then `Portfolio & case studies: https://www.keltoummalouki.com/en/about`.
 - **Contact info → Website:** `https://www.keltoummalouki.com` (type: Portfolio).
