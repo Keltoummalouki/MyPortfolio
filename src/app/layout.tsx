@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Archivo,
   Inter,
@@ -151,6 +151,15 @@ export const metadata: Metadata = {
     card: "summary_large_image",
   },
   category: "technology",
+};
+
+// Browser UI tint (mobile address bar, PWA title bar) matches the canvas.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0B0F19" },
+    { media: "(prefers-color-scheme: light)", color: "#F8FAFC" },
+  ],
+  colorScheme: "dark light",
 };
 
 // Single root layout for both the localized public site and the unprefixed

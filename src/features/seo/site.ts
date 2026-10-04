@@ -18,7 +18,8 @@ export const PERSON = {
   alternateName: ['كلثوم ملوكي'],
   jobTitle: 'Full Stack Web Developer',
   email: 'keltoummalouki@gmail.com',
-  image: '/images/keltoum.png',
+  /** Studio portrait (navy background) — same photo as the favicon. */
+  image: '/images/keltoum-malouki.jpg',
   address: { locality: 'Casablanca', country: 'MA', countryName: 'Morocco' },
 } as const
 

@@ -18,7 +18,7 @@ describe('personSchema', () => {
       '@id': SCHEMA_IDS.person,
       name: 'Keltoum Malouki',
       jobTitle: 'Full Stack Web Developer',
-      image: 'https://www.keltoummalouki.com/images/keltoum.png',
+      image: 'https://www.keltoummalouki.com/images/keltoum-malouki.jpg',
     })
     expect(person).not.toHaveProperty('worksFor')
     expect(person).not.toHaveProperty('knowsAbout')
