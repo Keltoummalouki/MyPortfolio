@@ -18,6 +18,8 @@ const cspHeader = `
 `.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
+    // Don't advertise the framework in every response (flagged by SEO audits).
+    poweredByHeader: false,
     images: {
         remotePatterns: [
             {

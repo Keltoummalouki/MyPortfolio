@@ -11,7 +11,9 @@ import {
   Users,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import Image from 'next/image'
 import { TechIcon, hasTechIcon, type TechName } from '@/components/ui/TechIcon'
+import { isOptimizableImageSrc } from '@/lib/images'
 import { cn } from '@/lib/utils'
 
 const softIconMap: Record<string, LucideIcon> = {
@@ -59,12 +61,17 @@ export default function SkillIcon({
   size?: number
 }) {
   if (imageUrl) {
+    // Uploaded logos can be multi-megapixel PNGs; the optimizer serves a
+    // size-matched WebP/AVIF instead. `alt` names the skill for crawlers, while
+    // aria-hidden keeps screen readers from repeating the adjacent label.
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={imageUrl}
-        alt=""
+        alt={name}
         aria-hidden="true"
+        width={size}
+        height={size}
+        unoptimized={!isOptimizableImageSrc(imageUrl)}
         className={cn('rounded-sm object-contain', className, imageClassName)}
         style={{ width: size, height: size }}
       />

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, Suspense } from 'react'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion } from 'framer-motion'
@@ -10,6 +11,7 @@ import { ArrowRight, ChevronDown, Download, Mail, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SocialIcon from '@/components/ui/SocialIcon'
 import type { PublicAbout, PublicSocialLink } from '@/features/cms/queries'
+import { isOptimizableImageSrc } from '@/lib/images'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -107,11 +109,13 @@ export default function HeroSection({
           { opacity: 1, y: 0, duration: 0.6 },
           0.7,
         )
+        // No opacity on the portrait: it is the LCP element, so it must stay
+        // painted from the first frame; only its position/scale animates.
         .fromTo(
           imageRef.current,
-          { opacity: 0, scale: 0.9, x: 40 },
-          { opacity: 1, scale: 1, x: 0, duration: 0.9 },
-          0.4,
+          { scale: 0.94, x: 32 },
+          { scale: 1, x: 0, duration: 0.9 },
+          0,
         )
 
       gsap.to(imageRef.current, {
@@ -182,13 +186,17 @@ export default function HeroSection({
             {t('greeting')}
           </p>
 
-          <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl font-bold mb-5 leading-[1.05] tracking-tight text-foreground">
-            {displayName}
+          {/* The role is part of the H1 so the page's main heading states who
+              and what ("Keltoum Malouki — Full Stack Web Developer"). */}
+          <h1 className="hero-title mb-6 text-foreground">
+            <span className="block text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight">
+              {displayName}
+            </span>
+            <span className="sr-only"> — </span>
+            <span className="hero-role mt-5 block text-xl md:text-2xl lg:text-3xl font-medium leading-snug text-gradient">
+              {role}
+            </span>
           </h1>
-
-          <p className="hero-role text-xl md:text-2xl lg:text-3xl font-medium text-gradient mb-6">
-            {role}
-          </p>
 
           <p className="hero-desc text-base md:text-lg text-muted-foreground mb-6 max-w-lg leading-relaxed text-pretty">
             {description}
@@ -267,11 +275,14 @@ export default function HeroSection({
 
           <div className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px]">
             <div className="w-full h-full rounded-full overflow-hidden border-2 border-border relative z-10 bg-card">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={avatarUrl}
                 alt={displayName}
-                className="h-full w-full object-cover"
+                fill
+                priority
+                sizes="(min-width: 768px) 320px, 260px"
+                unoptimized={!isOptimizableImageSrc(avatarUrl)}
+                className="object-cover"
               />
             </div>
           </div>

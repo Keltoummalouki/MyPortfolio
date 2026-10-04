@@ -158,7 +158,7 @@ export default function SkillsSection({
                   <div className="p-2.5 rounded-xl bg-secondary text-primary">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground">{category.title ?? t(`categories.${category.key}`)}</h3>
+                  <p className="text-lg font-bold text-foreground">{category.title ?? t(`categories.${category.key}`)}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">

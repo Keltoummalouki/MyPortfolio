@@ -5,9 +5,11 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { Award, ExternalLink } from 'lucide-react'
+import Image from 'next/image'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
 import type { PublicCertification } from '@/features/cms/queries'
+import { isOptimizableImageSrc } from '@/lib/images'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -85,8 +87,14 @@ export default function CertificationsSection({ items: cmsItems }: { items?: Pub
           <div key={item.id} className="certification-card">
             <GlassCard className="p-8 md:p-10 text-center">
               {item.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={item.imageUrl} alt={item.title} className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover" />
+                <Image
+                  src={item.imageUrl}
+                  alt={item.title}
+                  width={96}
+                  height={96}
+                  unoptimized={!isOptimizableImageSrc(item.imageUrl)}
+                  className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover"
+                />
               ) : (
                 <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-primary to-violet-500 text-white mb-6">
                   <Award size={40} />

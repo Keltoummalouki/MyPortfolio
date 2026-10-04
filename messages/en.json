@@ -221,7 +221,8 @@
         "description": "Service-booking platform with availability and reservation management.",
         "stack": "Laravel, MySQL, HTML, Tailwind CSS, JavaScript, UML, Jira, Git/GitHub"
       }
-    }
+    },
+    "moreOnGithub": "More projects on GitHub"
   },
   "certifications": {
     "title": "Certifications",
@@ -246,7 +247,7 @@
     }
   },
   "languages": {
-    "title": "Languages",
+    "title": "Spoken languages",
     "subtitle": "Communication",
     "arabic": "Arabic (Native)",
     "french": "French (B1)",
@@ -452,8 +453,8 @@
   },
   "home": {
     "meta": {
-      "title": "Keltoum Malouki — Full Stack Web Developer in Casablanca, Morocco",
-      "description": "Keltoum Malouki is a Full Stack Web Developer in Casablanca, Morocco, currently at DabaDoc, building web apps with React, Next.js, Angular, NestJS and Laravel."
+      "title": "Keltoum Malouki — Full Stack Web Developer, Casablanca",
+      "description": "Keltoum Malouki, Full Stack Web Developer in Casablanca at DabaDoc, builds web apps with React, Next.js, Angular, NestJS and Laravel."
     },
     "profile": {
       "eyebrow": "Profile at a glance",
@@ -502,7 +503,7 @@
     }
   },
   "seo": {
-    "defaultDescription": "Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco, building web applications with React, Next.js, NestJS, Laravel and Ruby on Rails.",
+    "defaultDescription": "Keltoum Malouki, Full Stack Web Developer in Casablanca, Morocco, builds web applications with React, Next.js, NestJS, Laravel and Ruby on Rails.",
     "ogImageAlt": "Keltoum Malouki — Full Stack Web Developer based in Casablanca, Morocco",
     "blogTitle": "Blog — Web development notes by Keltoum Malouki",
     "blogDescription": "Articles, tutorials and technical notes by Keltoum Malouki, a Full Stack Web Developer in Casablanca, Morocco, on building modern web applications.",

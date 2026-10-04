@@ -1,6 +1,8 @@
 import { ArrowRight, Download, Mail, MapPin, UserRound } from 'lucide-react'
+import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import type { ProfileAvailability } from '@/features/seo/profile-summary'
+import { isOptimizableImageSrc } from '@/lib/images'
 import { cn } from '@/lib/utils'
 import { ctaPrimary, ctaSecondary } from './ProfileSection'
 
@@ -48,21 +50,21 @@ export default function AboutIntro({
             aria-hidden="true"
             className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-primary/15 to-violet-500/15 blur-2xl"
           />
-          {/* CMS avatars may live on any allowed host; a plain img avoids next/image host config failures. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          {/* Optimized + preloaded (LCP). Hosts outside images.remotePatterns render unoptimized. */}
+          <Image
             src={photoUrl}
             alt={photoAlt}
-            width={500}
-            height={500}
-            fetchPriority="high"
-            decoding="async"
+            width={224}
+            height={224}
+            priority
+            sizes="(min-width: 768px) 224px, (min-width: 640px) 176px, 144px"
+            unoptimized={!isOptimizableImageSrc(photoUrl)}
             className="relative size-36 rounded-3xl border border-border bg-card object-cover shadow-lg sm:size-44 md:size-56"
           />
         </div>
 
         <div className="min-w-0 text-start">
-          <p className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-sm font-medium text-primary">
+          <p className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-sm font-medium text-primary-text">
             <UserRound aria-hidden="true" className="size-4" />
             {eyebrow}
           </p>

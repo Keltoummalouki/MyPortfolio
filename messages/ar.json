@@ -221,7 +221,8 @@
         "description": "منصة لحجز الخدمات مع إدارة التوفر والحجوزات.",
         "stack": "Laravel، MySQL، HTML، Tailwind CSS، JavaScript، UML، Jira، Git/GitHub"
       }
-    }
+    },
+    "moreOnGithub": "المزيد من المشاريع على GitHub"
   },
   "certifications": {
     "title": "الشهادات",
@@ -246,7 +247,7 @@
     }
   },
   "languages": {
-    "title": "اللغات",
+    "title": "اللغات المحكية",
     "subtitle": "التواصل",
     "arabic": "العربية (اللغة الأم)",
     "french": "الفرنسية (B1)",

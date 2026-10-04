@@ -221,7 +221,8 @@
         "description": "Plateforme de réservation de services avec gestion des disponibilités et des réservations.",
         "stack": "Laravel, MySQL, HTML, Tailwind CSS, JavaScript, UML, Jira, Git/GitHub"
       }
-    }
+    },
+    "moreOnGithub": "Plus de projets sur GitHub"
   },
   "certifications": {
     "title": "Certifications",
@@ -246,7 +247,7 @@
     }
   },
   "languages": {
-    "title": "Langues",
+    "title": "Langues parlées",
     "subtitle": "Communication",
     "arabic": "Arabe (Maternelle)",
     "french": "Français (B1)",
@@ -452,8 +453,8 @@
   },
   "home": {
     "meta": {
-      "title": "Keltoum Malouki — Développeuse Web Full Stack à Casablanca, Maroc",
-      "description": "Keltoum Malouki, développeuse web full stack à Casablanca (Maroc), actuellement chez DabaDoc. Applications web en React, Next.js, Angular, NestJS et Laravel."
+      "title": "Keltoum Malouki — Développeuse Web Full Stack, Casablanca",
+      "description": "Keltoum Malouki, développeuse web full stack à Casablanca chez DabaDoc : applications web en React, Next.js, Angular, NestJS et Laravel."
     },
     "profile": {
       "eyebrow": "Profil en bref",
@@ -502,12 +503,12 @@
     }
   },
   "seo": {
-    "defaultDescription": "Keltoum Malouki est développeuse web full stack à Casablanca, au Maroc, et crée des applications web avec React, Next.js, NestJS, Laravel et Ruby on Rails.",
+    "defaultDescription": "Keltoum Malouki, développeuse web full stack à Casablanca (Maroc), crée des applications web avec React, Next.js, NestJS, Laravel et Ruby on Rails.",
     "ogImageAlt": "Keltoum Malouki — Développeuse web full stack basée à Casablanca, au Maroc",
     "blogTitle": "Blog — Notes de développement web par Keltoum Malouki",
-    "blogDescription": "Articles, tutoriels et notes techniques de Keltoum Malouki, développeuse web full stack à Casablanca, au Maroc, sur la création d'applications web modernes.",
-    "freelanceTitle": "Travailler avec Keltoum Malouki — Développeuse web full stack freelance",
-    "freelanceDescription": "Keltoum Malouki est développeuse web full stack freelance à Casablanca, au Maroc, et réalise des applications web, des sites web, des back-ends et des API.",
+    "blogDescription": "Articles, tutoriels et notes techniques de Keltoum Malouki, développeuse web full stack à Casablanca, sur la création d'applications web modernes.",
+    "freelanceTitle": "Keltoum Malouki — Développeuse web full stack freelance",
+    "freelanceDescription": "Keltoum Malouki, développeuse web full stack freelance à Casablanca (Maroc), réalise des applications web, des sites web, des back-ends et des API.",
     "organizationDescription": "Développement web full stack en freelance par Keltoum Malouki, développeuse web full stack basée à Casablanca, au Maroc : applications web, back-end et API.",
     "breadcrumbLabel": "Fil d'Ariane"
   },
@@ -524,7 +525,7 @@
     "coverAlt": "Capture d'écran de {title}, un projet de Keltoum Malouki",
     "index": {
       "metaTitle": "Projets et études de cas — Keltoum Malouki",
-      "metaDescription": "Études de cas d'applications web réalisées par Keltoum Malouki, développeuse web full stack à Casablanca, au Maroc, avec NestJS, Next.js, Laravel et plus.",
+      "metaDescription": "Études de cas d'applications web réalisées par Keltoum Malouki, développeuse web full stack à Casablanca (Maroc), avec NestJS, Next.js et Laravel.",
       "title": "Projets et études de cas de Keltoum Malouki",
       "intro": "Keltoum Malouki est développeuse web full stack, basée à Casablanca, au Maroc. Chaque projet ci-dessous renvoie à une étude de cas qui présente le problème, mon rôle, les fonctionnalités clés et la stack technique.",
       "selection": "Ces études de cas sont une sélection parmi plus de 50 projets réalisés.",

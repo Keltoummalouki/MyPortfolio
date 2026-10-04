@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils'
 const Logo3D = dynamic(() => import('@/components/three/Logo3D'), {
   ssr: false,
   loading: () => (
-    <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-secondary text-primary font-bold">
+    <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-secondary text-primary-text font-bold">
       M
     </div>
   ),
@@ -174,7 +174,8 @@ export default function Header({
                 <div className="h-10 w-10">
                   <Logo3D className="h-full w-full" />
                 </div>
-                <span className="hidden text-lg font-semibold tracking-tight text-foreground sm:block">
+                {/* sr-only (not display:none) on mobile so the link keeps an accessible name. */}
+                <span className="sr-only text-lg font-semibold tracking-tight text-foreground sm:not-sr-only sm:block">
                   <span className="text-primary">{displayBrand.charAt(0)}</span>{displayBrand.slice(1)}
                 </span>
               </Link>
@@ -210,7 +211,7 @@ export default function Header({
                         )}
                         <span className="relative z-10 flex items-center gap-1.5">
                           <Icon size={15} className="shrink-0" aria-hidden />
-                          <span className="hidden sm:inline">{label}</span>
+                          <span className="sr-only sm:not-sr-only sm:inline">{label}</span>
                         </span>
                       </Link>
                     )

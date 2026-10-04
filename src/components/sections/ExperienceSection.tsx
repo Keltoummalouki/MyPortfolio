@@ -5,10 +5,12 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Briefcase } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import SkillIcon from '@/components/ui/SkillIcon'
 import type { PublicExperience } from '@/features/cms/queries'
+import { isOptimizableImageSrc } from '@/lib/images'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -131,6 +133,8 @@ export default function ExperienceSection({ items: cmsItems }: { items?: PublicE
                     <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
                       <h3 className="text-lg md:text-xl font-bold text-foreground tracking-tight">
                         {item.title}
+                        {/* Keeps headings unique when two roles share a title. */}
+                        {item.company && <span className="sr-only">, {item.company}</span>}
                       </h3>
                       <span className="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
                         {item.date}
@@ -139,8 +143,15 @@ export default function ExperienceSection({ items: cmsItems }: { items?: PublicE
 
                     <p className="text-sm text-primary font-medium mb-3">
                       {item.imageUrl && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.imageUrl} alt="" className="mr-2 inline-block size-8 rounded-lg border border-border object-cover align-middle" />
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.company}
+                          aria-hidden="true"
+                          width={32}
+                          height={32}
+                          unoptimized={!isOptimizableImageSrc(item.imageUrl)}
+                          className="me-2 inline-block size-8 rounded-lg border border-border object-cover align-middle"
+                        />
                       )}
                       {item.company}
                     </p>

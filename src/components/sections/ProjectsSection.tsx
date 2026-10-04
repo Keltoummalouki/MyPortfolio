@@ -141,11 +141,12 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
                     <Button size="sm" asChild className="flex-1">
                       <Link
                         href={`/projects/${project.slug}`}
-                        aria-label={tp('readCaseStudyAria', { title: project.title })}
                         className="flex items-center justify-center gap-2"
                       >
-                        <BookOpen size={16} />
+                        <BookOpen size={16} aria-hidden="true" />
                         {tp('caseStudy')}
+                        {/* Unique link text per project (SEO + "identical links" a11y audit). */}
+                        <span className="sr-only">: {project.title}</span>
                       </Link>
                     </Button>
                     {project.github && (
@@ -156,8 +157,9 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-2"
                         >
-                          <Github size={16} />
+                          <Github size={16} aria-hidden="true" />
                           {t('viewCode')}
+                          <span className="sr-only">: {project.title}</span>
                         </a>
                       </Button>
                     )}
@@ -169,8 +171,9 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-2"
                         >
-                          <ExternalLink size={16} />
+                          <ExternalLink size={16} aria-hidden="true" />
                           {t('liveDemo')}
+                          <span className="sr-only">: {project.title}</span>
                         </a>
                       </Button>
                     )}
@@ -184,7 +187,7 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
             <div className="p-4 rounded-2xl bg-secondary text-primary mb-5">
               <Code2 size={32} />
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-2">50+</h3>
+            <p className="text-3xl md:text-4xl font-bold text-foreground mb-2">50+</p>
             <p className="text-muted-foreground mb-6">{t('moreProjects')}</p>
             <Button size="sm" asChild className="mb-4">
               <Link href="/projects" className="flex items-center justify-center gap-2">
@@ -198,8 +201,8 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
             >
-              {t('viewCode')}
-              <ArrowUpRight size={16} />
+              {t('moreOnGithub')}
+              <ArrowUpRight size={16} aria-hidden="true" />
             </a>
           </BentoCard>
         </div>

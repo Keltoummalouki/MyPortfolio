@@ -35,6 +35,7 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-text: var(--primary-text);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -58,6 +59,8 @@
 
   --primary: #2563EB;
   --primary-foreground: #FFFFFF;
+  /* Primary used as TEXT on secondary/card surfaces (eyebrows, badges): AA 4.5:1+ */
+  --primary-text: var(--primary);
 
   --secondary: #F1F5F9;
   --secondary-foreground: #0B0F19;
@@ -103,6 +106,9 @@
 
   --primary: #2563EB;
   --primary-foreground: #FFFFFF;
+  /* #2563EB on #1A2236 is only 3.1:1; lightened ≈ #7CA1F3 → ~6.2:1. Derived so an
+     admin-picked primary colour (design_settings) stays readable too. */
+  --primary-text: color-mix(in oklab, var(--primary) 60%, white);
 
   --secondary: #1A2236;
   --secondary-foreground: #F8FAFC;

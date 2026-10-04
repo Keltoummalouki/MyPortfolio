@@ -248,7 +248,7 @@ export default function AboutSection({
               <div className="inline-flex w-fit p-3 rounded-xl bg-secondary text-primary mb-6">
                 <Compass className="w-6 h-6" />
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">{role}</h3>
+              <p className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">{role}</p>
               <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed text-pretty max-w-[44ch]">
                 {t('lead')}
               </p>

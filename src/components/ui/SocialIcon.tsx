@@ -1,4 +1,5 @@
 import { Globe, Mail } from 'lucide-react'
+import Image from 'next/image'
 import type { ComponentType } from 'react'
 import {
   SiDiscord,
@@ -12,6 +13,7 @@ import {
   SiX,
 } from 'react-icons/si'
 import { normalizeSocialPlatform } from '@/features/cms/social-platforms'
+import { isOptimizableImageSrc } from '@/lib/images'
 import { cn } from '@/lib/utils'
 
 const iconMap: Record<string, ComponentType<{ className?: string; 'aria-hidden'?: boolean }>> = {
@@ -45,12 +47,16 @@ export default function SocialIcon({
   const iconValue = icon?.trim() || ''
 
   if (iconValue && isImageIcon(iconValue)) {
+    // `alt` names the platform for crawlers; the link itself carries the
+    // accessible name, so the image stays aria-hidden.
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={iconValue}
-        alt=""
+        alt={platform}
         aria-hidden="true"
+        width={16}
+        height={16}
+        unoptimized={!isOptimizableImageSrc(iconValue)}
         className={cn('size-4 rounded-sm object-contain', className, imageClassName)}
       />
     )

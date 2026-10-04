@@ -5,6 +5,8 @@ import { useEffect, useRef } from 'react'
 // Renders a Cloudflare Turnstile widget ONLY when NEXT_PUBLIC_TURNSTILE_SITE_KEY
 // is configured. When the key is absent (e.g. local dev) it renders nothing and
 // the contact form works without a captcha — the server verifier bypasses too.
+// The Cloudflare script (~600 KB with its challenge assets) is only fetched once
+// the widget scrolls near the viewport, so it never weighs on the initial load.
 
 const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 const SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js'
@@ -42,19 +44,37 @@ export default function TurnstileWidget({ onToken }: { onToken: (token: string |
       return
     }
 
-    let script = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT_SRC}"]`)
-    if (!script) {
-      script = document.createElement('script')
-      script.src = SCRIPT_SRC
-      script.async = true
-      script.defer = true
-      script.addEventListener('load', render)
-      document.head.appendChild(script)
-    } else {
-      script.addEventListener('load', render)
+    const load = () => {
+      let script = document.querySelector<HTMLScriptElement>(`script[src="${SCRIPT_SRC}"]`)
+      if (!script) {
+        script = document.createElement('script')
+        script.src = SCRIPT_SRC
+        script.async = true
+        script.defer = true
+        script.addEventListener('load', render)
+        document.head.appendChild(script)
+      } else {
+        script.addEventListener('load', render)
+      }
     }
+
+    if (!('IntersectionObserver' in window)) {
+      load()
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        observer.disconnect()
+        load()
+      },
+      { rootMargin: '400px 0px' },
+    )
+    observer.observe(container)
+    return () => observer.disconnect()
   }, [onToken])
 
   if (!SITE_KEY) return null
-  return <div ref={ref} className="flex justify-center" />
+  // Reserve the widget's height (65px) so it doesn't shift the form when it renders.
+  return <div ref={ref} className="flex min-h-[65px] justify-center" />
 }

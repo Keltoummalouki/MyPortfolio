@@ -29,51 +29,62 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 
+// Archivo (headings) + Space Grotesk (body) are the published theme and are
+// preloaded. The others only render when a visitor or admin picks another font
+// preset, so they are fetched on demand instead of preloaded on every page.
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-inter",
 });
 
 const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-manrope",
 });
 
 const outfit = Outfit({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-outfit",
 });
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-plus-jakarta",
 });
 
 const sora = Sora({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-sora",
 });
 
 const urbanist = Urbanist({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-urbanist",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-jetbrains-mono",
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-playfair",
 });
 
@@ -102,7 +113,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco, building web applications with React, Next.js, NestJS, Laravel and Ruby on Rails.",
+    "Keltoum Malouki, Full Stack Web Developer in Casablanca, Morocco, builds web applications with React, Next.js, NestJS, Laravel and Ruby on Rails.",
   applicationName: SITE_NAME,
   authors: [{ name: PERSON.name, url: SITE_URL }],
   creator: PERSON.name,

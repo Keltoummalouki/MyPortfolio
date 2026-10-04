@@ -5,10 +5,12 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { GraduationCap, BookOpen } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
 import type { PublicEducation } from '@/features/cms/queries'
+import { isOptimizableImageSrc } from '@/lib/images'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -106,8 +108,15 @@ export default function EducationSection({ items: cmsItems }: { items?: PublicEd
               >
                 <GlassCard className="p-6 md:p-8 h-full">
                   {item.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={item.imageUrl} alt="" className="mb-5 size-14 rounded-xl border border-border object-cover" />
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.school}
+                      aria-hidden="true"
+                      width={56}
+                      height={56}
+                      unoptimized={!isOptimizableImageSrc(item.imageUrl)}
+                      className="mb-5 size-14 rounded-xl border border-border object-cover"
+                    />
                   ) : (
                     <div className="inline-flex p-3 rounded-xl bg-secondary text-primary mb-5">
                       <Icon className="w-6 h-6 md:w-7 md:h-7" />

@@ -60,7 +60,7 @@ export default async function ProfileSummarySection({
       <div className="relative container-main">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 lg:items-start">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-sm font-medium text-primary">
+            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-sm font-medium text-primary-text">
               <UserRound aria-hidden="true" className="size-4" />
               {t('eyebrow')}
             </p>
