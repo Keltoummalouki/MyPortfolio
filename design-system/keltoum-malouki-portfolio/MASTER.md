@@ -7,7 +7,7 @@
 **Owner:** Keltoum Malouki · Casablanca · Full Stack Web Developer
 **Generated:** 2026-06-24 (supersedes 2026-06-23 auto-draft)
 **Category:** Personal developer portfolio (single page)
-**Stack:** Next.js 15 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 (CSS theme) · shadcn/ui (new-york) · Framer Motion · GSAP ScrollTrigger · @react-three/fiber
+**Stack:** Next.js 15 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 (CSS theme) · shadcn/ui (new-york) · Framer Motion · GSAP ScrollTrigger · anime.js v4 · Lenis · @react-three/fiber
 **Locales:** `fr` (default) · `en` · `ar` (RTL) — cookie-based, no URL segment
 
 ---
@@ -44,6 +44,7 @@ Dark is the **default**. Light mode is fully supported (class-based via `next-th
 | Primary accent | `#2563EB` (blue) | `--primary` | Brand signature, CTAs, links |
 | Gradient partner | `#8B5CF6` (violet) | — | Used only inside `--gradient-primary` |
 | Ring / focus | `#2563EB` | `--ring` | Focus-visible outline |
+| Primary as text | `color-mix(primary 60%, white)` ≈ `#7CA1F3` | `--primary-text` (`text-primary-text`) | Eyebrows/badges on `--secondary`/`--card` (`#2563EB` there is only 3.1:1); light mode = `--primary` |
 | Destructive | `#EF4444` | `--destructive` | Form errors |
 
 ### 2.2 Light mode
@@ -157,6 +158,8 @@ Style = **Motion-Driven**, but disciplined: animate **1–2 key elements per vie
 - **Easing:** `ease-out` for entrances, `ease-in` for exits; spring for playful hovers. Never `linear` for UI.
 - **Framer Motion:** standard reveal variant — `initial {opacity:0, y:24}` → `whileInView {opacity:1, y:0}`, `viewport={{ once:true, margin:'-80px' }}`, stagger children `0.06–0.1s`.
 - **GSAP ScrollTrigger:** register guarded by `typeof window !== 'undefined'`; use for hero parallax (3–5 layers, subtle) and pinned scroll moments only. Kill triggers on unmount.
+- **Lenis (smooth scroll):** `components/providers/SmoothScroll.tsx`, public layout only, driven by `gsap.ticker` with `ScrollTrigger.update` on scroll; off under reduced motion. Programmatic scrolling goes through `lib/motion/smooth-scroll` (`scrollToElement`, `scrollToTop`); scrollable overlays get `data-lenis-prevent`.
+- **anime.js v4:** small component-level moments (pagination "pop", star picker, FAQ accordion height, review card stagger, rating bars). Import named functions (`animate`, `stagger`, `utils`), `revert()` in effect cleanups, skip when `prefersReducedMotion()`.
 - **Three.js:** ambient hero background only, **lazy-loaded below the fold / after idle**, `dynamic(() => ..., { ssr:false })`, capped DPR, paused when offscreen.
 - **Reduced motion (REQUIRED):** wrap all non-essential motion in `@media (prefers-reduced-motion: reduce)` / check the hook — disable parallax, scroll-jacking, autoplay 3D; keep instant opacity fades only. This is a **High severity** a11y gate.
 - **RTL:** mirror directional animations (x-offsets) when `dir="rtl"`; vertical motion is unaffected.
@@ -207,7 +210,11 @@ Every input has a `<label for>`; errors render adjacent to the field with `aria-
 6. **Projects** — bento/feature grid; feature **Event Booking App** and **Réservez-Moi** as large cards with stack chips + links; "40+ realized" stat tile.
 7. **Certifications** — compact glass card(s): Docker Foundations Professional (LinkedIn).
 8. **GitHub Stats** — remote stat images via `next/image` (hosts already whitelisted in `next.config.ts`); reserve width/height to prevent CLS.
-9. **Contact** — EmailJS form (client-only) + soft-skills + languages (Arabic native / French B1 / English A2).
+9. **Reviews** — rating summary (average + distribution bars) and the moderated review form (name, 1–5 stars, comment) beside a paginated grid of approved review cards (initials avatar, stars, date). Glass cards; stars `amber-400`.
+10. **Popular questions (FAQ)** — single-column accordion (max-w-3xl), first item open, chevron well turns primary when open; CTA to Contact. Same items feed the FAQPage JSON-LD.
+11. **Contact** — Server Action form (Turnstile, lazy) + contact cards.
+
+Pagination (projects, reviews) uses the shared `components/ui/Pagination` (44px targets, active page = solid primary, RTL arrows).
 
 ---
 
