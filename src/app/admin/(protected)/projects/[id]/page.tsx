@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
+import { ExternalLink } from 'lucide-react'
 import ProjectForm, { type ProjectFormDefaults } from '../ProjectForm'
 import { updateProjectAction } from '@/features/content/projects.actions'
 import { getAdminProject, listTechnicalSkillOptions } from '@/features/content/projects.queries'
+import { PROJECT_LOCALES } from '@/features/content/projects.schema'
 
 export default async function EditProjectPage({
   params,
@@ -30,18 +32,36 @@ export default async function EditProjectPage({
     demoUrl: project.demo_url ?? '',
     coverImageUrl: project.cover_image_url ?? '',
     startedAt: project.started_at ?? '',
-    translations: {
-      fr: { title: tr('fr')?.title ?? '', description: tr('fr')?.description ?? '' },
-      en: { title: tr('en')?.title ?? '', description: tr('en')?.description ?? '' },
-      ar: { title: tr('ar')?.title ?? '', description: tr('ar')?.description ?? '' },
-    },
+    translations: Object.fromEntries(
+      PROJECT_LOCALES.map((loc) => [
+        loc,
+        {
+          title: tr(loc)?.title ?? '',
+          description: tr(loc)?.description ?? '',
+          bodyMarkdown: tr(loc)?.body_markdown ?? '',
+        },
+      ]),
+    ) as ProjectFormDefaults['translations'],
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Edit project</h1>
-        <p className="text-sm text-muted-foreground">{project.slug}</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Edit project</h1>
+          <p className="text-sm text-muted-foreground">{project.slug}</p>
+        </div>
+        {project.status === 'published' && (
+          <a
+            href={`/fr/projects/${encodeURIComponent(project.slug)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            View case study
+            <ExternalLink size={14} aria-hidden="true" />
+          </a>
+        )}
       </div>
       <ProjectForm
         action={updateProjectAction.bind(null, id)}

@@ -5,9 +5,26 @@ import { motion } from 'framer-motion'
 import { Heart, Code } from 'lucide-react'
 import type { PublicSocialLink } from '@/features/cms/queries'
 import SocialIcon from '@/components/ui/SocialIcon'
+import { Link, usePathname } from '@/i18n/navigation'
+
+// Crawlable internal links on every page (locale-aware via next-intl's Link).
+const SITE_LINKS = [
+  { key: 'home', href: '/' },
+  { key: 'about', href: '/about' },
+  { key: 'projects', href: '/projects' },
+  { key: 'blog', href: '/blog' },
+  { key: 'freelance', href: '/freelance' },
+] as const
+
+/** mailto:/tel: links open locally; every other social link is an external
+ * profile of the site owner, marked `rel="me"` (identity link). */
+function isLocalLink(href: string) {
+  return href.startsWith('mailto:') || href.startsWith('tel:')
+}
 
 export default function Footer({ links }: { links?: PublicSocialLink[] }) {
   const t = useTranslations('footer')
+  const pathname = usePathname()
   const currentYear = new Date().getFullYear()
 
   const fallbackLinks = [
@@ -47,11 +64,12 @@ export default function Footer({ links }: { links?: PublicSocialLink[] }) {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center md:text-left"
+            className="text-center md:text-start"
           >
-            <h3 className="text-xl font-bold text-foreground tracking-tight mb-1">
+            {/* Not a heading: a footer brand line must not enter the page outline. */}
+            <p className="text-xl font-bold text-foreground tracking-tight mb-1">
               Keltoum <span className="text-primary">Malouki</span>
-            </h3>
+            </p>
             <p className="text-sm text-muted-foreground">
               © {currentYear} {t('copyright')}
             </p>
@@ -68,8 +86,8 @@ export default function Footer({ links }: { links?: PublicSocialLink[] }) {
               <a
                 key={link.name}
                 href={link.href}
-                target={link.href.startsWith('mailto:') || link.href.startsWith('tel:') ? undefined : '_blank'}
-                rel={link.href.startsWith('mailto:') || link.href.startsWith('tel:') ? undefined : 'noopener noreferrer'}
+                target={isLocalLink(link.href) ? undefined : '_blank'}
+                rel={isLocalLink(link.href) ? undefined : 'me noopener noreferrer'}
                 className="p-2.5 rounded-full border border-border bg-card text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
                 aria-label={link.name}
               >
@@ -91,6 +109,22 @@ export default function Footer({ links }: { links?: PublicSocialLink[] }) {
             <Code size={14} className="text-primary" />
           </motion.div>
         </div>
+
+        <nav aria-label={t('nav.label')} className="mt-8">
+          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+            {SITE_LINKS.map((item) => (
+              <li key={item.key}>
+                <Link
+                  href={item.href}
+                  aria-current={pathname === item.href ? 'page' : undefined}
+                  className="rounded-sm text-muted-foreground transition-colors duration-200 hover:text-primary aria-[current=page]:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {t(`nav.${item.key}`)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <motion.div
           initial={{ opacity: 0 }}

@@ -181,7 +181,7 @@ export default async function AdminAboutPage({
           description="Your public tagline and short biography. French is required; Arabic is entered right-to-left."
         >
           <div className="space-y-6">
-            <I18nInputs prefix="headline" label="Headline" values={headlineValues} />
+            <I18nInputs prefix="headline" label="Headline (job title — shown in the hero and search results)" values={headlineValues} />
             <I18nInputs prefix="bio" label="Bio" values={bioValues} textarea />
           </div>
         </SectionCard>

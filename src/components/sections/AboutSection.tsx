@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
+  ArrowRight,
   Calendar,
   Code,
   Compass,
@@ -17,6 +18,7 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react'
+import { Link } from '@/i18n/navigation'
 import SectionHeader from '@/components/ui/SectionHeader'
 import GlassCard from '@/components/ui/GlassCard'
 import SkillIcon from '@/components/ui/SkillIcon'
@@ -172,6 +174,7 @@ export default function AboutSection({
   const tHero = useTranslations('hero')
   const tSoftSkills = useTranslations('softSkills')
   const tLanguages = useTranslations('languages')
+  const tHome = useTranslations('home')
   const reduce = useReducedMotion() ?? false
 
   const role = about?.headline || tHero('role')
@@ -249,6 +252,16 @@ export default function AboutSection({
               <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed text-pretty max-w-[44ch]">
                 {t('lead')}
               </p>
+              <Link
+                href="/about"
+                className="group mt-6 inline-flex w-fit items-center gap-2 rounded-lg text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {tHome('aboutLink.readFullStory')}
+                <ArrowRight
+                  aria-hidden="true"
+                  className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+                />
+              </Link>
             </GlassCard>
           </motion.div>
 

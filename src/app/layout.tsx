@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Archivo,
   Inter,
@@ -15,6 +15,7 @@ import {
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { getLocale } from 'next-intl/server';
+import { PERSON, SITE_NAME, SITE_URL, isIndexable } from "@/features/seo/site";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -84,24 +85,81 @@ const notoSansArabic = Noto_Sans_Arabic({
   variable: "--font-noto-arabic",
 });
 
-// Base metadata. Per-locale title/description and canonical/hreflang alternates
-// are added by `app/[locale]/layout.tsx`; admin routes override with `noindex`.
+// Site-wide metadata defaults. `app/[locale]/layout.tsx` only localizes the
+// default description; every public page sets its own title, canonical,
+// hreflang and Open Graph via `buildPageMetadata`. Admin routes add `noindex`.
+const verification: Metadata["verification"] = {
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+  ...(process.env.BING_SITE_VERIFICATION
+    ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } }
+    : {}),
+};
+
 export const metadata: Metadata = {
-  keywords: ["Full Stack Developer", "Web Developer", "React", "Next.js", "TypeScript", "Portfolio", "Keltoum Malouki", "Morocco", "Casablanca"],
-  authors: [{ name: "Keltoum Malouki" }],
-  creator: "Keltoum Malouki",
-  metadataBase: new URL("https://www.keltoummalouki.com"),
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${PERSON.name} — ${PERSON.jobTitle}`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description:
+    "Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco, building web applications with React, Next.js, NestJS, Laravel and Ruby on Rails.",
+  applicationName: SITE_NAME,
+  authors: [{ name: PERSON.name, url: SITE_URL }],
+  creator: PERSON.name,
+  publisher: PERSON.name,
+  keywords: [
+    "Keltoum Malouki",
+    ...PERSON.alternateName,
+    "Full Stack Web Developer",
+    "Développeuse Web Full Stack",
+    "مطورة ويب متكاملة",
+    "Web Developer Casablanca",
+    "Casablanca",
+    "Morocco",
+    "Maroc",
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Node.js",
+    "NestJS",
+    "Laravel",
+    "Ruby on Rails",
+    "Angular",
+    "PostgreSQL",
+    "Docker",
+  ],
+  formatDetection: { telephone: false, email: false, address: false },
+  robots: isIndexable()
+    ? {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      }
+    : { index: false, follow: false },
+  ...(Object.keys(verification).length > 0 ? { verification } : {}),
   openGraph: {
     type: "website",
-    siteName: "Keltoum Malouki Portfolio",
+    siteName: SITE_NAME,
   },
   twitter: {
     card: "summary_large_image",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  category: "technology",
+};
+
+// Browser UI tint (mobile address bar, PWA title bar) matches the canvas.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0B0F19" },
+    { media: "(prefers-color-scheme: light)", color: "#F8FAFC" },
+  ],
+  colorScheme: "dark light",
 };
 
 // Single root layout for both the localized public site and the unprefixed

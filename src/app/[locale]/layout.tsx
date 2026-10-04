@@ -3,7 +3,6 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { setRequestLocale, getMessages, getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
-import { localizedAlternates } from '@/i18n/metadata'
 import { getPublishedDesignSettings } from '@/features/cms/queries'
 import { readVisitorDesignPreference } from '@/features/preferences/cookie'
 import { PreferenceProvider } from '@/components/providers/PreferenceProvider'
@@ -11,6 +10,10 @@ import { PreferenceProvider } from '@/components/providers/PreferenceProvider'
 // Note: no `generateStaticParams` — public pages read Supabase per request, so
 // the locale subtree is rendered on demand (always reflects published content).
 
+// Locale-generic metadata ONLY: the localized default description. Nothing
+// page-specific here (no title, canonical or Open Graph) — child pages would
+// otherwise inherit the home page's canonical. Every page sets its own via
+// `buildPageMetadata`; the title default/template come from the root layout.
 export async function generateMetadata({
   params,
 }: {
@@ -19,20 +22,8 @@ export async function generateMetadata({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
 
-  const hero = await getTranslations({ locale, namespace: 'hero' })
-  const about = await getTranslations({ locale, namespace: 'about' })
-  const title = `${hero('name')} | ${hero('role')}`
-  const description = about('description')
-
-  return {
-    title,
-    description,
-    alternates: {
-      canonical: `/${locale}`,
-      languages: localizedAlternates((l) => `/${l}`),
-    },
-    openGraph: { title, description, locale },
-  }
+  const t = await getTranslations({ locale, namespace: 'seo' })
+  return { description: t('defaultDescription') }
 }
 
 export default async function LocaleLayout({

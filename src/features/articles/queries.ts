@@ -36,9 +36,14 @@ export async function getPublishedArticles(): Promise<AdminArticle[]> {
 
 /**
  * Public detail: resolve a published article by one of its localized slugs.
+ * Slugs are only unique per locale, so several translations may share one;
+ * prefer the requested locale's translation, else the first match.
  * Returns the matched translation plus its parent article, or null.
  */
-export async function getPublishedArticleBySlug(slug: string): Promise<PublishedArticleDetail | null> {
+export async function getPublishedArticleBySlug(
+  slug: string,
+  locale?: string,
+): Promise<PublishedArticleDetail | null> {
   try {
     const supabase = await createServerSupabaseClient()
     const { data, error } = await supabase
@@ -46,9 +51,9 @@ export async function getPublishedArticleBySlug(slug: string): Promise<Published
       .select('*, articles!inner(*)')
       .eq('slug', slug)
       .eq('articles.status', 'published')
-      .maybeSingle()
     if (error) throw error
-    return (data as PublishedArticleDetail | null) ?? null
+    const rows = (data ?? []) as PublishedArticleDetail[]
+    return rows.find((row) => row.locale === locale) ?? rows[0] ?? null
   } catch (err) {
     console.error('getPublishedArticleBySlug failed:', err)
     return null
@@ -56,18 +61,22 @@ export async function getPublishedArticleBySlug(slug: string): Promise<Published
 }
 
 /**
- * Per-locale slugs for a published article identified by one of its slugs.
+ * Per-locale slugs for a published article identified by one of its slugs
+ * (preferring the requested locale's translation when a slug is shared).
  * Used to build `hreflang` alternates on the article detail page.
  */
-export async function getArticleLocaleSlugs(slug: string): Promise<Record<string, string>> {
+export async function getArticleLocaleSlugs(
+  slug: string,
+  locale?: string,
+): Promise<Record<string, string>> {
   try {
     const supabase = await createServerSupabaseClient()
-    const { data: match } = await supabase
+    const { data: matches } = await supabase
       .from('article_translations')
-      .select('article_id, articles!inner(status)')
+      .select('article_id, locale, articles!inner(status)')
       .eq('slug', slug)
       .eq('articles.status', 'published')
-      .maybeSingle()
+    const match = (matches ?? []).find((row) => row.locale === locale) ?? matches?.[0]
     if (!match) return {}
 
     const { data: siblings } = await supabase
