@@ -141,6 +141,7 @@ export default function SkillsSection({
 
       <div className="relative container-main">
         <SectionHeader
+          id="skills-title"
           eyebrow={t('subtitle')}
           title={t('title')}
         />

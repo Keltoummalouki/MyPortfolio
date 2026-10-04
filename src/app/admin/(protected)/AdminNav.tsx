@@ -11,6 +11,8 @@ import {
   Inbox,
   Languages,
   LayoutDashboard,
+  MessageCircleQuestion,
+  MessageSquareQuote,
   Palette,
   Share2,
   Sparkles,
@@ -20,7 +22,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-type BadgeKey = 'newMessages' | 'newLeads'
+type BadgeKey = 'newMessages' | 'newLeads' | 'pendingReviews'
 
 interface NavItem {
   href: string
@@ -35,8 +37,8 @@ interface NavGroup {
 }
 
 // Grouped information architecture: Overview / Content / Identity /
-// Communication / Settings. Badges on Inbox and Leads are fed real "new"
-// counts from the layout — never invented.
+// Communication / Settings. Badges on Inbox, Leads and Reviews are fed real
+// "new"/"pending" counts from the layout — never invented.
 const groups: NavGroup[] = [
   {
     label: 'Overview',
@@ -52,6 +54,7 @@ const groups: NavGroup[] = [
       { href: '/admin/experience', label: 'Experience', icon: Briefcase },
       { href: '/admin/education', label: 'Education', icon: GraduationCap },
       { href: '/admin/certifications', label: 'Certifications', icon: Award },
+      { href: '/admin/faq', label: 'FAQ', icon: MessageCircleQuestion },
     ],
   },
   {
@@ -66,6 +69,7 @@ const groups: NavGroup[] = [
     items: [
       { href: '/admin/inbox', label: 'Inbox', icon: Inbox, badge: 'newMessages' },
       { href: '/admin/leads', label: 'Freelance leads', icon: Target, badge: 'newLeads' },
+      { href: '/admin/reviews', label: 'Reviews', icon: MessageSquareQuote, badge: 'pendingReviews' },
     ],
   },
   {
@@ -77,6 +81,7 @@ const groups: NavGroup[] = [
 export interface AdminNavCounts {
   newMessages: number
   newLeads: number
+  pendingReviews: number
 }
 
 export default function AdminNav({

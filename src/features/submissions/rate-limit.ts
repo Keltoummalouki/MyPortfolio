@@ -4,7 +4,7 @@ import { createHmac } from 'node:crypto'
 import { headers } from 'next/headers'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 
-export type PublicSubmissionKind = 'contact_message' | 'freelance_lead'
+export type PublicSubmissionKind = 'contact_message' | 'freelance_lead' | 'review'
 
 export type SubmissionGateResult =
   | { ok: true; shouldMarkSpam: boolean; ipHash: string }

@@ -91,7 +91,7 @@ export default function EducationSection({ items: cmsItems }: { items?: PublicEd
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative container-main">
-        <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
+        <SectionHeader id="education-title" eyebrow={t('subtitle')} title={t('title')} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {items.map((item, index) => {

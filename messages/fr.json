@@ -559,5 +559,88 @@
     "pageAria": "Page {page}",
     "currentAria": "Page {page}, page actuelle",
     "status": "Page {page} sur {total}"
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Questions populaires",
+    "subtitle": "Les réponses aux questions que l'on me pose le plus souvent avant de travailler ensemble.",
+    "more": "Une autre question ?",
+    "moreCta": "Écrivez-moi",
+    "items": {
+      "projects": {
+        "question": "Quels types de projets réalisez-vous ?",
+        "answer": "Des applications web complètes, des sites web, de l'e-commerce, des API et back-ends, ainsi que du conseil technique. Je prends en charge toute la chaîne, de l'interface à la base de données."
+      },
+      "stack": {
+        "question": "Quelles technologies utilisez-vous ?",
+        "answer": "React, Next.js et Angular côté front-end ; NestJS, Laravel et Ruby on Rails côté back-end ; PostgreSQL, MySQL ou MongoDB pour les données ; Docker et des pipelines CI/CD (GitHub Actions, GitLab) pour la mise en production."
+      },
+      "availability": {
+        "question": "Êtes-vous disponible en freelance ou en mission ?",
+        "answer": "J'accepte une sélection de projets freelance et de missions. Décrivez votre projet sur la page freelance et je vous répondrai avec les prochaines étapes."
+      },
+      "process": {
+        "question": "Comment démarre un projet ?",
+        "answer": "Vous décrivez votre projet dans le formulaire freelance : type, budget, délai et moyen de contact préféré (e-mail, appel ou visioconférence). Je vous réponds avec les prochaines étapes pour valider le périmètre avant le début du développement."
+      },
+      "design": {
+        "question": "Pouvez-vous partir d'une maquette existante ?",
+        "answer": "Oui. J'intègre des maquettes Figma ou Adobe XD en interfaces responsives et accessibles avec Tailwind CSS, shadcn/ui, GSAP et Framer Motion."
+      },
+      "location": {
+        "question": "Où êtes-vous basée ?",
+        "answer": "Je suis basée à Casablanca, au Maroc, et ouverte à la mobilité et à la relocalisation. Nous pouvons collaborer par e-mail, téléphone ou visioconférence."
+      },
+      "languages": {
+        "question": "Dans quelles langues pouvons-nous travailler ?",
+        "answer": "Arabe (langue maternelle), français (B1) et anglais (A2)."
+      }
+    }
+  },
+  "reviews": {
+    "eyebrow": "Avis",
+    "title": "Ce qu'ils en disent",
+    "subtitle": "Avis de clients, de collègues et de visiteurs. Chaque avis est relu avant sa publication.",
+    "listLabel": "Avis",
+    "paginationLabel": "Pages des avis",
+    "average": "{average} sur 5",
+    "count": "{count, plural, =0 {Aucun avis pour le moment} one {# avis} other {# avis}}",
+    "starsAria": "Note : {rating} sur 5",
+    "distributionAria": "{stars} étoiles : {count}",
+    "emptyTitle": "Aucun avis pour le moment",
+    "emptyText": "Soyez la première ou le premier à partager votre expérience.",
+    "form": {
+      "title": "Laisser un avis",
+      "intro": "Partagez votre expérience de travail avec moi. Votre avis apparaîtra après validation.",
+      "name": "Votre nom",
+      "namePlaceholder": "Prénom et nom",
+      "rating": "Votre note",
+      "ratingOption": "{rating} étoiles sur 5",
+      "ratingLabels": {
+        "1": "Décevant",
+        "2": "Moyen",
+        "3": "Bien",
+        "4": "Très bien",
+        "5": "Excellent"
+      },
+      "comment": "Votre avis",
+      "commentPlaceholder": "Comment s'est passée notre collaboration ?",
+      "commentCount": "{count}/{max}",
+      "privacy": "Seuls votre nom, votre note et votre avis sont publiés.",
+      "submit": "Envoyer mon avis",
+      "sending": "Envoi…",
+      "successTitle": "Merci !",
+      "successText": "Votre avis a bien été reçu et apparaîtra dès qu'il aura été validé.",
+      "errors": {
+        "nameRequired": "Veuillez indiquer votre nom (2 caractères minimum).",
+        "nameTooLong": "Votre nom est trop long (80 caractères maximum).",
+        "ratingRequired": "Veuillez choisir une note de 1 à 5 étoiles.",
+        "commentTooShort": "Veuillez écrire au moins 10 caractères.",
+        "commentTooLong": "Votre avis est trop long (1000 caractères maximum).",
+        "captcha": "Veuillez valider la vérification de sécurité.",
+        "rateLimited": "Trop d'envois depuis votre réseau. Réessayez dans 24 heures.",
+        "generic": "Une erreur est survenue. Veuillez réessayer."
+      }
+    }
   }
 }

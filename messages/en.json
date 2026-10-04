@@ -559,5 +559,88 @@
     "pageAria": "Page {page}",
     "currentAria": "Page {page}, current page",
     "status": "Page {page} of {total}"
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Popular questions",
+    "subtitle": "Answers to what people ask me most before we work together.",
+    "more": "Another question?",
+    "moreCta": "Write to me",
+    "items": {
+      "projects": {
+        "question": "What kind of projects do you take on?",
+        "answer": "Complete web applications, websites, e-commerce, APIs and back ends, plus technical consulting. I handle the whole chain, from the interface to the database."
+      },
+      "stack": {
+        "question": "Which technologies do you use?",
+        "answer": "React, Next.js and Angular on the front end; NestJS, Laravel and Ruby on Rails on the back end; PostgreSQL, MySQL or MongoDB for data; Docker and CI/CD pipelines (GitHub Actions, GitLab) for delivery."
+      },
+      "availability": {
+        "question": "Are you available for freelance or contract work?",
+        "answer": "I take on selected freelance and contract projects. Share a few details through the freelance page and I will reply with next steps."
+      },
+      "process": {
+        "question": "How does a project start?",
+        "answer": "You describe your project in the freelance form: type, budget range, timeline and how you prefer to talk (email, phone or video call). I reply with next steps so we can agree on the scope before development starts."
+      },
+      "design": {
+        "question": "Can you build from an existing design?",
+        "answer": "Yes. I turn Figma or Adobe XD designs into responsive, accessible interfaces with Tailwind CSS, shadcn/ui, GSAP and Framer Motion."
+      },
+      "location": {
+        "question": "Where are you based?",
+        "answer": "I am based in Casablanca, Morocco, and open to mobility and relocation. We can work together by email, phone or video call."
+      },
+      "languages": {
+        "question": "Which languages can we work in?",
+        "answer": "Arabic (native), French (B1) and English (A2)."
+      }
+    }
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "title": "What people say",
+    "subtitle": "Reviews from clients, colleagues and visitors. Every review is checked before it is published.",
+    "listLabel": "Reviews",
+    "paginationLabel": "Review pages",
+    "average": "{average} out of 5",
+    "count": "{count, plural, =0 {No reviews yet} one {# review} other {# reviews}}",
+    "starsAria": "Rated {rating} out of 5",
+    "distributionAria": "{stars} stars: {count}",
+    "emptyTitle": "No reviews yet",
+    "emptyText": "Be the first to share your experience.",
+    "form": {
+      "title": "Leave a review",
+      "intro": "Share your experience working with me. Your review will appear once it has been approved.",
+      "name": "Your name",
+      "namePlaceholder": "First and last name",
+      "rating": "Your rating",
+      "ratingOption": "{rating} out of 5 stars",
+      "ratingLabels": {
+        "1": "Poor",
+        "2": "Fair",
+        "3": "Good",
+        "4": "Very good",
+        "5": "Excellent"
+      },
+      "comment": "Your review",
+      "commentPlaceholder": "What was it like working together?",
+      "commentCount": "{count}/{max}",
+      "privacy": "Only your name, rating and review are published.",
+      "submit": "Send my review",
+      "sending": "Sending…",
+      "successTitle": "Thank you!",
+      "successText": "Your review was received and will appear once it has been approved.",
+      "errors": {
+        "nameRequired": "Please enter your name (at least 2 characters).",
+        "nameTooLong": "Your name is too long (80 characters max).",
+        "ratingRequired": "Please choose a rating from 1 to 5 stars.",
+        "commentTooShort": "Please write at least 10 characters.",
+        "commentTooLong": "Your review is too long (1000 characters max).",
+        "captcha": "Please complete the security check.",
+        "rateLimited": "Too many submissions from your network. Please try again in 24 hours.",
+        "generic": "Something went wrong. Please try again."
+      }
+    }
   }
 }

@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 interface SectionHeaderProps {
+  /** id for the <h2>, so the section can reference it with aria-labelledby. */
+  id?: string
   eyebrow: string
   title: string
   subtitle?: string
@@ -11,7 +13,7 @@ interface SectionHeaderProps {
   className?: string
 }
 
-export default function SectionHeader({ eyebrow, title, subtitle, centered = true, className }: SectionHeaderProps) {
+export default function SectionHeader({ id, eyebrow, title, subtitle, centered = true, className }: SectionHeaderProps) {
   return (
     <div className={cn(centered && 'text-center', 'mb-14 md:mb-20', className)}>
       <motion.span
@@ -26,6 +28,7 @@ export default function SectionHeader({ eyebrow, title, subtitle, centered = tru
       </motion.span>
 
       <motion.h2
+        id={id}
         className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 tracking-tight text-foreground"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

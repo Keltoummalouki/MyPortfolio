@@ -130,6 +130,14 @@ export const languageSchema = z.object({
   status: statusSchema,
 })
 
+export const faqItemSchema = z.object({
+  id: z.string().uuid().optional().or(z.literal('')),
+  question: requiredFrenchI18nSchema,
+  answer: requiredFrenchI18nSchema,
+  sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
+  status: statusSchema,
+})
+
 export const experienceSchema = z.object({
   id: z.string().uuid().optional().or(z.literal('')),
   company: z.string().trim().max(160).optional(),

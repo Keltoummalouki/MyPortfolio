@@ -504,6 +504,36 @@ export type Database = {
         }
         Relationships: []
       }
+      faq_items: {
+        Row: {
+          answer: Json
+          created_at: string
+          id: string
+          question: Json
+          sort_order: number
+          status: Database["public"]["Enums"]["content_status"]
+          updated_at: string
+        }
+        Insert: {
+          answer?: Json
+          created_at?: string
+          id?: string
+          question?: Json
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Update: {
+          answer?: Json
+          created_at?: string
+          id?: string
+          question?: Json
+          sort_order?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       freelance_leads: {
         Row: {
           budget_range: string | null
@@ -751,6 +781,48 @@ export type Database = {
           started_at?: string | null
           status?: Database["public"]["Enums"]["content_status"]
           tech_stack?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          approved_at: string | null
+          author_name: string
+          comment: string
+          created_at: string
+          id: string
+          ip_hash: string | null
+          locale: string
+          rating: number
+          spam_reason: string | null
+          status: Database["public"]["Enums"]["review_status"]
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          author_name: string
+          comment: string
+          created_at?: string
+          id?: string
+          ip_hash?: string | null
+          locale?: string
+          rating: number
+          spam_reason?: string | null
+          status?: Database["public"]["Enums"]["review_status"]
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          author_name?: string
+          comment?: string
+          created_at?: string
+          id?: string
+          ip_hash?: string | null
+          locale?: string
+          rating?: number
+          spam_reason?: string | null
+          status?: Database["public"]["Enums"]["review_status"]
           updated_at?: string
         }
         Relationships: []
@@ -1010,6 +1082,7 @@ export type Database = {
         | "lost"
         | "spam"
       message_status: "new" | "read" | "replied" | "archived" | "spam"
+      review_status: "pending" | "approved" | "rejected" | "spam"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1151,6 +1224,7 @@ export const Constants = {
         "spam",
       ],
       message_status: ["new", "read", "replied", "archived", "spam"],
+      review_status: ["pending", "approved", "rejected", "spam"],
     },
   },
 } as const

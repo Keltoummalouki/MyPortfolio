@@ -321,6 +321,7 @@ export default function ContactSection({ socialLinks = [] }: { socialLinks?: Pub
 
       <div className="relative container-main">
         <SectionHeader
+          id="contact-title"
           eyebrow={t('eyebrow')}
           title={t('title')}
           subtitle={t('subtitle')}

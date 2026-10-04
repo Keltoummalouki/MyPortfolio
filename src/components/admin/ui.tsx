@@ -127,6 +127,10 @@ const statusTone: Record<string, BadgeTone> = {
   read: 'neutral',
   replied: 'success',
   spam: 'danger',
+  // reviews moderation
+  pending: 'warning',
+  approved: 'success',
+  rejected: 'neutral',
   // leads pipeline
   qualified: 'sky',
   meeting: 'violet',

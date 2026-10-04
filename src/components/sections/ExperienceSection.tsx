@@ -109,7 +109,7 @@ export default function ExperienceSection({ items: cmsItems }: { items?: PublicE
       <div className="absolute top-1/3 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative container-main">
-        <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
+        <SectionHeader id="experience-title" eyebrow={t('subtitle')} title={t('title')} />
 
         <div ref={timelineRef} className="relative max-w-3xl mx-auto">
           <div className="timeline-line absolute left-4 md:left-8 top-0 bottom-0 w-0.5 bg-border origin-top" />

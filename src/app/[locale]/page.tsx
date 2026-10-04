@@ -10,17 +10,23 @@ import CertificationsSection from '@/components/sections/CertificationsSection'
 import ContactSection from '@/components/sections/ContactSection'
 import EducationSection from '@/components/sections/EducationSection'
 import ExperienceSection from '@/components/sections/ExperienceSection'
+import FaqSection from '@/components/sections/FaqSection'
 import GithubStatsSection from '@/components/sections/GithubStatsSection'
 import HeroSection from '@/components/sections/HeroSection'
 import ProfileSummarySection from '@/components/sections/ProfileSummarySection'
 import ProjectsSection from '@/components/sections/ProjectsSection'
+import ReviewsSection from '@/components/sections/ReviewsSection'
 import SkillsSection from '@/components/sections/SkillsSection'
 import ScrollProgress from '@/components/ui/ScrollProgress'
+import { fallbackFaq } from '@/features/cms/faq'
+import { getPublishedFaq } from '@/features/cms/faq.queries'
 import { getFallbackLanguages } from '@/features/cms/languages'
 import { getPublishedCmsContent } from '@/features/cms/queries'
 import { getPublishedProjects } from '@/features/content/projects.queries'
 import { toProjectCard } from '@/features/content/projects.map'
+import { getApprovedReviews } from '@/features/reviews/queries'
 import {
+  faqSchema,
   jsonLdGraph,
   organizationSchema,
   personInputFromCms,
@@ -63,9 +69,12 @@ export default async function HomePage({ params }: PageProps) {
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
 
-  const [cms, projectRows, meta, seo, hero, about, experience, education, profile] = await Promise.all([
+  const [cms, projectRows, faqRows, reviews, faqT, meta, seo, hero, about, experience, education, profile] = await Promise.all([
     getPublishedCmsContent(locale),
     getPublishedProjects(),
+    getPublishedFaq(locale),
+    getApprovedReviews(),
+    getTranslations({ locale, namespace: 'faq' }),
     getTranslations({ locale, namespace: 'home.meta' }),
     getTranslations({ locale, namespace: 'seo' }),
     getTranslations({ locale, namespace: 'hero' }),
@@ -75,6 +84,8 @@ export default async function HomePage({ params }: PageProps) {
     getTranslations({ locale, namespace: 'home.profile' }),
   ])
   const projects = projectRows.map((project) => toProjectCard(project, locale))
+  // CMS-managed questions when published; otherwise the defaults in messages.
+  const faqItems = faqRows.length > 0 ? faqRows : fallbackFaq((key) => faqT(key))
 
   // A placeholder CMS headline (the seed stored "Get to know me") must never
   // surface as the job title in the hero, the About card or the JSON-LD.
@@ -108,6 +119,8 @@ export default async function HomePage({ params }: PageProps) {
     websiteSchema({ description: seo('defaultDescription') }),
     organizationSchema({ description: seo('organizationDescription'), sameAs: person.sameAs }),
     personSchema(person),
+    // Same Q&As as the visible FAQ section (expandable answers are allowed).
+    faqItems.length > 0 && faqSchema(localePath(locale, '/'), faqItems),
   )
 
   return (
@@ -126,6 +139,8 @@ export default async function HomePage({ params }: PageProps) {
         <ProjectsSection projects={projects} />
         <CertificationsSection items={cms.certifications} />
         <GithubStatsSection />
+        <ReviewsSection reviews={reviews} />
+        <FaqSection items={faqItems} />
         <ContactSection socialLinks={cms.socialLinks} />
       </main>
 

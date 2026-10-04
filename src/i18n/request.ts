@@ -11,6 +11,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
+    // Fixed zone so dates format identically on the server and in the browser.
+    timeZone: 'Africa/Casablanca',
     messages: (await import(`../../messages/${locale}.json`)).default,
   }
 })

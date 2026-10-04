@@ -4,6 +4,7 @@ import { getAdminSession } from '@/features/auth/session'
 import { signOutAction } from '@/features/auth/actions'
 import { getStatusCounts } from '@/features/inbox/queries'
 import { getLeadStatusCounts } from '@/features/freelance/queries'
+import { getReviewStatusCounts } from '@/features/reviews/queries'
 import { Button } from '@/components/ui/button'
 import AdminShell from './AdminShell'
 
@@ -42,15 +43,16 @@ export default async function ProtectedAdminLayout({
 
   // Real "new" counts for the nav badges (admin RLS context). Resolved here so
   // every admin page keeps a consistent, up-to-date sidebar.
-  const [messageCounts, leadCounts] = await Promise.all([
+  const [messageCounts, leadCounts, reviewCounts] = await Promise.all([
     getStatusCounts(),
     getLeadStatusCounts(),
+    getReviewStatusCounts(),
   ])
 
   return (
     <AdminShell
       email={user.email ?? 'Admin'}
-      counts={{ newMessages: messageCounts.new, newLeads: leadCounts.new }}
+      counts={{ newMessages: messageCounts.new, newLeads: leadCounts.new, pendingReviews: reviewCounts.pending }}
     >
       {children}
     </AdminShell>

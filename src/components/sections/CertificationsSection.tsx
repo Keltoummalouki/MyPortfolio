@@ -80,7 +80,7 @@ export default function CertificationsSection({ items: cmsItems }: { items?: Pub
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative container-main">
-        <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
+        <SectionHeader id="certifications-title" eyebrow={t('subtitle')} title={t('title')} />
 
         <div className="grid max-w-5xl mx-auto gap-6 md:grid-cols-2">
           {items.map((item) => (

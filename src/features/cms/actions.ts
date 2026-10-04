@@ -12,6 +12,7 @@ import {
   designSettingsSchema,
   educationSchema,
   experienceSchema,
+  faqItemSchema,
   i18nFromForm,
   languageSchema,
   nullableText,
@@ -386,6 +387,42 @@ export async function deleteLanguageAction(formData: FormData): Promise<void> {
   const supabase = await createServerSupabaseClient()
   await supabase.from('languages').delete().eq('id', id)
   done('/admin/languages')
+}
+
+export async function saveFaqItemAction(formData: FormData): Promise<void> {
+  await requireAdmin()
+  const parsed = faqItemSchema.safeParse({
+    id: textValue(formData.get('id')),
+    question: i18nFromForm(formData, 'question'),
+    answer: i18nFromForm(formData, 'answer'),
+    sortOrder: textValue(formData.get('sortOrder')),
+    status: textValue(formData.get('status')),
+  })
+  if (!parsed.success) failed('/admin/faq')
+
+  const v = parsed.data
+  const payload = {
+    question: cleanI18nMap(v.question),
+    answer: cleanI18nMap(v.answer),
+    sort_order: v.sortOrder,
+    status: v.status,
+  }
+  const supabase = await createServerSupabaseClient()
+  const { error } = v.id
+    ? await supabase.from('faq_items').update(payload).eq('id', v.id)
+    : await supabase.from('faq_items').insert(payload)
+  if (error) failed('/admin/faq', 'save')
+
+  done('/admin/faq')
+}
+
+export async function deleteFaqItemAction(formData: FormData): Promise<void> {
+  await requireAdmin()
+  const id = idValue(formData)
+  if (!id) failed('/admin/faq')
+  const supabase = await createServerSupabaseClient()
+  await supabase.from('faq_items').delete().eq('id', id)
+  done('/admin/faq')
 }
 
 export async function saveExperienceAction(formData: FormData): Promise<void> {
