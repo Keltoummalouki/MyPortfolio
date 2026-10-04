@@ -15,7 +15,8 @@ export async function getPublishedFaq(locale: Locale): Promise<PublicFaqItem[]> 
       .select('*')
       .eq('status', 'published')
       .order('sort_order')
-    if (error) throw error
+    // PostgREST errors are plain objects, not Error instances: wrap so the log shows the message.
+    if (error) throw new Error(error.message)
     return mapPublicFaq(data ?? [], locale)
   } catch (error) {
     console.error('faq: loading published items failed:', error instanceof Error ? error.message : error)

@@ -167,7 +167,7 @@ export const metadata: Metadata = {
 // Browser UI tint (mobile address bar, PWA title bar) matches the canvas.
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0B0F19" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
     { media: "(prefers-color-scheme: light)", color: "#F8FAFC" },
   ],
   colorScheme: "dark light",

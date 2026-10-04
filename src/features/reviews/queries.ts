@@ -24,7 +24,8 @@ export async function getApprovedReviews(): Promise<PublicReview[]> {
       .order('approved_at', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
       .limit(PUBLIC_REVIEW_LIMIT)
-    if (error) throw error
+    // PostgREST errors are plain objects, not Error instances: wrap so the log shows the message.
+    if (error) throw new Error(error.message)
     return ((data ?? []) as PublicReviewRow[]).map(toPublicReview)
   } catch (error) {
     console.error('reviews: loading approved reviews failed:', error instanceof Error ? error.message : error)
@@ -67,7 +68,7 @@ export async function getReviewStatusCounts(): Promise<Record<ReviewStatus, numb
   try {
     const supabase = await createServerSupabaseClient()
     const { data, error } = await supabase.from('reviews').select('status')
-    if (error) throw error
+    if (error) throw new Error(error.message)
     for (const row of data ?? []) {
       const status = row.status as ReviewStatus
       if (status in counts) counts[status] += 1
