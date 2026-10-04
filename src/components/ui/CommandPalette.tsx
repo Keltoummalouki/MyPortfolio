@@ -16,6 +16,7 @@ import { useRouter } from '@/i18n/navigation'
 import { NAV_ITEMS } from '@/features/cms/design-options'
 import { NAV_ICONS } from '@/components/ui/navIcons'
 import { cn } from '@/lib/utils'
+import { scrollToElement, scrollToTop } from '@/lib/motion/smooth-scroll'
 
 type NavItem = (typeof NAV_ITEMS)[number]
 
@@ -74,7 +75,7 @@ export default function CommandPalette({
       if (item.kind === 'section') {
         const el = document.querySelector(item.href)
         if (el) {
-          el.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+          scrollToElement(el)
           return
         }
         window.location.href = `/${locale}${item.href}`
@@ -86,7 +87,7 @@ export default function CommandPalette({
       }
       window.location.href = item.href
     },
-    [onClose, locale, router, prefersReducedMotion],
+    [onClose, locale, router],
   )
 
   // Build grouped commands: nav sections / pages / manage, plus quick actions.
@@ -118,7 +119,7 @@ export default function CommandPalette({
         active: false,
         run: () => {
           onClose()
-          window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+          scrollToTop()
         },
       },
     ]
@@ -129,7 +130,7 @@ export default function CommandPalette({
       { key: 'manage', label: tr(t, 'groupManage', 'Manage'), items: manage },
       { key: 'actions', label: tr(t, 'groupActions', 'Actions'), items: actions },
     ].filter((g) => g.items.length > 0)
-  }, [items, activeSection, pathname, labelFor, navigate, onClose, prefersReducedMotion, t])
+  }, [items, activeSection, pathname, labelFor, navigate, onClose, t])
 
   const filteredGroups = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -216,6 +217,7 @@ export default function CommandPalette({
           <motion.div
             role="dialog"
             aria-modal="true"
+            data-lenis-prevent
             aria-label={tr(t, 'commandTitle', 'Command menu')}
             initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: -8 }}
             animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}

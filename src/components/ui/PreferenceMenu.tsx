@@ -106,6 +106,9 @@ export default function PreferenceMenu() {
   useEffect(() => {
     if (!preferences || preferences.hasSeenPreference || autoOpenedRef.current) return
     autoOpenedRef.current = true
+    // Desktop only: on phones/tablets the panel would cover the page on arrival,
+    // which Google treats as an intrusive interstitial for mobile search.
+    if (!window.matchMedia('(min-width: 1024px)').matches) return
     setOpen(true)
   }, [preferences])
 
@@ -172,6 +175,7 @@ export default function PreferenceMenu() {
         side="bottom"
         sideOffset={10}
         aria-labelledby={titleId}
+        data-lenis-prevent
         className="max-h-[min(42rem,calc(100svh-6rem))] w-[min(calc(100vw-1.5rem),23rem)] overflow-y-auto rounded-2xl border-border bg-popover p-0 text-popover-foreground shadow-2xl shadow-foreground/10 ring-1 ring-border/60"
       >
         <div className="flex flex-col gap-4 p-4">

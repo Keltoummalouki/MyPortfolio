@@ -6,6 +6,7 @@ import { routing } from '@/i18n/routing'
 import { getPublishedDesignSettings } from '@/features/cms/queries'
 import { readVisitorDesignPreference } from '@/features/preferences/cookie'
 import { PreferenceProvider } from '@/components/providers/PreferenceProvider'
+import SmoothScroll from '@/components/providers/SmoothScroll'
 
 // Note: no `generateStaticParams` — public pages read Supabase per request, so
 // the locale subtree is rendered on demand (always reflects published content).
@@ -47,6 +48,8 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <PreferenceProvider adminDesign={design} initialPreference={visitorPreference}>
+        {/* Public site only: /admin keeps native scrolling. */}
+        <SmoothScroll />
         {children}
       </PreferenceProvider>
     </NextIntlClientProvider>

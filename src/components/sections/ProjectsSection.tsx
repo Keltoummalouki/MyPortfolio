@@ -15,7 +15,7 @@ import Pagination from '@/components/ui/Pagination'
 import { fallbackProjectCards } from '@/features/content/projects.fallback'
 import type { ProjectCardData } from '@/features/content/projects.map'
 import { paginate } from '@/lib/pagination'
-import { prefersReducedMotion as reducedMotionNow } from '@/lib/motion/reduced-motion'
+import { scrollToElement } from '@/lib/motion/smooth-scroll'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -70,7 +70,7 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
     // Bring the list back into view when the control sits below the fold.
     const section = sectionRef.current
     if (section && section.getBoundingClientRect().top < 0) {
-      section.scrollIntoView({ behavior: reducedMotionNow() ? 'auto' : 'smooth', block: 'start' })
+      scrollToElement(section)
     }
   }, [])
 
@@ -86,7 +86,7 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
       <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative container-main">
-        <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
+        <SectionHeader id="projects-title" eyebrow={t('subtitle')} title={t('title')} />
 
         <div id="projects-list" className="projects-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
           {slice.items.map((project, index) => (

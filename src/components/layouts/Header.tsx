@@ -15,6 +15,7 @@ import { Link, usePathname } from '@/i18n/navigation'
 import type { PublicDesignSettings } from '@/features/cms/queries'
 import { DEFAULT_PUBLIC_NAV_ITEMS, NAV_ITEMS, normalizeNavItems, type NavItemKey } from '@/features/cms/design-options'
 import { cn } from '@/lib/utils'
+import { scrollToElement, scrollToTop } from '@/lib/motion/smooth-scroll'
 
 const Logo3D = dynamic(() => import('@/components/three/Logo3D'), {
   ssr: false,
@@ -138,7 +139,7 @@ export default function Header({
   const handleSectionClick = (href: string) => {
     const element = document.querySelector(href)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      scrollToElement(element)
       return
     }
     window.location.href = `/${locale}${href}`
@@ -169,7 +170,7 @@ export default function Header({
               <Link
                 href="/"
                 className="relative flex items-center gap-2 group"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onClick={() => scrollToTop()}
               >
                 <div className="h-10 w-10">
                   <Logo3D className="h-full w-full" />

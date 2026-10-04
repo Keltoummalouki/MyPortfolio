@@ -148,7 +148,9 @@
     @apply border-border;
   }
 
-  html {
+  /* Native smooth scrolling only when Lenis isn't driving the page
+     (it adds .lenis to <html>; both at once makes scrolling stutter). */
+  html:not(.lenis) {
     scroll-behavior: smooth;
   }
 
