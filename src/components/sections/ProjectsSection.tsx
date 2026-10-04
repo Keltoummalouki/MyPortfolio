@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
@@ -11,18 +11,25 @@ import { Button } from '@/components/ui/button'
 import SectionHeader from '@/components/ui/SectionHeader'
 import BentoCard from '@/components/ui/BentoCard'
 import SkillIcon from '@/components/ui/SkillIcon'
+import Pagination from '@/components/ui/Pagination'
 import { fallbackProjectCards } from '@/features/content/projects.fallback'
 import type { ProjectCardData } from '@/features/content/projects.map'
+import { paginate } from '@/lib/pagination'
+import { prefersReducedMotion as reducedMotionNow } from '@/lib/motion/reduced-motion'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
+
+/** Projects per page on the home page; /projects lists them all (6 per page). */
+const PROJECTS_PER_PAGE = 2
 
 export default function ProjectsSection({ projects }: { projects?: ProjectCardData[] }) {
   const t = useTranslations('projects')
   const tp = useTranslations('projectPages')
   const sectionRef = useRef<HTMLElement>(null)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -56,6 +63,16 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
   // projects (same slugs as the /projects case-study pages).
   const items: ProjectCardData[] =
     projects && projects.length > 0 ? projects : fallbackProjectCards((key) => t(key))
+  const slice = paginate(items, page, PROJECTS_PER_PAGE)
+
+  const goToPage = useCallback((next: number) => {
+    setPage(next)
+    // Bring the list back into view when the control sits below the fold.
+    const section = sectionRef.current
+    if (section && section.getBoundingClientRect().top < 0) {
+      section.scrollIntoView({ behavior: reducedMotionNow() ? 'auto' : 'smooth', block: 'start' })
+    }
+  }, [])
 
   return (
     <section
@@ -71,8 +88,8 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
       <div className="relative container-main">
         <SectionHeader eyebrow={t('subtitle')} title={t('title')} />
 
-        <div className="projects-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {items.map((project, index) => (
+        <div id="projects-list" className="projects-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {slice.items.map((project, index) => (
             <BentoCard
               key={project.id}
               className="lg:col-span-2 group"
@@ -206,6 +223,15 @@ export default function ProjectsSection({ projects }: { projects?: ProjectCardDa
             </a>
           </BentoCard>
         </div>
+
+        <Pagination
+          page={slice.page}
+          totalPages={slice.totalPages}
+          onPageChange={goToPage}
+          controls="projects-list"
+          label={t('paginationLabel')}
+          className="mt-10"
+        />
       </div>
     </section>
   )

@@ -222,7 +222,8 @@
         "stack": "Laravel, MySQL, HTML, Tailwind CSS, JavaScript, UML, Jira, Git/GitHub"
       }
     },
-    "moreOnGithub": "More projects on GitHub"
+    "moreOnGithub": "More projects on GitHub",
+    "paginationLabel": "Project pages"
   },
   "certifications": {
     "title": "Certifications",
@@ -529,7 +530,8 @@
       "title": "Projects & case studies by Keltoum Malouki",
       "intro": "Keltoum Malouki is a Full Stack Web Developer based in Casablanca, Morocco. Each project below links to a case study that explains the problem, my role, the key features and the tech stack.",
       "selection": "These case studies are a selection from 50+ completed projects.",
-      "githubCta": "Browse more code on GitHub"
+      "githubCta": "Browse more code on GitHub",
+      "pageTitleSuffix": "page {page}"
     },
     "detail": {
       "metaTitle": "{title} — Case study",
@@ -547,5 +549,15 @@
       "stackSentence": "{title} is built with {stack}.",
       "moreTitle": "More projects"
     }
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "previousAria": "Previous page",
+    "nextAria": "Next page",
+    "pageAria": "Page {page}",
+    "currentAria": "Page {page}, current page",
+    "status": "Page {page} of {total}"
   }
 }

@@ -222,7 +222,8 @@
         "stack": "Laravel، MySQL، HTML، Tailwind CSS، JavaScript، UML، Jira، Git/GitHub"
       }
     },
-    "moreOnGithub": "المزيد من المشاريع على GitHub"
+    "moreOnGithub": "المزيد من المشاريع على GitHub",
+    "paginationLabel": "صفحات المشاريع"
   },
   "certifications": {
     "title": "الشهادات",
@@ -529,7 +530,8 @@
       "title": "المشاريع ودراسات الحالة لكلثوم ملوكي",
       "intro": "كلثوم ملوكي مطورة ويب متكاملة (Full Stack) مقيمة في الدار البيضاء بالمغرب. يقود كل مشروع أدناه إلى دراسة حالة تعرض المشكلة ودوري والميزات الرئيسية والتقنيات المستخدمة.",
       "selection": "دراسات الحالة هذه مختارة من بين أكثر من 50 مشروعاً منجزاً.",
-      "githubCta": "اطّلع على المزيد من الشيفرة على GitHub"
+      "githubCta": "اطّلع على المزيد من الشيفرة على GitHub",
+      "pageTitleSuffix": "الصفحة {page}"
     },
     "detail": {
       "metaTitle": "{title} — دراسة حالة",
@@ -547,5 +549,15 @@
       "stackSentence": "يعتمد {title} على {stack}.",
       "moreTitle": "مشاريع أخرى"
     }
+  },
+  "pagination": {
+    "label": "التنقل بين الصفحات",
+    "previous": "السابق",
+    "next": "التالي",
+    "previousAria": "الصفحة السابقة",
+    "nextAria": "الصفحة التالية",
+    "pageAria": "الصفحة {page}",
+    "currentAria": "الصفحة {page}، الصفحة الحالية",
+    "status": "الصفحة {page} من {total}"
   }
 }
