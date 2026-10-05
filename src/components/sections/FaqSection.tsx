@@ -4,9 +4,9 @@ import { useEffect, useId, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { animate } from 'animejs'
-import { ChevronDown, MessageCircleQuestion } from 'lucide-react'
+import { MessageCircleQuestion, Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import SectionHeader from '@/components/ui/SectionHeader'
+import ShowcaseSection from '@/components/sections/showcase/ShowcaseSection'
 import type { PublicFaqItem } from '@/features/cms/faq'
 import { prefersReducedMotion } from '@/lib/motion/reduced-motion'
 import { cn } from '@/lib/utils'
@@ -22,7 +22,7 @@ if (typeof window !== 'undefined') {
  * are `inert` so keyboard and screen-reader users only meet open panels.
  * Panel height animates with anime.js; the list reveals with GSAP.
  */
-export default function FaqSection({ items }: { items: PublicFaqItem[] }) {
+export default function FaqSection({ items, index }: { items: PublicFaqItem[]; index: string }) {
   const t = useTranslations('faq')
   const baseId = useId()
   const sectionRef = useRef<HTMLElement>(null)
@@ -73,77 +73,76 @@ export default function FaqSection({ items }: { items: PublicFaqItem[] }) {
   }
 
   return (
-    <section
-      id="faq"
+    <ShowcaseSection
       ref={sectionRef}
-      aria-labelledby="faq-title"
-      className="relative section-padding overflow-hidden bg-background"
-    >
-      <div aria-hidden="true" className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
-      <div aria-hidden="true" className="absolute bottom-0 left-1/4 h-96 w-96 rounded-full bg-violet-500/5 blur-3xl pointer-events-none" />
-
-      <div className="relative container-main">
-        <SectionHeader id="faq-title" eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
-
-        <div className="mx-auto max-w-3xl space-y-3">
-          {items.map((item, index) => {
-            const isOpen = open.has(item.id)
-            const buttonId = `${baseId}-q-${index}`
-            const panelId = `${baseId}-a-${index}`
-            return (
-              <div
-                key={item.id}
-                className={cn(
-                  'faq-item rounded-2xl border bg-card/80 backdrop-blur-xl transition-colors duration-300',
-                  isOpen ? 'border-primary/30 shadow-lg shadow-primary/5' : 'border-border hover:border-primary/20',
-                )}
-              >
-                <h3>
-                  <button
-                    id={buttonId}
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={panelId}
-                    onClick={() => toggle(item.id, document.getElementById(panelId))}
-                    className="flex w-full items-center justify-between gap-4 rounded-2xl px-5 py-4 text-start text-base font-semibold text-foreground md:px-6 md:py-5 md:text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                  >
-                    <span className="text-balance">{item.question}</span>
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        'flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-primary transition-transform duration-300',
-                        isOpen && 'rotate-180 bg-primary text-primary-foreground',
-                      )}
-                    >
-                      <ChevronDown className="size-4" />
-                    </span>
-                  </button>
-                </h3>
-                <div
-                  id={panelId}
-                  role="region"
-                  aria-labelledby={buttonId}
-                  inert={!isOpen}
-                  className={cn('overflow-hidden', !isOpen && 'h-0')}
-                >
-                  <p className="px-5 pb-5 leading-relaxed text-muted-foreground text-pretty md:px-6 md:pb-6">{item.answer}</p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        <p className="mt-10 flex flex-wrap items-center justify-center gap-2 text-center text-muted-foreground">
-          <MessageCircleQuestion aria-hidden="true" className="size-5 text-primary" />
+      id="faq"
+      index={index}
+      layout="half"
+      eyebrow={t('eyebrow')}
+      title={t('title')}
+      description={t('subtitle')}
+      actions={
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+          <MessageCircleQuestion aria-hidden="true" className="size-4 text-primary-text" />
           {t('more')}
           <a
             href="#contact"
-            className="rounded-sm font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-sm font-semibold text-primary-text underline-offset-4 hover:underline"
           >
             {t('moreCta')}
           </a>
         </p>
+      }
+    >
+      <div className="space-y-2.5">
+        {items.map((item, i) => {
+          const isOpen = open.has(item.id)
+          const buttonId = `${baseId}-q-${i}`
+          const panelId = `${baseId}-a-${i}`
+          return (
+            <div
+              key={item.id}
+              className={cn(
+                'faq-item rounded-xl border bg-card/80 backdrop-blur-xl transition-[border-color,box-shadow] duration-300 ease-fluid',
+                isOpen ? 'border-primary/35 shadow-lg shadow-primary/5' : 'border-border hover:border-primary/25',
+              )}
+            >
+              <h3>
+                <button
+                  id={buttonId}
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  onClick={() => toggle(item.id, document.getElementById(panelId))}
+                  className="flex min-h-14 w-full items-center justify-between gap-4 rounded-xl px-4 py-3 text-start text-sm font-semibold text-foreground sm:px-5 sm:text-base"
+                >
+                  <span className="text-balance">{item.question}</span>
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'flex size-8 shrink-0 items-center justify-center rounded-full border transition-[rotate,background-color,border-color,color] duration-300 ease-fluid',
+                      isOpen
+                        ? 'rotate-45 border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-secondary text-primary-text',
+                    )}
+                  >
+                    <Plus className="size-4" />
+                  </span>
+                </button>
+              </h3>
+              <div
+                id={panelId}
+                role="region"
+                aria-labelledby={buttonId}
+                inert={!isOpen}
+                className={cn('overflow-hidden', !isOpen && 'h-0')}
+              >
+                <p className="px-4 pb-4 text-sm leading-relaxed text-muted-foreground text-pretty sm:px-5 sm:pb-5">{item.answer}</p>
+              </div>
+            </div>
+          )
+        })}
       </div>
-    </section>
+    </ShowcaseSection>
   )
 }

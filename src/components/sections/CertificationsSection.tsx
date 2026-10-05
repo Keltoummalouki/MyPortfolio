@@ -1,58 +1,52 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
-import { Award, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
-import SectionHeader from '@/components/ui/SectionHeader'
-import GlassCard from '@/components/ui/GlassCard'
+import { ArrowUpRight, Award, BadgeCheck } from 'lucide-react'
+import ShowcaseSection from '@/components/sections/showcase/ShowcaseSection'
+import { pillOutline, surface } from '@/components/sections/showcase/classes'
 import type { PublicCertification } from '@/features/cms/queries'
 import { isOptimizableImageSrc } from '@/lib/images'
+import { prefersReducedMotion } from '@/lib/motion/reduced-motion'
+import { cn } from '@/lib/utils'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-export default function CertificationsSection({ items: cmsItems }: { items?: PublicCertification[] }) {
+export default function CertificationsSection({ items: cmsItems, index }: { items?: PublicCertification[]; index: string }) {
   const t = useTranslations('certifications')
   const sectionRef = useRef<HTMLElement>(null)
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setPrefersReducedMotion(mediaQuery.matches)
-  }, [])
-
-  useEffect(() => {
-    if (prefersReducedMotion || !sectionRef.current) return
-
+    const section = sectionRef.current
+    if (!section || prefersReducedMotion()) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.certification-card',
-        { opacity: 0, y: 40 },
+        '[data-certification]',
+        { opacity: 0, y: 24 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
+          duration: 0.6,
+          stagger: 0.1,
           ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          }
-        }
+          scrollTrigger: { trigger: section, start: 'top 80%', once: true },
+        },
       )
-    }, sectionRef)
-
+    }, section)
     return () => ctx.revert()
-  }, [prefersReducedMotion])
+  }, [])
 
   const items = cmsItems?.length
     ? cmsItems.map((item) => ({
         id: item.id,
         title: item.name,
         issuer: item.issuer,
+        date: item.issueDate.slice(0, 4),
         description: item.description,
         credentialUrl: item.credentialUrl,
         imageUrl: item.imageUrl,
@@ -62,6 +56,7 @@ export default function CertificationsSection({ items: cmsItems }: { items?: Pub
           id: 'docker',
           title: t('items.docker.title'),
           issuer: t('items.docker.issuer'),
+          date: t('items.docker.date'),
           description: t('items.docker.description'),
           credentialUrl:
             'https://www.linkedin.com/learning/certificates/8556c209c6898f55066429ef88fa4d13bed6d4bdb38b594b6d7dbc02216898b2',
@@ -70,63 +65,75 @@ export default function CertificationsSection({ items: cmsItems }: { items?: Pub
       ]
 
   return (
-    <section
-      id="certifications"
+    <ShowcaseSection
       ref={sectionRef}
-      className="relative section-padding overflow-hidden bg-background"
-      aria-labelledby="certifications-title"
+      id="certifications"
+      index={index}
+      layout="half"
+      eyebrow={t('title')}
+      title={t('heading')}
+      description={t('subtitle')}
     >
-      <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative container-main">
-        <SectionHeader id="certifications-title" eyebrow={t('subtitle')} title={t('title')} />
-
-        <div className="grid max-w-5xl mx-auto gap-6 md:grid-cols-2">
-          {items.map((item) => (
-          <div key={item.id} className="certification-card">
-            <GlassCard className="p-8 md:p-10 text-center">
+      <ul className="grid gap-4">
+        {items.map((item) => (
+          <li key={item.id} data-certification>
+            <article
+              className={cn(
+                surface,
+                'relative flex gap-4 p-4 transition-[border-color,box-shadow] duration-300 ease-fluid hover:border-primary/35 hover:shadow-lg hover:shadow-primary/10 sm:p-5',
+              )}
+            >
               {item.imageUrl ? (
                 <Image
                   src={item.imageUrl}
-                  alt={item.title}
-                  width={96}
-                  height={96}
+                  alt=""
+                  width={64}
+                  height={64}
                   unoptimized={!isOptimizableImageSrc(item.imageUrl)}
-                  className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover"
+                  className="size-14 shrink-0 rounded-xl border border-border object-cover sm:size-16"
                 />
               ) : (
-                <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-primary to-violet-500 text-white mb-6">
-                  <Award size={40} />
-                </div>
+                <span className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-linear-135 from-primary to-violet-600 text-white shadow-lg shadow-primary/25 sm:size-16">
+                  <Award aria-hidden="true" className="size-7" strokeWidth={1.75} />
+                </span>
               )}
 
-              <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-                {item.title}
-              </h3>
+              <div className="min-w-0 flex-1">
+                <div className="pe-8">
+                  <p className="text-sm font-semibold text-primary-text">{item.issuer}</p>
+                  <h3 className="mt-0.5 text-base font-bold leading-snug text-foreground text-balance">{item.title}</h3>
+                </div>
+                {item.description && (
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground text-pretty">{item.description}</p>
+                )}
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <a
+                    href={item.credentialUrl || 'https://www.linkedin.com/in/keltoummalouki'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(pillOutline, 'h-10 px-4')}
+                  >
+                    {t('viewCertificate')}
+                    <span className="sr-only">: {item.title}</span>
+                    <ArrowUpRight aria-hidden="true" className="size-4 rtl:-scale-x-100" />
+                  </a>
+                  {item.date && <span className="text-xs font-medium tabular-nums text-muted-foreground">{item.date}</span>}
+                </div>
+              </div>
 
-              <p className="text-primary font-medium mb-2">
-                {item.issuer}
-              </p>
-
-              <p className="text-muted-foreground mb-6">
-                {item.description}
-              </p>
-
-              <a
-                href={item.credentialUrl || 'https://www.linkedin.com/in/keltoummalouki'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-secondary text-foreground font-medium hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
-              >
-                {t('viewCredential')}
-                <ExternalLink size={16} />
-              </a>
-            </GlassCard>
-          </div>
-          ))}
-        </div>
-      </div>
-    </section>
+              {item.credentialUrl && (
+                <span
+                  title={t('verified')}
+                  className="absolute top-4 end-4 flex size-7 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 ring-1 ring-emerald-500/30 dark:text-emerald-400"
+                >
+                  <BadgeCheck aria-hidden="true" className="size-4" />
+                  <span className="sr-only">{t('verified')}</span>
+                </span>
+              )}
+            </article>
+          </li>
+        ))}
+      </ul>
+    </ShowcaseSection>
   )
 }

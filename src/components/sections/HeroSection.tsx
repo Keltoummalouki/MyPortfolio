@@ -92,12 +92,6 @@ export default function HeroSection({
           0.4,
         )
         .fromTo(
-          '.hero-desc',
-          { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, duration: 0.6 },
-          0.5,
-        )
-        .fromTo(
           '.hero-meta',
           { opacity: 0, y: 16 },
           { opacity: 1, y: 0, duration: 0.5 },
@@ -147,7 +141,6 @@ export default function HeroSection({
 
   const displayName = about?.fullName || t('name')
   const role = about?.headline || t('role')
-  const description = about?.bio || t('description')
   const location = about?.location || t('location')
   const cvUrl = about?.cvUrl || '/cv.pdf'
   const avatarUrl = about?.avatarUrl || '/images/keltoum.png'
@@ -188,7 +181,7 @@ export default function HeroSection({
 
           {/* The role is part of the H1 so the page's main heading states who
               and what ("Keltoum Malouki — Full Stack Web Developer"). */}
-          <h1 className="hero-title mb-6 text-foreground">
+          <h1 className="hero-title mb-8 text-foreground">
             <span className="block text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight">
               {displayName}
             </span>
@@ -197,10 +190,6 @@ export default function HeroSection({
               {role}
             </span>
           </h1>
-
-          <p className="hero-desc text-base md:text-lg text-muted-foreground mb-6 max-w-lg leading-relaxed text-pretty">
-            {description}
-          </p>
 
           <div className="hero-meta flex flex-wrap items-center gap-3 mb-8">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card text-sm text-muted-foreground">

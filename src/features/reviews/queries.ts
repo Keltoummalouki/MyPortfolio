@@ -6,7 +6,7 @@ import { REVIEW_STATUSES, type PublicReview, type ReviewStatus } from './schema'
 // Columns are always listed explicitly: visitors (anon) and admins only hold
 // column-level SELECT on reviews, so `select('*')` would be rejected.
 
-/** Newest-first cap for the public list (paginated client-side). */
+/** Newest-first cap for the public testimonials (browsed one at a time client-side). */
 const PUBLIC_REVIEW_LIMIT = 200
 
 /**

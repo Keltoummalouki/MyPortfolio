@@ -8,7 +8,7 @@ const cspHeader = `
   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com;
   style-src 'self' 'unsafe-inline';
   font-src 'self';
-  img-src 'self' data: https://github-readme-stats.vercel.app https://github-readme-streak-stats.herokuapp.com https://*.supabase.co;
+  img-src 'self' data: https://*.supabase.co;
   connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com;
   frame-src https://challenges.cloudflare.com;
   frame-ancestors 'none';
@@ -22,14 +22,6 @@ const nextConfig: NextConfig = {
     poweredByHeader: false,
     images: {
         remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'github-readme-stats.vercel.app',
-            },
-            {
-                protocol: 'https',
-                hostname: 'github-readme-streak-stats.herokuapp.com',
-            },
             {
                 // Supabase Storage public objects (e.g. project cover images).
                 protocol: 'https',

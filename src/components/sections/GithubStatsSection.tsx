@@ -1,128 +1,195 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useTranslations } from 'next-intl'
-import { motion } from 'framer-motion'
-import { ExternalLink, Github } from 'lucide-react'
-import SectionHeader from '@/components/ui/SectionHeader'
-import GlassCard from '@/components/ui/GlassCard'
+import { animate, stagger, utils } from 'animejs'
+import { ArrowUpRight, Github } from 'lucide-react'
+import { useFormatter, useTranslations } from 'next-intl'
+import ShowcaseSection from '@/components/sections/showcase/ShowcaseSection'
+import { iconButton, pillOutline, surface } from '@/components/sections/showcase/classes'
+import { GITHUB_USERNAME, type ContributionCalendar, type ContributionLevel, type GithubSummary } from '@/features/github'
+import { prefersReducedMotion } from '@/lib/motion/reduced-motion'
+import { cn } from '@/lib/utils'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-export default function GithubStatsSection() {
+const LEVEL_FILL: Record<ContributionLevel, string> = {
+  0: 'fill-foreground/[0.07]',
+  1: 'fill-primary/35',
+  2: 'fill-primary/60',
+  3: 'fill-primary/85',
+  4: 'fill-violet-500',
+}
+
+type GithubStatsSectionProps = {
+  index: string
+  /** null while streaming (`pending`) or when nothing could be loaded. */
+  summary: GithubSummary | null
+  /** Suspense fallback: same layout with skeletons, so nothing shifts on arrival. */
+  pending?: boolean
+}
+
+export default function GithubStatsSection({ index, summary, pending = false }: GithubStatsSectionProps) {
   const t = useTranslations('github')
+  const format = useFormatter()
   const sectionRef = useRef<HTMLElement>(null)
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setPrefersReducedMotion(mediaQuery.matches)
-  }, [])
+  const profile = summary?.profile ?? null
+  const calendar = summary?.contributions ?? null
+  const profileUrl = profile?.url ?? `https://github.com/${GITHUB_USERNAME}`
 
+  // Card reveal (GSAP) + heatmap weeks fading in left to right (anime.js).
   useEffect(() => {
-    if (prefersReducedMotion || !sectionRef.current) return
+    const section = sectionRef.current
+    if (!section || pending || prefersReducedMotion()) return
+    const weeks = Array.from(section.querySelectorAll<SVGGElement>('[data-heat-week]'))
+    utils.set(weeks, { opacity: 0 })
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.github-card',
-        { opacity: 0, y: 40, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          },
-        },
+        '[data-github-card]',
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: section, start: 'top 80%', once: true } },
       )
-    }, sectionRef)
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 70%',
+        once: true,
+        onEnter: () => {
+          animate(weeks, { opacity: [0, 1], duration: 500, delay: stagger(14), ease: 'outQuart' })
+        },
+      })
+    }, section)
 
-    return () => ctx.revert()
-  }, [prefersReducedMotion])
+    return () => {
+      ctx.revert()
+      utils.set(weeks, { opacity: 1 })
+    }
+  }, [pending])
 
-  const username = 'keltoummalouki'
-  const themeParams = 'theme=dark&hide_border=true&bg_color=0B0F19&title_color=3B82F6&icon_color=8B5CF6&text_color=F8FAFC'
+  const stats = [
+    calendar && { key: 'contributions', value: calendar.total },
+    profile && { key: 'repositories', value: profile.publicRepos },
+    profile && { key: 'followers', value: profile.followers },
+    profile && { key: 'following', value: profile.following },
+  ].filter((stat): stat is { key: string; value: number } => Boolean(stat))
 
-  const githubStats = [
-    {
-      title: 'GitHub Stats',
-      src: `https://github-readme-stats.vercel.app/api?username=${username}&${themeParams}&show_icons=true`,
-      width: 520,
-      height: 200,
-    },
-    {
-      title: 'GitHub Streak',
-      src: `https://github-readme-streak-stats.herokuapp.com?user=${username}&${themeParams}&ring=3B82F6&fire=8B5CF6&currStreakLabel=F8FAFC`,
-      width: 520,
-      height: 200,
-    },
-  ]
+  const unavailable = !pending && stats.length === 0
 
   return (
-    <section
-      id="github"
+    <ShowcaseSection
       ref={sectionRef}
-      className="relative section-padding overflow-hidden bg-background"
-      aria-labelledby="github-title"
+      id="github"
+      index={index}
+      layout="half"
+      eyebrow={t('title')}
+      title={t('heading')}
+      description={t('subtitle')}
     >
-      <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative container-main">
-        <SectionHeader id="github-title" eyebrow={t('subtitle')} title={t('title')} />
-
-        <div className="flex flex-col items-center gap-8 mb-12">
-          {githubStats.map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              className="github-card w-full max-w-xl"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 * index }}
-              whileHover={{ scale: 1.01 }}
-            >
-              <GlassCard className="p-3 overflow-hidden">
-                <Image
-                  src={stat.src}
-                  alt={stat.title}
-                  width={stat.width}
-                  height={stat.height}
-                  className="w-full h-auto rounded-xl"
-                  unoptimized
-                />
-              </GlassCard>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <a
-            href={`https://github.com/${username}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-card border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
-          >
-            <Github className="w-5 h-5 text-primary" />
-            <span className="font-medium text-foreground">{t('viewProfile')}</span>
-            <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+      <article data-github-card aria-busy={pending || undefined} className={cn(surface, '@container p-4 sm:p-5')}>
+        <header className="flex items-center gap-3">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-foreground ring-1 ring-border">
+            <Github aria-hidden="true" className="size-5" />
+          </span>
+          <div className="min-w-0">
+            <h3 className="truncate font-semibold text-foreground">{profile?.name ?? 'GitHub'}</h3>
+            <p className="truncate text-xs text-muted-foreground" dir="ltr">
+              @{profile?.login ?? GITHUB_USERNAME}
+            </p>
+          </div>
+          <a href={profileUrl} target="_blank" rel="noopener noreferrer" className={cn(iconButton, 'ms-auto')}>
+            <ArrowUpRight aria-hidden="true" className="size-4 rtl:-scale-x-100" />
+            <span className="sr-only">{t('viewProfile')}</span>
           </a>
-        </motion.div>
-      </div>
-    </section>
+        </header>
+
+        {unavailable ? (
+          <div className="mt-5 rounded-xl border border-dashed border-border p-5 text-center">
+            <p className="text-sm text-muted-foreground">{t('unavailable')}</p>
+            <a href={profileUrl} target="_blank" rel="noopener noreferrer" className={cn(pillOutline, 'mt-4 h-10 px-4')}>
+              {t('viewProfile')}
+              <ArrowUpRight aria-hidden="true" className="size-4 rtl:-scale-x-100" />
+            </a>
+          </div>
+        ) : (
+          <>
+            <dl className="mt-5 grid grid-cols-2 gap-2 @lg:grid-cols-4">
+              {(pending ? ['contributions', 'repositories', 'followers', 'following'] : stats.map((stat) => stat.key)).map(
+                (key) => {
+                  const stat = stats.find((item) => item.key === key)
+                  return (
+                    <div key={key} className="flex flex-col-reverse rounded-xl border border-border bg-secondary/50 px-3 py-2.5">
+                      <dt className="text-xs text-muted-foreground">{t(`stats.${key}`)}</dt>
+                      <dd className="text-xl font-bold tabular-nums text-foreground">
+                        {stat ? (
+                          format.number(stat.value)
+                        ) : (
+                          <span aria-hidden="true" className="my-1 block h-5 w-12 animate-pulse rounded bg-foreground/10" />
+                        )}
+                      </dd>
+                    </div>
+                  )
+                },
+              )}
+            </dl>
+
+            {pending ? (
+              <div aria-hidden="true" className="mt-5 aspect-[636/82] animate-pulse rounded-lg bg-foreground/[0.06]" />
+            ) : (
+              calendar && (
+                <figure className="mt-5">
+                  <figcaption className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                    <span>{t('heatmapTitle')}</span>
+                    <HeatmapLegend less={t('less')} more={t('more')} />
+                  </figcaption>
+                  <Heatmap
+                    calendar={calendar}
+                    label={t('heatmapLabel', { count: calendar.total, total: format.number(calendar.total) })}
+                  />
+                </figure>
+              )
+            )}
+          </>
+        )}
+      </article>
+    </ShowcaseSection>
+  )
+}
+
+const CELL = 10
+const STEP = 12
+
+function Heatmap({ calendar, label }: { calendar: ContributionCalendar; label: string }) {
+  const width = calendar.weeks.length * STEP - (STEP - CELL)
+  const height = 7 * STEP - (STEP - CELL)
+  return (
+    <svg role="img" aria-label={label} viewBox={`0 0 ${width} ${height}`} className="block h-auto w-full">
+      {calendar.weeks.map((week, x) => (
+        <g key={x} data-heat-week>
+          {week.map((day, y) =>
+            day ? (
+              <rect key={day.date} x={x * STEP} y={y * STEP} width={CELL} height={CELL} rx={2} className={LEVEL_FILL[day.level]} />
+            ) : null,
+          )}
+        </g>
+      ))}
+    </svg>
+  )
+}
+
+function HeatmapLegend({ less, more }: { less: string; more: string }) {
+  return (
+    <span aria-hidden="true" className="inline-flex items-center gap-1.5">
+      {less}
+      <svg viewBox={`0 0 ${5 * STEP - 2} ${CELL}`} className="h-2.5 w-auto">
+        {([0, 1, 2, 3, 4] as const).map((level) => (
+          <rect key={level} x={level * STEP} y={0} width={CELL} height={CELL} rx={2} className={LEVEL_FILL[level]} />
+        ))}
+      </svg>
+      {more}
+    </span>
   )
 }

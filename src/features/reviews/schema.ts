@@ -11,8 +11,6 @@ export const reviewStatusSchema = z.enum(REVIEW_STATUSES)
 export const REVIEW_NAME_MAX = 80
 export const REVIEW_COMMENT_MIN = 10
 export const REVIEW_COMMENT_MAX = 1000
-/** Reviews per page in the public list. */
-export const REVIEWS_PER_PAGE = 4
 
 // Error messages are stable keys, mapped to localized text by the client.
 export const reviewFormSchema = z.object({

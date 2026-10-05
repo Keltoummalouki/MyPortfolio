@@ -1,223 +1,228 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { animate, stagger, utils } from 'animejs'
-import { MessageSquareQuote, PenLine } from 'lucide-react'
+import { animate } from 'animejs'
+import { ChevronDown, ChevronLeft, ChevronRight, MessageSquareQuote, Quote } from 'lucide-react'
 import { useFormatter, useTranslations } from 'next-intl'
-import GlassCard from '@/components/ui/GlassCard'
-import Pagination from '@/components/ui/Pagination'
-import SectionHeader from '@/components/ui/SectionHeader'
+import ShowcaseSection from '@/components/sections/showcase/ShowcaseSection'
+import { iconButton, pillOutline, surface } from '@/components/sections/showcase/classes'
 import ReviewForm from '@/components/reviews/ReviewForm'
 import StarRating from '@/components/reviews/StarRating'
-import { REVIEWS_PER_PAGE, reviewerInitials, summarizeReviews, type PublicReview } from '@/features/reviews'
-import { paginate } from '@/lib/pagination'
+import { reviewerInitials, summarizeReviews, type PublicReview } from '@/features/reviews'
 import { prefersReducedMotion } from '@/lib/motion/reduced-motion'
 import { scrollToElement } from '@/lib/motion/smooth-scroll'
+import { cn } from '@/lib/utils'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-const STARS = [5, 4, 3, 2, 1] as const
-
-export default function ReviewsSection({ reviews }: { reviews: PublicReview[] }) {
+/**
+ * Testimonials: one approved review at a time with prev/next controls, the
+ * rating summary under the section lead, and the moderated review form behind
+ * a disclosure button (kept mounted once opened so typed text survives).
+ */
+export default function ReviewsSection({ reviews, index }: { reviews: PublicReview[]; index: string }) {
   const t = useTranslations('reviews')
   const format = useFormatter()
+  const uid = useId()
+  const formPanelId = `${uid}-form`
   const sectionRef = useRef<HTMLElement>(null)
-  const listRef = useRef<HTMLUListElement>(null)
-  const [page, setPage] = useState(1)
-  const pageChanged = useRef(false)
+  const quoteRef = useRef<HTMLElement>(null)
+  const formPanelRef = useRef<HTMLDivElement>(null)
+  const [current, setCurrent] = useState(0)
+  const [formOpen, setFormOpen] = useState(false)
+  const [formMounted, setFormMounted] = useState(false)
+  const lastStep = useRef<1 | -1 | 0>(0)
 
   const summary = useMemo(() => summarizeReviews(reviews), [reviews])
-  const slice = paginate(reviews, page, REVIEWS_PER_PAGE)
+  const review = reviews[current]
 
-  // Section reveal (GSAP ScrollTrigger, like the other sections) + rating bars
-  // that grow once the summary scrolls into view (anime.js).
   useEffect(() => {
     const section = sectionRef.current
     if (!section || prefersReducedMotion()) return
-    const bars = Array.from(section.querySelectorAll<HTMLElement>('[data-rating-bar]'))
-    utils.set(bars, { scaleX: 0 })
-
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.reviews-reveal',
-        { opacity: 0, y: 32 },
+        '[data-reviews-reveal]',
+        { opacity: 0, y: 24 },
         {
           opacity: 1,
           y: 0,
           duration: 0.7,
           ease: 'power3.out',
-          stagger: 0.12,
           scrollTrigger: { trigger: section, start: 'top 80%', once: true },
         },
       )
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top 70%',
-        once: true,
-        onEnter: () => {
-          animate(bars, { scaleX: [0, 1], duration: 900, delay: stagger(90), ease: 'outExpo' })
-        },
-      })
     }, section)
-
-    return () => {
-      ctx.revert()
-      utils.set(bars, { scaleX: 1 })
-    }
+    return () => ctx.revert()
   }, [])
 
-  // New page of reviews: staggered entrance (anime.js), skipped on first render.
+  // New review: slide in from the side it came from (anime.js), skipped on first render.
   useEffect(() => {
-    if (!pageChanged.current) return
-    const cards = listRef.current?.querySelectorAll<HTMLElement>(':scope > li')
-    if (!cards?.length || prefersReducedMotion()) return
-    const animation = animate(cards, {
+    const step = lastStep.current
+    const quote = quoteRef.current
+    if (!step || !quote || prefersReducedMotion()) return
+    const rtl = getComputedStyle(quote).direction === 'rtl'
+    const animation = animate(quote, {
       opacity: [0, 1],
-      y: [18, 0],
-      duration: 480,
-      delay: stagger(70),
+      x: [16 * step * (rtl ? -1 : 1), 0],
+      duration: 420,
       ease: 'outQuart',
     })
     return () => {
       animation.revert()
     }
-  }, [page])
+  }, [current])
 
-  const goToPage = (next: number) => {
-    pageChanged.current = true
-    setPage(next)
-    const list = listRef.current
-    if (list && list.getBoundingClientRect().top < 80) {
-      scrollToElement(list, 112)
-    }
+  // Opening the form moves focus to it: it may sit in the other column (or below the fold).
+  useEffect(() => {
+    const panel = formPanelRef.current
+    if (!formOpen || !panel) return
+    panel.focus({ preventScroll: true })
+    const { top, bottom } = panel.getBoundingClientRect()
+    if (top < 80 || bottom > window.innerHeight) scrollToElement(panel, 112)
+  }, [formOpen])
+
+  const go = (step: 1 | -1) => {
+    lastStep.current = step
+    setCurrent((value) => Math.min(reviews.length - 1, Math.max(0, value + step)))
   }
 
+  const toggleForm = () => {
+    setFormMounted(true)
+    setFormOpen((open) => !open)
+  }
+
+  const position = (value: number) => String(value).padStart(2, '0')
+
   return (
-    <section
-      id="reviews"
+    <ShowcaseSection
       ref={sectionRef}
-      aria-labelledby="reviews-title"
-      className="relative section-padding overflow-hidden bg-background"
-    >
-      <div aria-hidden="true" className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
-      <div aria-hidden="true" className="absolute top-1/4 right-0 h-96 w-96 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
-
-      <div className="relative container-main">
-        <SectionHeader id="reviews-title" eyebrow={t('eyebrow')} title={t('title')} subtitle={t('subtitle')} />
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          <div className="flex flex-col gap-6 lg:col-span-5">
-            {/* Rating summary */}
-            <GlassCard hover={false} className="reviews-reveal p-6 md:p-8">
-              <div className="flex items-center gap-5">
-                <p className="text-5xl font-bold tracking-tight text-foreground tabular-nums">
-                  {summary.count > 0 ? format.number(summary.average, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : '—'}
-                </p>
-                <div className="space-y-1.5">
-                  <StarRating
-                    value={summary.average}
-                    size={20}
-                    label={t('starsAria', { rating: format.number(summary.average, { maximumFractionDigits: 1 }) })}
-                  />
-                  <p className="text-sm text-muted-foreground">{t('count', { count: summary.count })}</p>
-                </div>
-              </div>
-
-              <ul className="mt-6 space-y-2.5">
-                {STARS.map((stars) => {
-                  const count = summary.distribution[stars]
-                  const percent = summary.count > 0 ? (count / summary.count) * 100 : 0
-                  return (
-                    <li key={stars} className="flex items-center gap-3 text-sm">
-                      <span className="w-3 text-end font-medium tabular-nums text-muted-foreground">{stars}</span>
-                      <span className="sr-only">{t('distributionAria', { stars, count })}</span>
-                      <span aria-hidden="true" className="relative h-2 flex-1 overflow-hidden rounded-full bg-secondary">
-                        <span
-                          data-rating-bar
-                          className="absolute inset-y-0 start-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 origin-left rtl:origin-right"
-                          style={{ width: `${percent}%` }}
-                        />
-                      </span>
-                      <span aria-hidden="true" className="w-6 text-end tabular-nums text-muted-foreground">{count}</span>
-                    </li>
-                  )
-                })}
-              </ul>
-            </GlassCard>
-
-            {/* Leave a review */}
-            <GlassCard hover={false} className="reviews-reveal p-6 md:p-8">
-              <div className="mb-5 flex items-center gap-3">
-                <span className="rounded-xl bg-secondary p-2.5 text-primary">
-                  <PenLine aria-hidden="true" className="size-5" />
-                </span>
-                <h3 className="text-xl font-bold text-foreground">{t('form.title')}</h3>
-              </div>
-              <p className="mb-6 text-sm leading-relaxed text-muted-foreground">{t('form.intro')}</p>
-              <ReviewForm />
-            </GlassCard>
+      id="reviews"
+      index={index}
+      layout="half"
+      eyebrow={t('eyebrow')}
+      title={t('title')}
+      description={t('subtitle')}
+      aside={
+        summary.count > 0 && (
+          <div className="flex items-center gap-3">
+            <p className="text-3xl font-bold tracking-tight tabular-nums text-foreground">
+              {format.number(summary.average, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+            </p>
+            <div className="space-y-1">
+              <StarRating
+                value={summary.average}
+                size={14}
+                label={t('starsAria', { rating: format.number(summary.average, { maximumFractionDigits: 1 }) })}
+              />
+              <p className="text-xs text-muted-foreground">{t('count', { count: summary.count })}</p>
+            </div>
           </div>
-
-          {/* Approved reviews */}
-          <div className="reviews-reveal lg:col-span-7">
-            {reviews.length === 0 ? (
-              <GlassCard hover={false} className="flex min-h-72 flex-col items-center justify-center p-8 text-center">
-                <span className="mb-4 rounded-2xl bg-secondary p-4 text-primary">
-                  <MessageSquareQuote aria-hidden="true" className="size-8" />
+        )
+      }
+      actions={
+        <button
+          type="button"
+          aria-expanded={formOpen}
+          aria-controls={formPanelId}
+          onClick={toggleForm}
+          className={cn(pillOutline, 'whitespace-nowrap px-4')}
+        >
+          {t('form.title')}
+          <ChevronDown
+            aria-hidden="true"
+            className={cn('size-4 text-primary-text transition-transform duration-200 ease-fluid', formOpen && 'rotate-180')}
+          />
+        </button>
+      }
+    >
+      <div data-reviews-reveal>
+        {review ? (
+          <div className={cn(surface, 'relative p-6 sm:p-7')}>
+            <Quote aria-hidden="true" className="size-9 fill-primary/20 text-primary-text" strokeWidth={1.25} />
+            <figure ref={quoteRef} className="mt-4">
+              <blockquote>
+                <p dir="auto" className="text-base leading-relaxed text-foreground/90 text-pretty md:text-[1.0625rem]">
+                  {review.comment}
+                </p>
+              </blockquote>
+              <figcaption className="mt-6 flex min-w-0 items-center gap-3 sm:pe-40">
+                <span
+                  aria-hidden="true"
+                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-primary text-sm font-bold text-white ring-2 ring-background"
+                >
+                  {reviewerInitials(review.name)}
                 </span>
-                <p className="text-lg font-semibold text-foreground">{t('emptyTitle')}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{t('emptyText')}</p>
-              </GlassCard>
-            ) : (
-              <>
-                <ul ref={listRef} id="reviews-list" aria-label={t('listLabel')} className="grid scroll-mt-28 gap-4 md:grid-cols-2">
-                  {slice.items.map((review) => (
-                    <li key={review.id}>
-                      <GlassCard className="flex h-full flex-col p-6">
-                        <div className="flex items-center gap-3">
-                          <span
-                            aria-hidden="true"
-                            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gradient-primary text-sm font-bold text-white"
-                          >
-                            {reviewerInitials(review.name)}
-                          </span>
-                          <div className="min-w-0">
-                            <p className="truncate font-semibold text-foreground">{review.name}</p>
-                            <time dateTime={review.date} className="text-xs text-muted-foreground">
-                              {format.dateTime(new Date(review.date), { year: 'numeric', month: 'long' })}
-                            </time>
-                          </div>
-                        </div>
-                        <StarRating
-                          value={review.rating}
-                          className="mt-4"
-                          label={t('starsAria', { rating: review.rating })}
-                        />
-                        <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground text-pretty">
-                          <p dir="auto">{review.comment}</p>
-                        </blockquote>
-                      </GlassCard>
-                    </li>
-                  ))}
-                </ul>
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-foreground">{review.name}</p>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <StarRating value={review.rating} size={12} label={t('starsAria', { rating: review.rating })} />
+                    <time dateTime={review.date} className="text-xs text-muted-foreground">
+                      {format.dateTime(new Date(review.date), { year: 'numeric', month: 'long' })}
+                    </time>
+                  </div>
+                </div>
+              </figcaption>
+            </figure>
 
-                <Pagination
-                  page={slice.page}
-                  totalPages={slice.totalPages}
-                  onPageChange={goToPage}
-                  controls="reviews-list"
-                  label={t('paginationLabel')}
-                  className="mt-8"
-                />
-              </>
+            {reviews.length > 1 && (
+              <div className="mt-5 flex items-center justify-end gap-2 sm:absolute sm:end-7 sm:bottom-7 sm:mt-0">
+                <p aria-live="polite" className="me-1 text-xs font-medium tabular-nums text-muted-foreground">
+                  <span className="sr-only">{t('position', { current: current + 1, total: reviews.length })}</span>
+                  <span aria-hidden="true" dir="ltr">
+                    {position(current + 1)} / {position(reviews.length)}
+                  </span>
+                </p>
+                <button
+                  type="button"
+                  onClick={() => go(-1)}
+                  disabled={current === 0}
+                  aria-label={t('previous')}
+                  className={iconButton}
+                >
+                  <ChevronLeft aria-hidden="true" className="size-5 rtl:rotate-180" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => go(1)}
+                  disabled={current === reviews.length - 1}
+                  aria-label={t('next')}
+                  className={iconButton}
+                >
+                  <ChevronRight aria-hidden="true" className="size-5 rtl:rotate-180" />
+                </button>
+              </div>
             )}
           </div>
-        </div>
+        ) : (
+          <div className={cn(surface, 'flex min-h-56 flex-col items-center justify-center p-8 text-center')}>
+            <span className="mb-4 rounded-2xl bg-secondary p-4 text-primary-text">
+              <MessageSquareQuote aria-hidden="true" className="size-8" />
+            </span>
+            <p className="text-lg font-semibold text-foreground">{t('emptyTitle')}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t('emptyText')}</p>
+          </div>
+        )}
       </div>
-    </section>
+
+      <div
+        ref={formPanelRef}
+        id={formPanelId}
+        role="region"
+        aria-labelledby={`${formPanelId}-title`}
+        tabIndex={-1}
+        hidden={!formOpen}
+        className={cn(surface, 'mt-4 scroll-mt-28 p-6 outline-none sm:p-7')}
+      >
+        <h3 id={`${formPanelId}-title`} className="text-lg font-bold text-foreground">
+          {t('form.title')}
+        </h3>
+        <p className="mt-1 mb-6 text-sm leading-relaxed text-muted-foreground">{t('form.intro')}</p>
+        {formMounted && <ReviewForm />}
+      </div>
+    </ShowcaseSection>
   )
 }

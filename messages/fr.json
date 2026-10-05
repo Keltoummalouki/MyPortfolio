@@ -117,7 +117,6 @@
     "greeting": "Bonjour, je suis",
     "name": "Keltoum Malouki",
     "role": "Développeuse Web Full Stack",
-    "description": "Je conçois des expériences web modernes, performantes et accessibles. Basée à Casablanca, mobile et ouverte aux nouvelles opportunités.",
     "downloadCV": "Télécharger CV",
     "contactMe": "Me Contacter",
     "scrollDown": "Défiler pour explorer",
@@ -130,10 +129,7 @@
     "location": "Casablanca (mobilité / relocation)"
   },
   "about": {
-    "title": "À propos de moi",
-    "subtitle": "Apprenez à me connaître",
     "description": "Je suis Keltoum Malouki, développeuse web full stack basée à Casablanca, Maroc. Formée chez YouCode (UM6P), je livre des solutions web complètes, de l'interface utilisateur à l'architecture back-end. Je privilégie le code propre, l'expérience utilisateur et l'apprentissage continu.",
-    "lead": "Ce que je construis, ma façon de travailler et les langues que je parle.",
     "stats": {
       "projects": "Projets Réalisés",
       "experience": "Années d'Expérience",
@@ -184,7 +180,7 @@
   },
   "education": {
     "title": "Formation",
-    "subtitle": "Mon parcours académique",
+    "subtitle": "Des bases solides qui ont forgé mon esprit de résolution de problèmes.",
     "items": {
       "youcode": {
         "title": "Formation Développement Full Stack",
@@ -198,16 +194,21 @@
         "date": "2023 – 2024",
         "description": "Baccalauréat scientifique avec des bases solides en mathématiques, physique et chimie."
       }
+    },
+    "heading": "Parcours académique",
+    "ongoing": {
+      "title": "Apprentissage continu",
+      "school": "Cours, certifications et nouvelles technologies",
+      "date": "En continu"
     }
   },
   "projects": {
     "title": "Projets",
-    "subtitle": "Projets sélectionnés parmi plus de 40 réalisations",
+    "subtitle": "Une sélection de projets qui montrent mes compétences et mon envie de construire des solutions concrètes.",
     "viewCode": "Voir le Code",
     "liveDemo": "Démo Live",
     "techStack": "Stack Technique",
     "featured": "En vedette",
-    "moreProjects": "50+ projets réalisés",
     "items": {
       "eventBooking": {
         "title": "Event Booking App",
@@ -222,12 +223,15 @@
         "stack": "Laravel, MySQL, HTML, Tailwind CSS, JavaScript, UML, Jira, Git/GitHub"
       }
     },
-    "moreOnGithub": "Plus de projets sur GitHub",
-    "paginationLabel": "Pages des projets"
+    "paginationLabel": "Pages des projets",
+    "heading": "Projets phares",
+    "carouselLabel": "Contrôles du carrousel de projets",
+    "previousProjects": "Projets précédents",
+    "nextProjects": "Projets suivants"
   },
   "certifications": {
     "title": "Certifications",
-    "subtitle": "Diplômes et réussites",
+    "subtitle": "Des formations et certifications qui renforcent mon expertise.",
     "viewCredential": "Voir sur LinkedIn",
     "items": {
       "docker": {
@@ -236,11 +240,13 @@
         "date": "2025",
         "description": "Certification professionnelle validant les fondamentaux de Docker et de la conteneurisation."
       }
-    }
+    },
+    "heading": "Compétences certifiées",
+    "viewCertificate": "Voir le certificat",
+    "verified": "Certificat vérifiable"
   },
   "softSkills": {
     "title": "Compétences Transversales",
-    "subtitle": "Ma façon de travailler",
     "items": {
       "timeManagement": "Gestion du temps",
       "adaptability": "Adaptabilité / Flexibilité",
@@ -248,7 +254,6 @@
     }
   },
   "languages": {
-    "title": "Langues parlées",
     "subtitle": "Communication",
     "arabic": "Arabe (Maternelle)",
     "french": "Français (B1)",
@@ -256,8 +261,20 @@
   },
   "github": {
     "title": "Statistiques GitHub",
-    "subtitle": "Un aperçu visuel de mon activité et de mes contributions open-source sur GitHub.",
-    "viewProfile": "Voir mon profil GitHub"
+    "subtitle": "Contributions open source et projets personnels, en direct de GitHub.",
+    "viewProfile": "Voir mon profil GitHub",
+    "heading": "Construire en public",
+    "unavailable": "Les statistiques GitHub sont indisponibles pour le moment.",
+    "heatmapTitle": "Contributions (12 derniers mois)",
+    "heatmapLabel": "{count, plural, one {{total} contribution} other {{total} contributions}} au cours des 12 derniers mois",
+    "less": "Moins",
+    "more": "Plus",
+    "stats": {
+      "contributions": "Contributions",
+      "repositories": "Dépôts",
+      "followers": "Abonnés",
+      "following": "Abonnements"
+    }
   },
   "contact": {
     "eyebrow": "Contact",
@@ -466,7 +483,6 @@
     },
     "profile": {
       "eyebrow": "Profil en bref",
-      "title": "Qui est Keltoum Malouki ?",
       "identity": "{name} est {role}, basée à Casablanca, au Maroc.",
       "identityCurrent": "{name} est {role}, basée à Casablanca, au Maroc, et occupe actuellement le poste de {currentRole} chez {company}.",
       "craftSchool": "Formée chez {school}, Keltoum conçoit des applications web complètes, des interfaces React, Next.js et Angular aux back-ends NestJS, Laravel et Ruby on Rails.",
@@ -504,10 +520,17 @@
         "about": "Profil complet",
         "projects": "Études de cas",
         "freelance": "Travailler avec moi"
-      }
-    },
-    "aboutLink": {
-      "readFullStory": "Lire mon parcours complet"
+      },
+      "tagline": {
+        "lead": "Transformer les idées",
+        "accent": "en vrais produits"
+      },
+      "note": "Créer des expériences numériques qui font la différence.",
+      "notes": {
+        "cleanCode": "Code propre, meilleurs produits"
+      },
+      "traitsLabel": "Qualités",
+      "statsLabel": "En chiffres"
     }
   },
   "seo": {
@@ -608,12 +631,9 @@
     "eyebrow": "Avis",
     "title": "Ce qu'ils en disent",
     "subtitle": "Avis de clients, de collègues et de visiteurs. Chaque avis est relu avant sa publication.",
-    "listLabel": "Avis",
-    "paginationLabel": "Pages des avis",
     "average": "{average} sur 5",
     "count": "{count, plural, =0 {Aucun avis pour le moment} one {# avis} other {# avis}}",
     "starsAria": "Note : {rating} sur 5",
-    "distributionAria": "{stars} étoiles : {count}",
     "emptyTitle": "Aucun avis pour le moment",
     "emptyText": "Soyez la première ou le premier à partager votre expérience.",
     "form": {
@@ -648,6 +668,9 @@
         "rateLimited": "Trop d'envois depuis votre réseau. Réessayez dans 24 heures.",
         "generic": "Une erreur est survenue. Veuillez réessayer."
       }
-    }
+    },
+    "position": "Avis {current} sur {total}",
+    "previous": "Avis précédent",
+    "next": "Avis suivant"
   }
 }

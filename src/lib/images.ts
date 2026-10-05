@@ -3,11 +3,7 @@
 // remote host that is not listed there makes next/image throw at render time,
 // so anything else is rendered `unoptimized` instead of breaking the page.
 
-const OPTIMIZABLE_HOSTS = [
-  /(^|\.)supabase\.co$/i,
-  /^github-readme-stats\.vercel\.app$/i,
-  /^github-readme-streak-stats\.herokuapp\.com$/i,
-]
+const OPTIMIZABLE_HOSTS = [/(^|\.)supabase\.co$/i]
 
 /** True for site-relative paths and https URLs on a configured remote host. */
 export function isOptimizableImageSrc(src: string | null | undefined): boolean {

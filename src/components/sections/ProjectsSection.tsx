@@ -5,234 +5,282 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { Github, ExternalLink, Star, Folder, Code2, ArrowUpRight, ArrowRight, BookOpen } from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight, ExternalLink, Folder, Github, Star } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
-import { Button } from '@/components/ui/button'
-import SectionHeader from '@/components/ui/SectionHeader'
-import BentoCard from '@/components/ui/BentoCard'
+import ShowcaseSection from '@/components/sections/showcase/ShowcaseSection'
+import { iconButton, pillArrow, pillOutline, pillPrimary, surface } from '@/components/sections/showcase/classes'
 import SkillIcon from '@/components/ui/SkillIcon'
-import Pagination from '@/components/ui/Pagination'
 import { fallbackProjectCards } from '@/features/content/projects.fallback'
 import type { ProjectCardData } from '@/features/content/projects.map'
-import { paginate } from '@/lib/pagination'
-import { scrollToElement } from '@/lib/motion/smooth-scroll'
+import { prefersReducedMotion } from '@/lib/motion/reduced-motion'
+import { cn } from '@/lib/utils'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-/** Projects per page on the home page; /projects lists them all (6 per page). */
-const PROJECTS_PER_PAGE = 2
+const TRACK_ID = 'projects-track'
+const pad = (value: number) => String(value).padStart(2, '0')
 
-export default function ProjectsSection({ projects }: { projects?: ProjectCardData[] }) {
+/**
+ * Featured projects as a scroll-snap carousel: native horizontal scrolling
+ * (touch, trackpad, keyboard via the card links) plus prev/next buttons. The
+ * first card is the wide "lead" card. /projects lists everything.
+ */
+export default function ProjectsSection({ projects, index }: { projects?: ProjectCardData[]; index: string }) {
   const t = useTranslations('projects')
   const tp = useTranslations('projectPages')
   const sectionRef = useRef<HTMLElement>(null)
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
-  const [page, setPage] = useState(1)
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setPrefersReducedMotion(mediaQuery.matches)
-  }, [])
-
-  useEffect(() => {
-    if (prefersReducedMotion || !sectionRef.current) return
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.projects-grid',
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          }
-        }
-      )
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [prefersReducedMotion])
+  const trackRef = useRef<HTMLUListElement>(null)
+  // Starts as 'more to the end' so the controls render server-side without a layout shift.
+  const [edges, setEdges] = useState({ start: true, end: false })
 
   // Prefer database-managed projects; otherwise fall back to the shared static
   // projects (same slugs as the /projects case-study pages).
   const items: ProjectCardData[] =
     projects && projects.length > 0 ? projects : fallbackProjectCards((key) => t(key))
-  const slice = paginate(items, page, PROJECTS_PER_PAGE)
 
-  const goToPage = useCallback((next: number) => {
-    setPage(next)
-    // Bring the list back into view when the control sits below the fold.
+  useEffect(() => {
     const section = sectionRef.current
-    if (section && section.getBoundingClientRect().top < 0) {
-      scrollToElement(section)
-    }
+    if (!section || prefersReducedMotion()) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '[data-project-card]',
+        { opacity: 0, y: 32 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: section, start: 'top 75%', once: true },
+        },
+      )
+    }, section)
+    return () => ctx.revert()
   }, [])
 
+  // Track which ends are reached (RTL scrollLeft is negative, hence Math.abs).
+  // Runs on every scroll event; the state setter bails out when nothing changed.
+  const updateEdges = useCallback(() => {
+    const track = trackRef.current
+    if (!track) return
+    const offset = Math.abs(track.scrollLeft)
+    const start = offset <= 2
+    const end = offset + track.clientWidth >= track.scrollWidth - 2
+    setEdges((current) => (current.start === start && current.end === end ? current : { start, end }))
+  }, [])
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    updateEdges()
+    track.addEventListener('scroll', updateEdges, { passive: true })
+    const observer = new ResizeObserver(updateEdges)
+    observer.observe(track)
+    return () => {
+      track.removeEventListener('scroll', updateEdges)
+      observer.disconnect()
+    }
+  }, [updateEdges, items.length])
+
+  const scrollByPage = (direction: 1 | -1) => {
+    const track = trackRef.current
+    if (!track) return
+    const rtl = getComputedStyle(track).direction === 'rtl'
+    // Snap points settle the exact position.
+    track.scrollBy({
+      left: direction * (rtl ? -1 : 1) * track.clientWidth * 0.75,
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    })
+  }
+
   return (
-    <section
-      id="projects"
+    <ShowcaseSection
       ref={sectionRef}
-      className="relative section-padding overflow-hidden bg-background"
-      aria-labelledby="projects-title"
+      id="projects"
+      index={index}
+      eyebrow={t('title')}
+      title={t('heading')}
+      description={t('subtitle')}
+      actions={
+        <Link href="/projects" className={pillOutline}>
+          {tp('viewAll')}
+          <ArrowRight aria-hidden="true" className={pillArrow} />
+        </Link>
+      }
     >
-      <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
-      <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative container-main">
-        <SectionHeader id="projects-title" eyebrow={t('subtitle')} title={t('title')} />
-
-        <div id="projects-list" className="projects-grid grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {slice.items.map((project, index) => (
-            <BentoCard
-              key={project.id}
-              className="lg:col-span-2 group"
-              delay={index * 0.1}
-            >
-              <div className="grid md:grid-cols-2 h-full">
-                <div className="relative h-56 md:h-full overflow-hidden">
-                  {project.image ? (
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 66vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-violet-500/10 text-primary">
-                      <Folder size={40} />
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-r rtl:bg-gradient-to-l from-transparent to-background/90 hidden md:block" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent md:hidden" />
-
-                  {project.featured && (
-                    <span className="absolute top-4 start-4 z-10 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-sm">
-                      <Star size={12} className="fill-current" />
-                      {t('featured')}
-                    </span>
-                  )}
-                </div>
-
-                <div className="p-6 md:p-8 flex flex-col justify-center">
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <div>
-                      {project.dateLabel && (
-                        <p className="text-sm text-primary font-medium mb-1">{project.dateLabel}</p>
-                      )}
-                      <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-200">
-                        {project.title}
-                      </h3>
-                    </div>
-                    <div className="p-2 rounded-lg bg-secondary text-primary">
-                      <Folder size={18} />
-                    </div>
-                  </div>
-
-                  {project.description && (
-                    <p className="text-muted-foreground mb-5 leading-relaxed">
-                      {project.description}
-                    </p>
-                  )}
-
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.stackItems.slice(0, 6).map((tech) => (
-                      <span
-                        key={tech.name}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-secondary text-muted-foreground border border-border"
-                      >
-                        <SkillIcon name={tech.name} icon={tech.icon} imageUrl={tech.imageUrl} className="text-primary" size={13} />
-                        {tech.name}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-3 mt-auto">
-                    <Button size="sm" asChild className="flex-1">
-                      <Link
-                        href={`/projects/${project.slug}`}
-                        className="flex items-center justify-center gap-2"
-                      >
-                        <BookOpen size={16} aria-hidden="true" />
-                        {tp('caseStudy')}
-                        {/* Unique link text per project (SEO + "identical links" a11y audit). */}
-                        <span className="sr-only">: {project.title}</span>
-                      </Link>
-                    </Button>
-                    {project.github && (
-                      <Button variant="outline" size="sm" asChild className="flex-1">
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2"
-                        >
-                          <Github size={16} aria-hidden="true" />
-                          {t('viewCode')}
-                          <span className="sr-only">: {project.title}</span>
-                        </a>
-                      </Button>
-                    )}
-                    {project.demo && (
-                      <Button variant="outline" size="sm" asChild className="flex-1">
-                        <a
-                          href={project.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2"
-                        >
-                          <ExternalLink size={16} aria-hidden="true" />
-                          {t('liveDemo')}
-                          <span className="sr-only">: {project.title}</span>
-                        </a>
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </BentoCard>
-          ))}
-
-          <BentoCard className="p-6 md:p-8 flex flex-col justify-center items-center text-center bg-gradient-to-br from-primary/10 to-violet-500/10" delay={0.2}>
-            <div className="p-4 rounded-2xl bg-secondary text-primary mb-5">
-              <Code2 size={32} />
-            </div>
-            <p className="text-3xl md:text-4xl font-bold text-foreground mb-2">50+</p>
-            <p className="text-muted-foreground mb-6">{t('moreProjects')}</p>
-            <Button size="sm" asChild className="mb-4">
-              <Link href="/projects" className="flex items-center justify-center gap-2">
-                {tp('viewAll')}
-                <ArrowRight size={16} className="rtl:rotate-180" />
-              </Link>
-            </Button>
-            <a
-              href="https://github.com/keltoummalouki"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
-            >
-              {t('moreOnGithub')}
-              <ArrowUpRight size={16} aria-hidden="true" />
-            </a>
-          </BentoCard>
-        </div>
-
-        <Pagination
-          page={slice.page}
-          totalPages={slice.totalPages}
-          onPageChange={goToPage}
-          controls="projects-list"
-          label={t('paginationLabel')}
-          className="mt-10"
-        />
+      <div role="group" aria-label={t('carouselLabel')} className="mb-4 flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={() => scrollByPage(-1)}
+          disabled={edges.start}
+          aria-controls={TRACK_ID}
+          aria-label={t('previousProjects')}
+          className={iconButton}
+        >
+          <ChevronLeft aria-hidden="true" className="size-5 rtl:rotate-180" />
+        </button>
+        <button
+          type="button"
+          onClick={() => scrollByPage(1)}
+          disabled={edges.end}
+          aria-controls={TRACK_ID}
+          aria-label={t('nextProjects')}
+          className={iconButton}
+        >
+          <ChevronRight aria-hidden="true" className="size-5 rtl:rotate-180" />
+        </button>
       </div>
-    </section>
+
+      <ul
+        ref={trackRef}
+        id={TRACK_ID}
+        aria-label={t('title')}
+        className="-mx-1 flex snap-x snap-mandatory scroll-px-1 gap-4 overflow-x-auto overscroll-x-contain px-1 pt-1 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((project, i) => (
+          <li
+            key={project.id}
+            data-project-card
+            className={cn(
+              'flex shrink-0 snap-start',
+              i === 0 ? 'w-[88%] sm:w-[70%] xl:w-[54%]' : 'w-[80%] sm:w-[46%] xl:w-[31%]',
+            )}
+          >
+            <ProjectCard
+              project={project}
+              lead={i === 0}
+              position={`${pad(i + 1)} / ${pad(items.length)}`}
+              labels={{
+                featured: t('featured'),
+                caseStudy: tp('caseStudy'),
+                code: t('viewCode'),
+                demo: t('liveDemo'),
+                stack: t('techStack'),
+              }}
+            />
+          </li>
+        ))}
+      </ul>
+    </ShowcaseSection>
+  )
+}
+
+function ProjectCard({
+  project,
+  lead,
+  position,
+  labels,
+}: {
+  project: ProjectCardData
+  lead: boolean
+  position: string
+  labels: { featured: string; caseStudy: string; code: string; demo: string; stack: string }
+}) {
+  const href = `/projects/${project.slug}`
+
+  return (
+    <article
+      className={cn(
+        surface,
+        'group relative flex w-full flex-col overflow-hidden p-2 transition-[border-color,box-shadow,translate] duration-300 ease-fluid hover:-translate-y-1 hover:border-primary/35 hover:shadow-xl hover:shadow-primary/10',
+        lead && 'border-primary/25 shadow-lg shadow-primary/10',
+      )}
+    >
+      <div className={cn('relative overflow-hidden rounded-xl bg-secondary', lead ? 'h-48 sm:h-56' : 'h-36 sm:h-40')}>
+        {project.image ? (
+          <Image
+            src={project.image}
+            alt=""
+            fill
+            sizes={lead ? '(max-width: 640px) 88vw, (max-width: 1280px) 70vw, 640px' : '(max-width: 640px) 80vw, (max-width: 1280px) 46vw, 380px'}
+            className="object-cover transition-transform duration-500 ease-fluid group-hover:scale-[1.04]"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-linear-135 from-primary/15 to-violet-500/15 text-primary-text">
+            <Folder aria-hidden="true" className="size-10" strokeWidth={1.5} />
+          </div>
+        )}
+        <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-card/70 via-transparent to-transparent" />
+        <span
+          aria-hidden="true"
+          className="absolute top-3 start-3 rounded-full border border-white/15 bg-black/55 px-2.5 py-1 text-xs font-semibold tabular-nums text-white backdrop-blur"
+          dir="ltr"
+        >
+          {position}
+        </span>
+      </div>
+
+      <div className="flex flex-1 flex-col px-3 pt-4 pb-2 md:px-4">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <h3 className={cn('font-bold tracking-tight text-foreground', lead ? 'text-xl md:text-2xl' : 'text-lg')}>
+            {project.title}
+          </h3>
+          {project.featured && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary-text">
+              <Star aria-hidden="true" className="size-3 fill-current" />
+              {labels.featured}
+            </span>
+          )}
+        </div>
+        {project.dateLabel && <p className="mt-1 text-xs font-medium text-muted-foreground">{project.dateLabel}</p>}
+
+        {project.description && (
+          <p className={cn('mt-2 text-sm leading-relaxed text-muted-foreground text-pretty', lead ? 'line-clamp-3' : 'line-clamp-2')}>
+            {project.description}
+          </p>
+        )}
+
+        <ul aria-label={labels.stack} className="mt-4 flex flex-wrap gap-1.5">
+          {project.stackItems.slice(0, lead ? 5 : 3).map((tech) => (
+            <li
+              key={tech.name}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-secondary/70 px-2 py-1 text-xs font-medium text-muted-foreground"
+            >
+              <SkillIcon name={tech.name} icon={tech.icon} imageUrl={tech.imageUrl} className="text-primary-text" size={12} />
+              {tech.name}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-auto flex items-center gap-2 pt-5">
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noopener noreferrer" className={iconButton}>
+              <Github aria-hidden="true" className="size-4" />
+              <span className="sr-only">
+                {labels.code}: {project.title}
+              </span>
+            </a>
+          )}
+          {project.demo && (
+            <a href={project.demo} target="_blank" rel="noopener noreferrer" className={iconButton}>
+              <ExternalLink aria-hidden="true" className="size-4" />
+              <span className="sr-only">
+                {labels.demo}: {project.title}
+              </span>
+            </a>
+          )}
+          {lead ? (
+            <Link href={href} className={cn(pillPrimary, 'ms-auto')}>
+              {labels.caseStudy}
+              {/* Unique link text per project (SEO + "identical links" a11y audit). */}
+              <span className="sr-only">: {project.title}</span>
+              <ArrowRight aria-hidden="true" className={pillArrow} />
+            </Link>
+          ) : (
+            <Link
+              href={href}
+              className={cn(iconButton, 'ms-auto border-primary/40 bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground')}
+            >
+              <ArrowRight aria-hidden="true" className="size-4 rtl:rotate-180" />
+              <span className="sr-only">
+                {labels.caseStudy}: {project.title}
+              </span>
+            </Link>
+          )}
+        </div>
+      </div>
+    </article>
   )
 }

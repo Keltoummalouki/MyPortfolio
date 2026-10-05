@@ -117,7 +117,6 @@
     "greeting": "Hello, I'm",
     "name": "Keltoum Malouki",
     "role": "Full Stack Web Developer",
-    "description": "I build modern, performant, and accessible web experiences. Based in Casablanca, open to mobility and new opportunities.",
     "downloadCV": "Download CV",
     "contactMe": "Contact Me",
     "scrollDown": "Scroll to explore",
@@ -130,10 +129,7 @@
     "location": "Casablanca (mobile / relocation)"
   },
   "about": {
-    "title": "About Me",
-    "subtitle": "Get to know me",
     "description": "I'm Keltoum Malouki, a Full Stack Web Developer from Casablanca, Morocco. With hands-on training at YouCode (UM6P), I deliver complete web solutions from front-end interfaces to back-end architecture. I care about clean code, user experience, and continuous learning.",
-    "lead": "What I build, how I work, and the languages I speak.",
     "stats": {
       "projects": "Projects Completed",
       "experience": "Years Experience",
@@ -184,7 +180,7 @@
   },
   "education": {
     "title": "Education",
-    "subtitle": "My academic background",
+    "subtitle": "A solid foundation that shaped my problem-solving mindset.",
     "items": {
       "youcode": {
         "title": "Full Stack Development Program",
@@ -198,16 +194,21 @@
         "date": "2023 – 2024",
         "description": "Scientific baccalauréat with a strong foundation in mathematics, physics, and chemistry."
       }
+    },
+    "heading": "Academic background",
+    "ongoing": {
+      "title": "Continuous learning",
+      "school": "Courses, certifications and new technologies",
+      "date": "Ongoing"
     }
   },
   "projects": {
     "title": "Projects",
-    "subtitle": "Featured work from 50+ completed projects",
+    "subtitle": "A selection of projects that show my skills and my drive to build real solutions.",
     "viewCode": "View Code",
     "liveDemo": "Live Demo",
     "techStack": "Tech Stack",
     "featured": "Featured",
-    "moreProjects": "50+ projects realized",
     "items": {
       "eventBooking": {
         "title": "Event Booking App",
@@ -222,12 +223,15 @@
         "stack": "Laravel, MySQL, HTML, Tailwind CSS, JavaScript, UML, Jira, Git/GitHub"
       }
     },
-    "moreOnGithub": "More projects on GitHub",
-    "paginationLabel": "Project pages"
+    "paginationLabel": "Project pages",
+    "heading": "Featured projects",
+    "carouselLabel": "Project carousel controls",
+    "previousProjects": "Previous projects",
+    "nextProjects": "Next projects"
   },
   "certifications": {
     "title": "Certifications",
-    "subtitle": "Credentials and achievements",
+    "subtitle": "Courses and certifications that strengthen my expertise.",
     "viewCredential": "View on LinkedIn",
     "items": {
       "docker": {
@@ -236,11 +240,13 @@
         "date": "2025",
         "description": "Professional certification validating Docker and containerization fundamentals."
       }
-    }
+    },
+    "heading": "Certified skills",
+    "viewCertificate": "View certificate",
+    "verified": "Verifiable credential"
   },
   "softSkills": {
     "title": "Soft Skills",
-    "subtitle": "How I work",
     "items": {
       "timeManagement": "Time Management",
       "adaptability": "Adaptability / Flexibility",
@@ -248,7 +254,6 @@
     }
   },
   "languages": {
-    "title": "Spoken languages",
     "subtitle": "Communication",
     "arabic": "Arabic (Native)",
     "french": "French (B1)",
@@ -256,8 +261,20 @@
   },
   "github": {
     "title": "GitHub Stats",
-    "subtitle": "A visual overview of my open-source activity and contributions on GitHub.",
-    "viewProfile": "View my GitHub profile"
+    "subtitle": "Open-source contributions and personal projects, live from GitHub.",
+    "viewProfile": "View my GitHub profile",
+    "heading": "Building in public",
+    "unavailable": "Live GitHub stats are unavailable right now.",
+    "heatmapTitle": "Contributions (last 12 months)",
+    "heatmapLabel": "{count, plural, one {{total} contribution} other {{total} contributions}} in the last 12 months",
+    "less": "Less",
+    "more": "More",
+    "stats": {
+      "contributions": "Contributions",
+      "repositories": "Repositories",
+      "followers": "Followers",
+      "following": "Following"
+    }
   },
   "contact": {
     "eyebrow": "Contact",
@@ -466,7 +483,6 @@
     },
     "profile": {
       "eyebrow": "Profile at a glance",
-      "title": "Who is Keltoum Malouki?",
       "identity": "{name} is {roleArticle, select, an {an} other {a}} {role} based in Casablanca, Morocco.",
       "identityCurrent": "{name} is {roleArticle, select, an {an} other {a}} {role} based in Casablanca, Morocco, currently working as {currentArticle, select, an {an} other {a}} {currentRole} at {company}.",
       "craftSchool": "Trained at {school}, Keltoum builds complete web applications, from React, Next.js and Angular interfaces to NestJS, Laravel and Ruby on Rails back ends.",
@@ -504,10 +520,17 @@
         "about": "Full profile",
         "projects": "Case studies",
         "freelance": "Work with me"
-      }
-    },
-    "aboutLink": {
-      "readFullStory": "Read my full story"
+      },
+      "tagline": {
+        "lead": "Turning ideas",
+        "accent": "into real products"
+      },
+      "note": "Building digital experiences that make a difference.",
+      "notes": {
+        "cleanCode": "Clean code, better products"
+      },
+      "traitsLabel": "Qualities",
+      "statsLabel": "In numbers"
     }
   },
   "seo": {
@@ -608,12 +631,9 @@
     "eyebrow": "Reviews",
     "title": "What people say",
     "subtitle": "Reviews from clients, colleagues and visitors. Every review is checked before it is published.",
-    "listLabel": "Reviews",
-    "paginationLabel": "Review pages",
     "average": "{average} out of 5",
     "count": "{count, plural, =0 {No reviews yet} one {# review} other {# reviews}}",
     "starsAria": "Rated {rating} out of 5",
-    "distributionAria": "{stars} stars: {count}",
     "emptyTitle": "No reviews yet",
     "emptyText": "Be the first to share your experience.",
     "form": {
@@ -648,6 +668,9 @@
         "rateLimited": "Too many submissions from your network. Please try again in 24 hours.",
         "generic": "Something went wrong. Please try again."
       }
-    }
+    },
+    "position": "Review {current} of {total}",
+    "previous": "Previous review",
+    "next": "Next review"
   }
 }

@@ -8,6 +8,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-space-grotesk), system-ui, sans-serif;
   --font-display: var(--font-archivo), system-ui, sans-serif;
+  /* Editorial accent headlines (profile tagline). Latin only: RTL keeps the Arabic heading font. */
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Strong ease-out for UI feedback (hover, press, state swaps): `ease-fluid` */

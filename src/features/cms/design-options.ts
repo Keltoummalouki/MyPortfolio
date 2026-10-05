@@ -148,7 +148,8 @@ export type HeaderPosition = (typeof HEADER_POSITIONS)[number]['value']
 
 export const NAV_ITEMS = [
   { value: 'home', label: 'Home', href: '/', kind: 'page' },
-  { value: 'about', label: 'About', href: '#about', kind: 'section' },
+  // The home page's about block is "Profile at a glance" (#profile).
+  { value: 'about', label: 'About', href: '#profile', kind: 'section' },
   { value: 'skills', label: 'Skills', href: '#skills', kind: 'section' },
   { value: 'experience', label: 'Experience', href: '#experience', kind: 'section' },
   { value: 'education', label: 'Education', href: '#education', kind: 'section' },
