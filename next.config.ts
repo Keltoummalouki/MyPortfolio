@@ -33,6 +33,14 @@ const nextConfig: NextConfig = {
         ],
     },
     transpilePackages: ['three'],
+    experimental: {
+        serverActions: {
+            // Admin forms post files through Server Actions (default cap: 1 MB).
+            // The largest is the profile form: avatar (5 MB) + two CV PDFs (10 MB
+            // each), per the limits enforced in src/features/cms/media.ts.
+            bodySizeLimit: '26mb',
+        },
+    },
     // The OG image route reads the profile photo from disk at runtime; make sure
     // output file tracing bundles it into that serverless function.
     outputFileTracingIncludes: {
