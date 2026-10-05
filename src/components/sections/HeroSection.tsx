@@ -33,9 +33,11 @@ function availabilityLabel(t: ReturnType<typeof useTranslations>, status: string
 export default function HeroSection({
   about,
   socialLinks = [],
+  avatarUrl = about?.avatarUrl || '/images/keltoum-malouki.jpg',
 }: {
   about?: PublicAbout
   socialLinks?: PublicSocialLink[]
+  avatarUrl?: string
 }) {
   const t = useTranslations('hero')
   const sectionRef = useRef<HTMLElement>(null)
@@ -103,25 +105,6 @@ export default function HeroSection({
           { opacity: 1, y: 0, duration: 0.6 },
           0.7,
         )
-        // No opacity on the portrait: it is the LCP element, so it must stay
-        // painted from the first frame; only its position/scale animates.
-        .fromTo(
-          imageRef.current,
-          { scale: 0.94, x: 32 },
-          { scale: 1, x: 0, duration: 0.9 },
-          0,
-        )
-
-      gsap.to(imageRef.current, {
-        y: 40,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
-        },
-      })
 
       gsap.to(contentRef.current, {
         opacity: 0,
@@ -143,7 +126,6 @@ export default function HeroSection({
   const role = about?.headline || t('role')
   const location = about?.location || t('location')
   const cvUrl = about?.cvUrl || '/cv.pdf'
-  const avatarUrl = about?.avatarUrl || '/images/keltoum.png'
   const socialItems = socialLinks.length
     ? socialLinks.slice(0, 3).map((link) => ({
         name: link.label || link.platform,
@@ -160,6 +142,7 @@ export default function HeroSection({
   return (
     <section
       ref={sectionRef}
+      data-portrait-hero
       className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background"
       aria-label="Introduction"
     >
@@ -263,7 +246,7 @@ export default function HeroSection({
           />
 
           <div className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px]">
-            <div className="w-full h-full rounded-full overflow-hidden border-2 border-border relative z-10 bg-card">
+            <div data-portrait-source className="w-full h-full rounded-full overflow-hidden border-2 border-border relative z-10 bg-card">
               <Image
                 src={avatarUrl}
                 alt={displayName}

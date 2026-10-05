@@ -3,13 +3,16 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
+// The production domain is proxied through Cloudflare, which injects its Web
+// Analytics beacon (static.cloudflareinsights.com) into HTML responses; the
+// beacon reports to cloudflareinsights.com.
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com;
   style-src 'self' 'unsafe-inline';
   font-src 'self';
   img-src 'self' data: https://*.supabase.co;
-  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com https://cloudflareinsights.com;
   frame-src https://challenges.cloudflare.com;
   frame-ancestors 'none';
   base-uri 'self';

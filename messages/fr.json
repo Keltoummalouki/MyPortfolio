@@ -492,7 +492,6 @@
         "limited": "Keltoum a actuellement une disponibilité limitée, mais reste ouverte aux missions freelance et aux nouvelles opportunités.",
         "unavailable": "Keltoum n'accepte pas de nouveaux projets pour le moment."
       },
-      "factsTitle": "Points clés",
       "facts": {
         "role": "Métier",
         "basedIn": "Basée à",
@@ -514,12 +513,6 @@
       "fallback": {
         "currentCompany": "DabaDoc",
         "school": "YouCode (UM6P)"
-      },
-      "cta": {
-        "label": "En savoir plus sur Keltoum Malouki",
-        "about": "Profil complet",
-        "projects": "Études de cas",
-        "freelance": "Travailler avec moi"
       },
       "tagline": {
         "lead": "Transformer les idées",

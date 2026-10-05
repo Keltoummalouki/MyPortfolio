@@ -136,13 +136,15 @@ export default function EducationSection({ items: cmsItems, index }: { items?: P
                 <span className="relative z-10 flex size-14 shrink-0 rounded-full bg-gradient-primary p-px shadow-[0_0_32px_-6px_var(--glow-color)]">
                   <span className="flex size-full items-center justify-center overflow-hidden rounded-full bg-card text-primary-text">
                     {node.imageUrl ? (
+                      // Fills the ring: square logos with their own background (YouCode)
+                      // become a round badge; any inset would show the square's corners.
                       <Image
                         src={node.imageUrl}
                         alt=""
                         width={56}
                         height={56}
                         unoptimized={!isOptimizableImageSrc(node.imageUrl)}
-                        className="size-full object-contain p-1"
+                        className="size-full object-cover"
                       />
                     ) : (
                       <Icon aria-hidden="true" className="size-6" strokeWidth={1.75} />

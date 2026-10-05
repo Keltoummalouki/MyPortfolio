@@ -492,7 +492,6 @@
         "limited": "Keltoum currently has limited availability but still welcomes freelance projects and new opportunities.",
         "unavailable": "Keltoum is not taking on new projects at the moment."
       },
-      "factsTitle": "Key facts",
       "facts": {
         "role": "Role",
         "basedIn": "Based in",
@@ -514,12 +513,6 @@
       "fallback": {
         "currentCompany": "DabaDoc",
         "school": "YouCode (UM6P)"
-      },
-      "cta": {
-        "label": "Learn more about Keltoum Malouki",
-        "about": "Full profile",
-        "projects": "Case studies",
-        "freelance": "Work with me"
       },
       "tagline": {
         "lead": "Turning ideas",

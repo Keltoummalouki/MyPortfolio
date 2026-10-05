@@ -14,6 +14,7 @@ import FaqSection from '@/components/sections/FaqSection'
 import GithubStatsSection from '@/components/sections/GithubStatsSection'
 import HeroSection from '@/components/sections/HeroSection'
 import ProfileSummarySection from '@/components/sections/ProfileSummarySection'
+import PortraitTransition from '@/components/sections/PortraitTransition'
 import ProjectsSection from '@/components/sections/ProjectsSection'
 import ReviewsSection from '@/components/sections/ReviewsSection'
 import SkillsSection from '@/components/sections/SkillsSection'
@@ -132,8 +133,9 @@ export default async function HomePage({ params }: PageProps) {
       <Header brandName={cms.about?.fullName} design={cms.design} />
 
       <main id="main-content">
-        <HeroSection about={cmsAbout} socialLinks={cms.socialLinks} />
-        <ProfileSummarySection locale={locale} facts={facts} avatarUrl={cmsAbout?.avatarUrl || '/images/keltoum.png'} />
+        <HeroSection about={cmsAbout} socialLinks={cms.socialLinks} avatarUrl="/images/keltoum-malouki.jpg" />
+        <ProfileSummarySection locale={locale} facts={facts} avatarUrl="/images/keltoum-malouki.jpg" />
+        <PortraitTransition />
         <SkillsSection categories={cms.skillCategories} />
         <ExperienceSection items={cms.experiences} />
         {/* Numbered bento block (04–09): side-label sections, two-up from lg. */}

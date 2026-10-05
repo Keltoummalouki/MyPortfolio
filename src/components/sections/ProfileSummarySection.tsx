@@ -1,48 +1,19 @@
 import Image from 'next/image'
 import { Caveat } from 'next/font/google'
 import { getTranslations } from 'next-intl/server'
-import {
-  ArrowRight,
-  BriefcaseBusiness,
-  Building2,
-  CalendarDays,
-  Code2,
-  FolderOpen,
-  Github,
-  GraduationCap,
-  Handshake,
-  Languages,
-  Layers,
-  MapPin,
-  type LucideIcon,
-} from 'lucide-react'
-import { Link } from '@/i18n/navigation'
+import { CalendarDays, Code2, FolderOpen, Github, Layers, type LucideIcon } from 'lucide-react'
 import { isOptimizableImageSrc } from '@/lib/images'
 import { cn } from '@/lib/utils'
 import { statValue, type PortfolioStatKey } from '@/features/stats/portfolio'
-import {
-  composeProfileSummary,
-  type ProfileFactId,
-  type ProfileFacts,
-} from '@/features/seo/profile-summary'
+import { composeProfileSummary, type ProfileFacts } from '@/features/seo/profile-summary'
 
-// Server component on purpose: the definitional paragraph, stats and key facts
-// must be in the initial HTML (no client-side animation gating their
+// Server component on purpose: the definitional paragraph and stats must be in
+// the initial HTML (no client-side animation gating their
 // visibility), so search engines and AI crawlers read exactly what visitors see.
-// Motion here is CSS only (floating decor, hover), off under reduced motion.
+// The portrait transfer progressively enhances this markup on the client.
 
 /** Handwritten annotations (decorative, xl+ only): fetched on demand, never preloaded. */
 const hand = Caveat({ subsets: ['latin'], weight: '500', display: 'swap', preload: false })
-
-const FACT_ICONS: Record<ProfileFactId, LucideIcon> = {
-  role: BriefcaseBusiness,
-  basedIn: MapPin,
-  current: Building2,
-  education: GraduationCap,
-  stack: Layers,
-  languages: Languages,
-  openTo: Handshake,
-}
 
 const STATS: { key: PortfolioStatKey; icon: LucideIcon }[] = [
   { key: 'projects', icon: FolderOpen },
@@ -58,9 +29,6 @@ const TRAITS = [
   { key: 'teamPlayer', dot: 'bg-amber-400' },
   { key: 'dedicated', dot: 'bg-rose-400' },
 ] as const
-
-const pill =
-  'group/pill inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition-[background-color,border-color,color,scale] duration-200 ease-fluid active:scale-[0.98]'
 
 export default async function ProfileSummarySection({
   locale,
@@ -90,7 +58,7 @@ export default async function ProfileSummarySection({
           <Portrait
             src={avatarUrl}
             note={t('note')}
-            className="order-last lg:order-first"
+            className="order-first"
           />
 
           <div className="min-w-0">
@@ -151,65 +119,6 @@ export default async function ProfileSummarySection({
             </dl>
           </div>
         </div>
-
-        {/* Key facts: the quotable profile (also feeds the Person JSON-LD) + crawlable profile links. */}
-        <div className="mt-16 rounded-2xl border border-border bg-card/60 p-5 backdrop-blur-xl md:mt-20 md:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-text rtl:tracking-normal">
-              {t('factsTitle')}
-            </h3>
-            <nav aria-label={t('cta.label')}>
-              <ul className="flex flex-wrap gap-2">
-                <li>
-                  <Link href="/about" className={cn(pill, 'bg-primary text-primary-foreground hover:bg-primary/90')}>
-                    {t('cta.about')}
-                    <ArrowRight
-                      aria-hidden="true"
-                      className="size-4 transition-transform duration-200 ease-fluid group-hover/pill:translate-x-0.5 rtl:rotate-180 rtl:group-hover/pill:-translate-x-0.5"
-                    />
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/projects" className={cn(pill, 'border border-border bg-card text-foreground hover:border-primary/50 hover:bg-primary/10')}>
-                    {t('cta.projects')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/freelance" className={cn(pill, 'border border-border bg-card text-foreground hover:border-primary/50 hover:bg-primary/10')}>
-                    {t('cta.freelance')}
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-          </div>
-
-          <dl className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
-            {summary.facts.map((fact) => {
-              const Icon = FACT_ICONS[fact.id]
-              return (
-                <div key={fact.id} className={cn('min-w-0', fact.id === 'stack' && 'sm:col-span-2')}>
-                  <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                    <Icon aria-hidden="true" className="size-3.5 shrink-0 text-primary-text" />
-                    {fact.label}
-                  </dt>
-                  <dd className="mt-1.5 text-sm font-semibold leading-snug text-foreground">
-                    {fact.items ? (
-                      <ul className="flex flex-wrap gap-1.5">
-                        {fact.items.map((item) => (
-                          <li key={item} className="rounded-md border border-border bg-secondary/70 px-2 py-0.5 text-xs font-medium">
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      fact.value
-                    )}
-                  </dd>
-                </div>
-              )
-            })}
-          </dl>
-        </div>
       </div>
     </section>
   )
@@ -226,7 +135,7 @@ function Portrait({ src, note, className }: { src: string; note: string; classNa
       />
 
       {/* The arch fades out at the bottom so the cropped portrait melts into the page. */}
-      <div className="relative aspect-[4/5] overflow-hidden rounded-t-full bg-card/60 [mask-image:linear-gradient(to_bottom,black_72%,transparent)]">
+      <div data-portrait-destination className="relative aspect-[4/5] overflow-hidden rounded-t-full bg-card/60 [mask-image:linear-gradient(to_bottom,black_72%,transparent)]">
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_38%,color-mix(in_oklab,var(--primary)_55%,transparent),color-mix(in_oklab,#7c3aed_35%,transparent)_55%,transparent_80%)]"
@@ -249,12 +158,12 @@ function Portrait({ src, note, className }: { src: string; note: string; classNa
 
       <span
         aria-hidden="true"
-        className="float-delayed absolute -end-3 top-[46%] flex size-14 items-center justify-center rounded-full border border-border bg-card/80 text-primary-text shadow-lg shadow-primary/20 backdrop-blur-xl sm:-end-5"
+        data-portrait-detail className="absolute -end-3 top-[46%] flex size-14 items-center justify-center rounded-full border border-border bg-card/80 text-primary-text shadow-lg shadow-primary/20 backdrop-blur-xl sm:-end-5"
       >
         <Code2 className="size-6" strokeWidth={1.75} />
       </span>
 
-      <p className="float absolute -start-2 top-8 max-w-[12.5rem] rounded-2xl border border-border bg-card/80 p-4 text-sm leading-snug text-foreground shadow-xl shadow-black/10 backdrop-blur-xl sm:-start-8">
+      <p data-portrait-detail className="absolute -start-2 top-8 max-w-[12.5rem] rounded-2xl border border-border bg-card/80 p-4 text-sm leading-snug text-foreground shadow-xl shadow-black/10 backdrop-blur-xl sm:-start-8">
         <span aria-hidden="true" className="mb-2 block size-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />
         {note}
       </p>
