@@ -33,7 +33,7 @@ function availabilityLabel(t: ReturnType<typeof useTranslations>, status: string
 export default function HeroSection({
   about,
   socialLinks = [],
-  avatarUrl = about?.avatarUrl || '/images/keltoum-malouki.jpg',
+  avatarUrl = about?.avatarUrl || '/images/keltoum-portrait.png',
 }: {
   about?: PublicAbout
   socialLinks?: PublicSocialLink[]
@@ -246,7 +246,7 @@ export default function HeroSection({
           />
 
           <div className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px]">
-            <div data-portrait-source className="w-full h-full rounded-full overflow-hidden border-2 border-border relative z-10 bg-card">
+            <div data-portrait-source className="w-full h-full rounded-full overflow-hidden border-2 border-border relative z-10 bg-[var(--portrait-backdrop)]">
               <Image
                 src={avatarUrl}
                 alt={displayName}

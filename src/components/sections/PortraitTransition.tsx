@@ -26,7 +26,7 @@ export default function PortraitTransition() {
       Object.assign(layer.style, {
         position: 'fixed', top: '0px', left: '0px', zIndex: '30',
         overflow: 'hidden', pointerEvents: 'none', transformOrigin: 'top left',
-        willChange: 'transform', background: 'var(--card)', visibility: 'hidden',
+        willChange: 'transform', background: 'var(--portrait-backdrop)', visibility: 'hidden',
       })
       layer.querySelectorAll('img').forEach((img) => {
         img.alt = ''

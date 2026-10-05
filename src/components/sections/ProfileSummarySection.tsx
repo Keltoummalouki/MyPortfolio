@@ -124,7 +124,7 @@ export default async function ProfileSummarySection({
   )
 }
 
-/** Portrait in a glowing arch, circled by an orbit line, with a code badge and a floating note. */
+/** Portrait in a navy arch, circled by an orbit line, with a code badge and a floating note. */
 function Portrait({ src, note, className }: { src: string; note: string; className?: string }) {
   return (
     <div className={cn('relative mx-auto w-full max-w-[19rem] sm:max-w-sm lg:max-w-none', className)}>
@@ -135,11 +135,7 @@ function Portrait({ src, note, className }: { src: string; note: string; classNa
       />
 
       {/* The arch fades out at the bottom so the cropped portrait melts into the page. */}
-      <div data-portrait-destination className="relative aspect-[4/5] overflow-hidden rounded-t-full bg-card/60 [mask-image:linear-gradient(to_bottom,black_72%,transparent)]">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(70%_55%_at_50%_38%,color-mix(in_oklab,var(--primary)_55%,transparent),color-mix(in_oklab,#7c3aed_35%,transparent)_55%,transparent_80%)]"
-        />
+      <div data-portrait-destination className="relative aspect-[4/5] overflow-hidden rounded-t-full bg-[var(--portrait-backdrop)] [mask-image:linear-gradient(to_bottom,black_72%,transparent)]">
         <Image
           src={src}
           // Decorative here: the hero already shows (and names) the same portrait.
@@ -148,11 +144,6 @@ function Portrait({ src, note, className }: { src: string; note: string; classNa
           sizes="(min-width: 1280px) 440px, (min-width: 1024px) 38vw, (min-width: 640px) 384px, 304px"
           unoptimized={!isOptimizableImageSrc(src)}
           className="object-cover"
-        />
-        {/* Rim light: reads as glow on opaque photos too (the CMS avatar is not a cutout). */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(85%_45%_at_50%_0%,color-mix(in_oklab,var(--primary)_45%,transparent),transparent_75%)] mix-blend-screen"
         />
       </div>
 
