@@ -39,17 +39,19 @@ export default function SectionHeader({ id, eyebrow, title, subtitle, centered =
       </motion.h2>
 
       <motion.div
-        className="h-1 w-16 bg-gradient-to-r from-primary to-violet-500 rounded-full"
+        className={cn(
+          'h-1 w-16 bg-gradient-to-r from-primary to-violet-500 rounded-full mb-5',
+          centered ? 'mx-auto origin-center' : 'origin-left rtl:origin-right'
+        )}
         initial={{ opacity: 0, scaleX: 0 }}
         whileInView={{ opacity: 1, scaleX: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        style={{ transformOrigin: centered ? 'center' : 'left', margin: centered ? '0 auto 1.25rem' : undefined }}
       />
 
       {subtitle && (
         <motion.p
-          className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty"
+          className={cn('text-lg text-muted-foreground max-w-2xl text-pretty', centered && 'mx-auto')}
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

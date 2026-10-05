@@ -281,13 +281,20 @@
         "messageRequired": "Le message est requis",
         "messageMin": "Le message doit contenir au moins 10 caractères",
         "messageMax": "Le message doit contenir moins de 2000 caractères"
-      }
+      },
+      "title": "Envoyer un message",
+      "intro": "Donnez-moi quelques détails sur votre projet ou opportunité, je vous répondrai par email.",
+      "requiredHint": "Champs obligatoires"
     },
     "info": {
       "email": "Email",
       "phone": "Téléphone",
-      "location": "Localisation"
-    }
+      "location": "Localisation",
+      "locationValue": "Casablanca, Maroc",
+      "copyEmail": "Copier l'adresse email",
+      "copied": "Adresse email copiée"
+    },
+    "socials": "Retrouvez-moi aussi sur"
   },
   "footer": {
     "copyright": "Tous droits réservés",

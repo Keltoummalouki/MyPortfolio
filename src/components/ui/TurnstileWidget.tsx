@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { cn } from '@/lib/utils'
 
 // Renders a Cloudflare Turnstile widget ONLY when NEXT_PUBLIC_TURNSTILE_SITE_KEY
 // is configured. When the key is absent (e.g. local dev) it renders nothing and
@@ -21,7 +22,13 @@ declare global {
   }
 }
 
-export default function TurnstileWidget({ onToken }: { onToken: (token: string | null) => void }) {
+export default function TurnstileWidget({
+  onToken,
+  className,
+}: {
+  onToken: (token: string | null) => void
+  className?: string
+}) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -33,6 +40,9 @@ export default function TurnstileWidget({ onToken }: { onToken: (token: string |
       if (!window.turnstile || !container || container.childElementCount > 0) return
       window.turnstile.render(container, {
         sitekey: SITE_KEY,
+        // Follow the site theme (class on <html>), not the OS setting that
+        // Turnstile's 'auto' reads, so it never renders a white box on dark.
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         callback: (token: string) => onToken(token),
         'expired-callback': () => onToken(null),
         'error-callback': () => onToken(null),
@@ -76,5 +86,5 @@ export default function TurnstileWidget({ onToken }: { onToken: (token: string |
 
   if (!SITE_KEY) return null
   // Reserve the widget's height (65px) so it doesn't shift the form when it renders.
-  return <div ref={ref} className="flex min-h-[65px] justify-center" />
+  return <div ref={ref} className={cn('flex min-h-[65px] justify-center', className)} />
 }

@@ -281,13 +281,20 @@
         "messageRequired": "Message is required",
         "messageMin": "Message must be at least 10 characters",
         "messageMax": "Message must be less than 2000 characters"
-      }
+      },
+      "title": "Send a message",
+      "intro": "Share a few details about your project or opportunity and I'll reply by email.",
+      "requiredHint": "Required fields"
     },
     "info": {
       "email": "Email",
       "phone": "Phone",
-      "location": "Location"
-    }
+      "location": "Location",
+      "locationValue": "Casablanca, Morocco",
+      "copyEmail": "Copy email address",
+      "copied": "Email address copied"
+    },
+    "socials": "Find me elsewhere"
   },
   "footer": {
     "copyright": "All rights reserved",
